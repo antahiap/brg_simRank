@@ -1,0 +1,155 @@
+$ Session File written by META_post version:19.1.4
+window size 1452,870
+window size 1452,832
+write options outputsize workspace 1452,832
+window size 2092,1156
+write options outputsize workspace 2092,1156
+write options outputsize workspace 1939,1156
+window size 1939,1156
+read geom Dyna3d /home/ndv/data/BUMPER/MAIN_SIM/121563.draco/d3plot
+options session barsectoggle enable
+window maximize "Window1"
+window size 1939,1156
+window active "Window1"
+xyplot read lsdyna "Window1" "/home/ndv/data/BUMPER/MAIN_SIM/121563.draco/binout*" matsum-Material all Internal_Energy_(ie)
+read onlyfun Dyna3d /home/ndv/data/BUMPER/MAIN_SIM/121563.draco/d3plot all MaterialUtilization
+xyplot model active all
+xyplot model load uniq_dyna /home/ndv/data/BUMPER/MAIN_SIM/121563.draco/binout*
+xyplot options abscissa lsdyna time
+xyplot options read toglobalunits off
+xyplot options read prefix ""
+xyplot options read customname ""
+xyplot options read customytext ""
+xyplot options read customylabel ""
+xyplot options read customxlabel ""
+xyplot options read customheader ""
+xyplot options read filename off
+xyplot loadtomodel active
+xyplot create "Window1"
+window active "Window1"
+window position 200,0
+window active "MetaPost"
+window active "Window1"
+window size 192,172
+window active "MetaPost"
+window shownormal "MetaPost"
+window size 192,172
+window active "Window1"
+window position 0,0
+window active "MetaPost"
+window active "Window1"
+window size 1939,1156
+window active "MetaPost"
+window active "Window1"
+window active "MetaPost"
+window shownormal "Window1"
+window maximize "MetaPost"
+window size 1939,1156
+window active "Window1"
+window size 192,172
+window active "MetaPost"
+window active "Window1"
+window position 200,0
+window active "MetaPost"
+options state variable "serial=1"
+animation for
+animation off
+0:opt winstate "MetaPost" 5
+xyplot model active empty
+xyplot model load uniq_dyna /home/ndv/data/BUMPER/MAIN_SIM/121143.draco/binout*
+view scale in 0.004126,0.493080
+view scale in 0.002579,0.493945
+xyplot options read prefix ""
+xyplot options read customname ""
+xyplot options read customytext ""
+xyplot options read customylabel ""
+xyplot options read customxlabel ""
+xyplot options read customheader ""
+xyplot loadtomodel active
+xyplot create "Window2"
+window active "Window2"
+window position 400,0
+window active "MetaPost"
+window active "Window2"
+window size 192,172
+window active "MetaPost"
+window shownormal "MetaPost"
+window size 192,172
+window active "Window2"
+window position 0,0
+window active "MetaPost"
+window active "Window2"
+window size 1939,1156
+window active "MetaPost"
+window active "Window2"
+window active "Window2"
+xyplot read lsdyna "Window2" "/home/ndv/data/BUMPER/MAIN_SIM/121143.draco/binout*" matsum-Material all Internal_Energy_(ie)
+xyplot axisoptions axxrange "Window2" 0 0 -0.0017833 0.0536812
+xyplot axisoptions xaxis space "Window2" 0 0 0.01
+xyplot axisoptions axyrange "Window2" 0 0 -2.71097e+06 1.6263e+07
+xyplot axisoptions yaxis space "Window2" 0 0 2e+06
+xyplot axisoptions axxrange "Window2" 0 0 -0.0037615 0.0577647
+xyplot axisoptions xaxis space "Window2" 0 0 0.01
+xyplot axisoptions axyrange "Window2" 0 0 -3.57463e+06 1.89261e+07
+xyplot axisoptions yaxis space "Window2" 0 0 2e+06
+window maximize "Window2"
+window active "Window2"
+read geom Dyna3d /home/ndv/data/BUMPER/MAIN_SIM/121143.draco/d3plot
+xyplot model active empty
+xyplot model load uniq_dyna /home/ndv/data/BUMPER/MAIN_SIM/121235.draco/binout*
+xyplot options read prefix ""
+xyplot options read customname ""
+xyplot options read customytext ""
+xyplot options read customylabel ""
+xyplot options read customxlabel ""
+xyplot options read customheader ""
+xyplot loadtomodel active
+xyplot create "Window3"
+window active "Window3"
+window position 600,0
+window active "Window2"
+window active "Window3"
+window size 192,172
+window active "Window2"
+window shownormal "Window2"
+window position 400,0
+window size 192,172
+window active "Window3"
+window position 0,0
+window active "Window2"
+window active "Window3"
+window size 1939,1156
+window active "Window2"
+window active "Window3"
+window active "Window3"
+xyplot read lsdyna "Window3" "/home/ndv/data/BUMPER/MAIN_SIM/121235.draco/binout*" matsum-Material all Internal_Energy_(ie)
+window maximize "Window3"
+window active "Window3"
+read geom Dyna3d /home/ndv/data/BUMPER/MAIN_SIM/121235.draco/d3plot
+read dis Dyna3d /home/ndv/data/BUMPER/MAIN_SIM/121235.draco/d3plot all Displacements
+read onlyfun Dyna3d /home/ndv/data/BUMPER/MAIN_SIM/121235.draco/d3plot all Stresses,VonMises,MaxofInOutMid
+window active "MetaPost"
+window shownormal "Window3"
+window maximize "MetaPost"
+window active "Window3"
+window size 192,172
+window active "MetaPost"
+window size 1939,1156
+window active "Window3"
+window position 600,0
+window active "MetaPost"
+view scale in 0.161423,0.735294
+view scale in 0.161423,0.735294
+options state variable "serial=1"
+animation for
+view scale out 0.167096,0.379758
+view scale out 0.158329,0.379758
+view scale out 0.154719,0.378893
+view scale out 0.154719,0.378893
+animation off
+0:opt winstate "MetaPost" 9
+view scale out 0.241362,0.677336
+view scale out 0.241362,0.677336
+view scale out 0.241362,0.677336
+view scale out 0.240846,0.679066
+options var delete FLAG_RSS_KEEP_CURVES

@@ -1,0 +1,177 @@
+Log File written by META_post version:19.1.4
+Created at Wed Mar  9 15:51:45 2022
+
+
+Welcome to <font color="#b60f27">META</font> Post Processor
+ version:  19.1.4, compiled on: Sep 18 2019, 20:24:57
+ built:	64-bit sn: 14e352dac260
+ platform:Linux x86_64 4.18.0-348.7.1.el8_5.x86_64 little-endian
+ company:Fraunhofer-Institut fuer Algorithmen und Wissenschaftliches Rec
+ Graphics Vendor:	NVIDIA Corporation
+ Graphics Renderer:Quadro K620/PCIe/SSE2
+ OpenGL Version:	4.6.0 NVIDIA 510.47.03
+ OpenGL info:
+	Detected available video memory size: 2048 MB.
+	Graphics Mode: High performance.
+	If you experience instabilities run META with -performance_mode 4 or -mesa_llvm.
+File not found.
+File not found.
+Detected LsDyna file.
+Model 0 :Geometry filename: //home/ndv/data/BUMPER/MAIN_SIM/121563.draco/d3plot 
+	Nodes  : 998116 
+	Shells : 950343 
+		Quads  : 896155 
+		Trias  : 54188 
+	Solids : 19319 
+		Tetras : 0 
+		Pentas : 1514 
+		Hexas  : 17805 
+	PShells : 732 
+	PSolids : 33 
+Detected LsDyna file.
+Detected LsDyna file.
+Reading "STATE 1       ,TIME 0.00000000E+00"
+Reading "STATE 2       ,TIME 4.99999616E-03"
+Reading "STATE 3       ,TIME 9.99999233E-03"
+Reading "STATE 4       ,TIME 1.49999885E-02"
+Reading "STATE 5       ,TIME 1.99999847E-02"
+Reading "STATE 6       ,TIME 2.49999817E-02"
+Reading "STATE 7       ,TIME 2.99999770E-02"
+Reading "STATE 8       ,TIME 3.49999741E-02"
+Reading "STATE 9       ,TIME 3.99999693E-02"
+Reading "STATE 10      ,TIME 4.49999683E-02"
+Reading "STATE 11      ,TIME 4.99999635E-02"
+Reading "STATE 12      ,TIME 5.49999587E-02"
+Reading "STATE 13      ,TIME 5.99999540E-02"
+Reading "STATE 14      ,TIME 6.49999529E-02"
+Reading "STATE 15      ,TIME 6.99999481E-02"
+Reading "STATE 16      ,TIME 7.49999434E-02"
+Reading "STATE 17      ,TIME 7.99999386E-02"
+Reading "STATE 18      ,TIME 8.49999338E-02"
+Reading "STATE 19      ,TIME 8.99999365E-02"
+Reading "STATE 20      ,TIME 9.49999318E-02"
+Reading "STATE 21      ,TIME 9.99999270E-02"
+Reading "STATE 22      ,TIME 1.04999922E-01"
+Reading "STATE 23      ,TIME 1.09999917E-01"
+Reading "STATE 24      ,TIME 1.14999913E-01"
+Detected lsdyna file.
+Reading "STATE 25      ,TIME 1.19999908E-01"
+Reading "STATE 26      ,TIME 1.20000914E-01"
+Reading "STATE 1       ,TIME 0.00000000E+00"
+/home/ndv/data/BUMPER/MAIN_SIM/121563.draco/binout0000
+/home/ndv/data/BUMPER/MAIN_SIM/121563.draco/binout0001
+/home/ndv/data/BUMPER/MAIN_SIM/121563.draco/binout0008
+Reading "STATE 2       ,TIME 4.99999616E-03"
+Reading "STATE 3       ,TIME 9.99999233E-03"
+Reading "STATE 4       ,TIME 1.49999885E-02"
+Reading "STATE 5       ,TIME 1.99999847E-02"
+Reading "STATE 6       ,TIME 2.49999817E-02"
+Reading "STATE 7       ,TIME 2.99999770E-02"
+Reading "STATE 8       ,TIME 3.49999741E-02"
+Reading "STATE 9       ,TIME 3.99999693E-02"
+Reading "STATE 10      ,TIME 4.49999683E-02"
+Reading "STATE 11      ,TIME 4.99999635E-02"
+Reading "STATE 12      ,TIME 5.49999587E-02"
+Reading "STATE 13      ,TIME 5.99999540E-02"
+Detected LsDyna file.
+Reading "STATE 14      ,TIME 6.49999529E-02"
+Reading "STATE 15      ,TIME 6.99999481E-02"
+Reading "STATE 16      ,TIME 7.49999434E-02"
+Reading "STATE 17      ,TIME 7.99999386E-02"
+Reading "STATE 18      ,TIME 8.49999338E-02"
+Reading "STATE 19      ,TIME 8.99999365E-02"
+Reading "STATE 20      ,TIME 9.49999318E-02"
+Reading "STATE 21      ,TIME 9.99999270E-02"
+Reading "STATE 22      ,TIME 1.04999922E-01"
+Reading "STATE 23      ,TIME 1.09999917E-01"
+Reading "STATE 24      ,TIME 1.14999913E-01"
+Reading "STATE 25      ,TIME 1.19999908E-01"
+Reading "STATE 26      ,TIME 1.20000914E-01"
+Detected lsdyna file.
+/home/ndv/data/BUMPER/MAIN_SIM/121143.draco/binout0000
+/home/ndv/data/BUMPER/MAIN_SIM/121143.draco/binout0001
+/home/ndv/data/BUMPER/MAIN_SIM/121143.draco/binout0008
+Detected LsDyna file.
+Model 0 :Geometry filename: //home/ndv/data/BUMPER/MAIN_SIM/121143.draco/d3plot 
+	Nodes  : 998116 
+	Shells : 950343 
+		Quads  : 896155 
+		Trias  : 54188 
+	Solids : 19319 
+		Tetras : 0 
+		Pentas : 1514 
+		Hexas  : 17805 
+	PShells : 732 
+	PSolids : 33 
+Detected LsDyna file.
+Detected lsdyna file.
+/home/ndv/data/BUMPER/MAIN_SIM/121235.draco/binout0000
+/home/ndv/data/BUMPER/MAIN_SIM/121235.draco/binout0001
+/home/ndv/data/BUMPER/MAIN_SIM/121235.draco/binout0008
+Detected LsDyna file.
+Model 0 :Geometry filename: //home/ndv/data/BUMPER/MAIN_SIM/121235.draco/d3plot 
+	Nodes  : 998116 
+	Shells : 950343 
+		Quads  : 896155 
+		Trias  : 54188 
+	Solids : 19319 
+		Tetras : 0 
+		Pentas : 1514 
+		Hexas  : 17805 
+	PShells : 732 
+	PSolids : 33 
+Detected LsDyna file.
+Detected LsDyna file.
+Reading "STATE 1       ,TIME 0.00000000E+00"
+Reading "STATE 2       ,TIME 4.99999616E-03"
+Reading "STATE 3       ,TIME 9.99999233E-03"
+Reading "STATE 4       ,TIME 1.49999885E-02"
+Reading "STATE 5       ,TIME 1.99999847E-02"
+Reading "STATE 6       ,TIME 2.49999817E-02"
+Reading "STATE 7       ,TIME 2.99999770E-02"
+Reading "STATE 8       ,TIME 3.49999741E-02"
+Reading "STATE 9       ,TIME 3.99999693E-02"
+Reading "STATE 10      ,TIME 4.49999683E-02"
+Reading "STATE 11      ,TIME 4.99999635E-02"
+Reading "STATE 12      ,TIME 5.49999587E-02"
+Reading "STATE 13      ,TIME 5.99999540E-02"
+Reading "STATE 14      ,TIME 6.49999529E-02"
+Reading "STATE 15      ,TIME 6.99999481E-02"
+Reading "STATE 16      ,TIME 7.49999434E-02"
+Reading "STATE 17      ,TIME 7.99999386E-02"
+Reading "STATE 18      ,TIME 8.49999338E-02"
+Reading "STATE 19      ,TIME 8.99999365E-02"
+Reading "STATE 20      ,TIME 9.49999318E-02"
+Reading "STATE 21      ,TIME 9.99999270E-02"
+Reading "STATE 22      ,TIME 1.04999922E-01"
+Reading "STATE 23      ,TIME 1.09999917E-01"
+Reading "STATE 24      ,TIME 1.14999913E-01"
+Reading "STATE 25      ,TIME 1.19999908E-01"
+Reading "STATE 26      ,TIME 1.20000914E-01"
+Reading "STATE 1       ,TIME 0.00000000E+00"
+Reading "STATE 2       ,TIME 4.99999616E-03"
+Reading "STATE 3       ,TIME 9.99999233E-03"
+Reading "STATE 4       ,TIME 1.49999885E-02"
+Reading "STATE 5       ,TIME 1.99999847E-02"
+Reading "STATE 6       ,TIME 2.49999817E-02"
+Reading "STATE 7       ,TIME 2.99999770E-02"
+Reading "STATE 8       ,TIME 3.49999741E-02"
+Reading "STATE 9       ,TIME 3.99999693E-02"
+Reading "STATE 10      ,TIME 4.49999683E-02"
+Reading "STATE 11      ,TIME 4.99999635E-02"
+Reading "STATE 12      ,TIME 5.49999587E-02"
+Reading "STATE 13      ,TIME 5.99999540E-02"
+Reading "STATE 14      ,TIME 6.49999529E-02"
+Reading "STATE 15      ,TIME 6.99999481E-02"
+Reading "STATE 16      ,TIME 7.49999434E-02"
+Reading "STATE 17      ,TIME 7.99999386E-02"
+Reading "STATE 18      ,TIME 8.49999338E-02"
+Reading "STATE 19      ,TIME 8.99999365E-02"
+Reading "STATE 20      ,TIME 9.49999318E-02"
+Reading "STATE 21      ,TIME 9.99999270E-02"
+Reading "STATE 22      ,TIME 1.04999922E-01"
+Reading "STATE 23      ,TIME 1.09999917E-01"
+Reading "STATE 24      ,TIME 1.14999913E-01"
+Reading "STATE 25      ,TIME 1.19999908E-01"
+Reading "STATE 26      ,TIME 1.20000914E-01"
+Variable FLAG_RSS_KEEP_CURVES does not exist! Can not be deleted.

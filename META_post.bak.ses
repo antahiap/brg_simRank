@@ -1,0 +1,821 @@
+$ Session File written by META_post version:19.1.4
+window size 1452,870
+window size 1452,832
+write options outputsize workspace 1452,832
+window size 2092,1156
+write options outputsize workspace 2092,1156
+window size 1837,1156
+write options outputsize workspace 1837,1156
+read geom Dyna3d /home/ndv/data/BUMPER/MAIN_SIM/121551.draco/d3plot
+options session barsectoggle enable
+read dis Dyna3d /home/ndv/data/BUMPER/MAIN_SIM/121551.draco/d3plot 1-3 Displacements
+read onlyfun Dyna3d /home/ndv/data/BUMPER/MAIN_SIM/121551.draco/d3plot 1-3 Stresses,VonMises,MaxofInOutMid
+options state variable "serial=1"
+animation for
+animation off
+0:opt winstate "MetaPost" 5
+model active empty
+read geom Dyna3d /home/ndv/data/BUMPER/MAIN_SIM/121139.draco/d3plot
+1:read dis Dyna3d /home/ndv/data/BUMPER/MAIN_SIM/121139.draco/d3plot all Displacements
+1:read onlyfun Dyna3d /home/ndv/data/BUMPER/MAIN_SIM/121139.draco/d3plot all Stresses,VonMises,MaxofInOutMid
+view scale out 0.239521,0.627163
+view scale out 0.223190,0.630623
+options state variable "serial=1"
+animation for
+animation off
+1:opt winstate "MetaPost" 5
+view default top
+view default front
+ani last
+ani first
+view default left
+model active all
+ani next
+ani last
+ani first
+view scale in 0.836146,0.583045
+view scale in 0.799129,0.557093
+view set -173.112,0,681.405,-173.112,4203.86,681.405,0,6.12323e-17,1,-173.112,4203.86,681.405,-11804,20211.7,28,0
+view set -173.112,0,681.405,-173.112,4203.86,681.405,0,6.12323e-17,1,-173.112,4203.86,681.405,-19808,28215.7,28,0
+view set -232.63,80.7734,504.999,-520.568,4175.58,-401.707,-0.0149512,0.215165,0.976463,-520.568,4175.58,-401.707,-19808,28215.7,28,0
+erase pid pick
+mouse 1 0.470332 0.851211 0
+mouse 1 0.469788 0.846021 0
+view default top
+view scale out 0.426783,0.633218
+view scale out 0.317910,0.610727
+view scale out 0.299946,0.602076
+mouse 1 0.706587 0.269896 0
+mouse 1 0.918345 0.91955 0
+view scale in 0.756669,0.663495
+view scale in 0.754491,0.665225
+view set -999.058,-138.678,2038.88,-2556.82,5249.92,-1898.28,0.0608412,0.600266,0.797483,-2556.82,5249.92,-1898.28,-8248.69,21954.9,28,0
+view scale out 0.236255,0.542388
+view scale out 0.159499,0.520761
+view scale out 0.151878,0.514706
+view scale in 0.385411,0.783737
+view scale in 0.408819,0.787197
+view scale in 0.471965,0.801038
+view scale in 0.639630,0.839965
+view set 393.377,-738.149,869.182,-3888.13,3036.36,1059.51,0.129331,0.09694,0.986852,-3888.13,3036.36,1059.51,-9390.87,20812.7,28,0
+view scale in 0.536200,0.687716
+view scale in 0.536200,0.677336
+view scale in 0.536200,0.667820
+view scale in 0.532934,0.647924
+view set 341.27,-788.046,658.793,-1349.12,1382.97,538.995,0.0147473,0.0665348,0.997675,-1349.12,1382.97,538.995,-12347.7,17855.9,28,0
+view scale in 0.489385,0.582180
+view scale in 0.488840,0.585640
+view scale in 0.488840,0.589965
+view scale in 0.486119,0.595156
+view scale in 0.486119,0.595156
+view scale in 0.486119,0.595156
+view set 282.969,-817.764,672.16,-206.334,-64.0365,464.331,-0.0853702,0.212959,0.973324,-206.334,-64.0365,464.331,-14179.4,16024.1,28,0
+view scale out 0.183451,0.496540
+view scale out 0.182907,0.518166
+view set 379.164,-722.893,676.789,-392.618,304.216,339.971,-0.10307,0.239165,0.965493,-392.618,304.216,339.971,-13773.6,16429.9,28,0
+mouse 1 0.206315 0.650519 0
+mouse 1 0.206315 0.650519 0
+view scale in 0.231900,0.698097
+mouse 1 0.212303 0.702422 0
+mouse 1 0.211214 0.700692 0
+view scale out 0.195427,0.604671
+view set 343.104,-790.465,687.367,-286.242,333.602,364.193,-0.145821,0.197088,0.969481,-286.242,333.602,364.193,-13773.6,16429.9,28,0
+ani first
+mouse 1 0.737616 0.859862 0
+mouse 1 0.737616 0.859862 0
+view scale out 0.283615,0.594291
+view scale out 0.283615,0.590830
+ani first
+add all
+view scale out 0.117583,0.452422
+view scale out 0.117583,0.452422
+view scale out 0.117583,0.452422
+view scale out 0.135003,0.469723
+mouse 1 0.167665 0.670415 0
+mouse 1 0.167665 0.66782 0
+mouse 1 0.106151 0.58564 0
+mouse 1 0.106151 0.58564 0
+mouse 1 0.17583 0.536332 0
+mouse 1 0.17583 0.536332 0
+view scale in 0.166032,0.554498
+view scale in 0.166032,0.554498
+view set 713.651,-521.826,598.103,-795.632,1686.02,-59.5986,-0.107984,0.215305,0.970558,-795.632,1686.02,-59.5986,-12347.7,17855.9,28,0
+view scale out 0.191617,0.565744
+view scale out 0.191617,0.565744
+view scale in 0.192161,0.565744
+view scale in 0.197605,0.565744
+view scale in 0.200327,0.565744
+view scale in 0.201415,0.565744
+view scale in 0.201415,0.565744
+view scale in 0.202504,0.553633
+mouse 1 0.366358 0.807093 0
+mouse 1 0.366358 0.807093 0
+erase pid pick
+mouse 1 0.112684 0.474914 0
+mouse 1 0.112684 0.474914 0
+mouse 1 0.112684 0.475779 0
+mouse 1 0.112684 0.475779 0
+add all
+mouse 1 0.328797 0.761246 0
+mouse 1 0.328797 0.761246 0
+mouse 1 0.303212 0.853806 0
+mouse 1 0.303212 0.853806 0
+mouse 1 0.206315 0.625433 0
+mouse 1 0.206315 0.625433 0
+mouse 1 0.246598 0.646194 0
+mouse 1 0.246598 0.646194 0
+view scale out 0.677735,0.410035
+view scale out 0.622210,0.427336
+view set 431.113,-655.763,796.851,-617,877.46,340.114,-0.107984,0.215305,0.970558,-617,877.46,340.114,-13189.2,17014.3,28,0
+view scale out 0.623299,0.389273
+view scale out 0.623299,0.389273
+style pident enabled model
+view scale in 0.382689,0.610727
+view set 302.75,-734.529,790.242,-824.478,1092.29,-21.8621,-0.176865,0.306629,0.935252,-824.478,1092.29,-21.8621,-12806.7,17396.9,28,0
+mouse 1 0.44638 0.564014 0
+mouse 1 0.44638 0.564014 0
+mouse 1 0.367991 0.560554 0
+mouse 1 0.367991 0.560554 0
+view set 291.07,-649.154,857.295,-874.189,918.819,-347.297,-0.27325,0.450066,0.850162,-874.189,918.819,-347.297,-12806.7,17396.9,28,0
+mouse 1 0.355471 0.593426 0
+mouse 1 0.355471 0.591695 0
+mouse 1 0.335329 0.596021 0
+mouse 1 0.335329 0.596021 0
+view scale out 0.348938,0.601211
+view scale out 0.348938,0.601211
+view scale out 0.348938,0.602076
+view scale out 0.348938,0.602941
+view scale in 0.419162,0.625433
+view scale in 0.424061,0.597751
+view set 569.651,-469.879,666.419,-1709.25,1740.75,-251.296,-0.125706,0.267053,0.955448,-1709.25,1740.75,-251.296,-11796.9,18406.7,28,0
+view scale in 0.284703,0.543253
+view scale in 0.282526,0.547578
+view set 427.395,-610.819,713.467,-1022.92,956.264,-128.115,-0.191009,0.321328,0.927504,-1022.92,956.264,-128.115,-12806.7,17396.9,28,0
+view scale in 0.997278,0.503460
+view set 574.681,-367.675,650.628,-944.705,658.04,105.378,-0.189013,0.227777,0.955192,-944.705,658.04,105.378,-13189.2,17014.3,28,0
+add all
+view scale out 0.247142,0.557093
+view scale out 0.249320,0.564014
+mouse 1 0.284159 0.694637 0
+mouse 1 0.284159 0.694637 0
+mouse 1 0.204682 0.789792 0
+mouse 1 0.205226 0.782872 0
+view set 668.016,-262.636,691.833,-1407.03,1315.2,-196.803,-0.216668,0.246988,0.944485,-1407.03,1315.2,-196.803,-12347.7,17855.9,28,0
+mouse 1 0.227001 0.586505 0
+mouse 1 0.227001 0.586505 0
+mouse 1 0.21448 0.607266 0
+mouse 1 0.21448 0.607266 0
+view scale in 0.162765,0.565744
+view scale in 0.167665,0.565744
+view set 530.668,-485.577,707.717,-801.049,694.13,5.75781,-0.24028,0.281529,0.928982,-801.049,694.13,5.75781,-13189.2,17014.3,28,0
+model allhide 1
+view scale in 0.197605,0.551038
+view scale in 0.195972,0.550173
+view scale in 0.195427,0.548443
+view set 370.524,-591.031,786.065,-339.941,11.2244,188.102,-0.376903,0.389682,0.840293,-339.941,11.2244,188.102,-13995,16208.6,28,0
+view scale out 0.701143,0.780277
+view scale out 0.309744,0.642734
+view scale out 0.053348,0.512976
+view scale out 0.053348,0.512976
+grstyle hidden on
+grstyle hidden off
+grstyle shade on
+style pident enabled pid
+view scale in 0.221557,0.561419
+view scale in 0.223734,0.562284
+view set 388.885,-334.722,822.309,-739.77,142.018,-197.044,-0.507689,0.413804,0.755658,-739.77,142.018,-197.044,-13508,16695.6,28,0
+view scale in 0.277627,0.479239
+view scale in 0.286336,0.480969
+view scale in 0.295046,0.488754
+view set 374.077,-533.657,744.025,-341.726,-89.1986,368.792,-0.353275,0.202191,0.913409,-341.726,-89.1986,368.792,-14179.4,16024.1,28,0
+view scale out 0.400653,0.416955
+view scale out 0.400653,0.416955
+view scale in 0.247686,0.611592
+view set 297.18,-520.327,833.029,-404.273,-40.5564,123.934,-0.548708,0.331856,0.767327,-404.273,-40.5564,123.934,-13995,16208.6,28,0
+view scale in 0.254219,0.534602
+view scale in 0.254219,0.534602
+view scale in 0.254219,0.534602
+view scale in 0.254219,0.534602
+view set 249.818,-705.327,765.148,-87.936,-387.396,501.054,-0.472877,0.208728,0.856049,-87.936,-387.396,501.054,-14568,15635.5,28,0
+view scale out 0.295591,0.416955
+view scale out 0.293958,0.416955
+view scale out 0.293958,0.416955
+view scale out 0.293958,0.416955
+view scale out 0.293958,0.416955
+view set 374.886,-560.735,762.395,-544.417,100.532,68.3833,-0.393818,0.346182,0.851508,-544.417,100.532,68.3833,-13773.6,16429.9,28,0
+view scale out 0.041916,0.605536
+view scale out 0.041916,0.606401
+view scale out 0.041916,0.606401
+view scale in 0.081655,0.644464
+view scale in 0.081655,0.644464
+view scale out 0.082744,0.661765
+view scale in 0.170386,0.523356
+view scale in 0.180729,0.527682
+view scale in 0.176919,0.592561
+view scale in 0.232989,0.639273
+view set 364.428,-579.59,757.424,-278.144,-119.527,281.863,-0.391808,0.337502,0.855908,-278.144,-119.527,281.863,-14179.4,16024.1,28,0
+view scale in 0.160588,0.531142
+view scale in 0.160588,0.531142
+view set 314.351,-693.982,737.387,-112.42,-319.325,441.147,-0.354087,0.297672,0.886574,-112.42,-319.325,441.147,-14461.3,15742.3,28,0
+erase pid not pick
+opt selpart
+mouse 1 0.234077 0.606401 0
+mouse 1 0.234077 0.606401 0
+mouse 1 0.200327 0.556228 0
+mouse 1 0.200327 0.556228 0
+mouse 1 0.211214 0.551903 0
+mouse 1 0.211214 0.551903 0
+option enter
+view scale in 0.221013,0.527682
+view scale in 0.221013,0.527682
+view set 37.8431,-697.416,950.677,-32.6109,-477.817,570.333,-0.54951,0.675431,0.491764,-32.6109,-477.817,570.333,-14657,15546.6,28,0
+view scale out 0.326075,0.674740
+view scale out 0.326075,0.674740
+view scale out 0.325531,0.673875
+view set 229.044,-647.134,852.525,-172.625,-253.49,328.615,-0.413133,0.547237,0.72791,-172.625,-253.49,328.615,-14333.2,15870.4,28,0
+view scale in 0.224823,0.559689
+view scale in 0.225367,0.558824
+view scale in 0.225912,0.559689
+view scale out 0.106696,0.566609
+view scale out 0.079477,0.566609
+view scale out 0.054981,0.565744
+view scale out 0.051170,0.564014
+view scale out 0.046815,0.563149
+view scale out 0.044638,0.563149
+view scale out 0.044094,0.562284
+view scale out 0.041916,0.565744
+view scale out 0.039194,0.569204
+view scale out 0.038650,0.570069
+view scale in 0.052259,0.469723
+view scale in 0.052259,0.469723
+view scale in 0.052259,0.469723
+view scale in 0.052259,0.469723
+add all
+view scale in 0.163310,0.664360
+view scale out 0.415895,0.702422
+view scale out 0.424605,0.707612
+view scale out 0.424605,0.707612
+view scale out 0.424605,0.707612
+erase pid pick
+mouse 1 0.294502 0.860727 0
+mouse 1 0.294502 0.860727 0
+mouse 1 0.179096 0.701557 0
+mouse 1 0.179096 0.701557 0
+view scale in 0.192161,0.735294
+view set 331.936,-437.491,903.362,-867.608,517.369,-239.993,-0.370662,0.483726,0.792855,-867.608,517.369,-239.993,-13189.2,17014.3,28,0
+model active empty
+read geom Dyna3d /home/ndv/data/BUMPER/MAIN_SIM/121393.draco/d3plot
+view scale out 0.168209,0.538062
+2:read dis Dyna3d /home/ndv/data/BUMPER/MAIN_SIM/121393.draco/d3plot all Displacements
+2:read onlyfun Dyna3d /home/ndv/data/BUMPER/MAIN_SIM/121393.draco/d3plot all Stresses,VonMises,MaxofInOutMid
+view scale out 0.303212,0.498270
+view scale out 0.301579,0.502595
+view scale in 0.666848,0.674740
+view scale in 0.666848,0.674740
+erase pid pick
+mouse 1 0.765923 0.818339 0
+mouse 1 0.632553 0.621972 0
+mouse 1 0.747414 0.83391 0
+mouse 1 0.622755 0.644464 0
+view set -320.355,-1478.2,1192.52,-3760.32,4186.44,-1782.08,0.100202,0.509594,0.854561,-3760.32,4186.44,-1782.08,-8743.61,23272.2,28,0
+model active all
+mouse 1 0.663582 0.154844 0
+mouse 1 0.663582 0.154844 0
+mouse 1 0.735983 0.504325 0
+mouse 1 0.735983 0.504325 0
+view scale in 0.643985,0.587370
+mouse 1 0.573762 0.556228 0
+mouse 1 0.573762 0.556228 0
+view scale in 0.632009,0.548443
+view scale in 0.633097,0.544983
+view scale in 0.632553,0.542388
+view set 183.325,-1382.34,899.109,-2006.38,900.615,-606.168,-0.267611,0.338204,0.902221,-2006.38,900.615,-606.168,-12504.7,19511.1,28,0
+view scale in 0.750136,0.432526
+view scale in 0.749592,0.433391
+view scale in 0.749592,0.433391
+view scale in 0.749047,0.434256
+view set 98.0198,-1343.1,673.884,-462.425,216.504,345.66,-0.175775,0.14185,0.974157,-462.425,216.504,345.66,-14318.4,17697.3,28,0
+2:read geom Dyna3d /home/ndv/data/BUMPER/MAIN_SIM/121247.draco/d3plot
+view scale out 0.340229,0.750000
+view scale out 0.340229,0.750000
+view scale out 0.340229,0.750000
+2:read dis Dyna3d /home/ndv/data/BUMPER/MAIN_SIM/121247.draco/d3plot all Displacements
+2:read onlyfun Dyna3d /home/ndv/data/BUMPER/MAIN_SIM/121247.draco/d3plot all Stresses,VonMises,MaxofInOutMid
+view scale out 0.051170,0.175606
+view scale out 0.051170,0.175606
+view scale out 0.051170,0.175606
+view scale in 0.264017,0.240484
+view scale in 0.266739,0.240484
+view set 385.522,-1277.79,994.402,-3157.28,10254.6,-2472.85,0.0198255,0.293446,0.95577,-3157.28,10254.6,-2472.85,-3455.22,28560.5,28,0
+erase pid pick
+mouse 1 0.494284 0.391003 0
+mouse 1 0.494284 0.391003 0
+mouse 1 0.484486 0.368512 0
+mouse 1 0.484486 0.366782 0
+view scale in 0.480131,0.555363
+view scale in 0.480131,0.554498
+view scale in 0.478498,0.550173
+view scale in 0.477953,0.546713
+mouse 1 0.453457 0.527682 0
+mouse 1 0.452912 0.525952 0
+view scale in 0.455090,0.524221
+view scale in 0.455090,0.522491
+view scale in 0.455090,0.516436
+view set 551.958,-1164.39,742.063,-1773.68,1389.09,155.812,-0.256421,-0.0116441,0.966495,-1773.68,1389.09,155.812,-12504.7,19511.1,28,0
+view scale out 0.346217,0.441176
+view scale out 0.353293,0.466263
+model curvespagedelete all allwindelete 1
+model active all
+model curvespagedelete all allwindelete 0
+model active all
+view scale out 0.497550,0.415225
+view scale out 0.497550,0.416955
+view scale out 0.497550,0.418685
+view scale in 0.497550,0.418685
+view scale in 0.497550,0.418685
+view scale in 0.497550,0.418685
+view scale in 0.497550,0.418685
+view scale in 0.497550,0.418685
+view set 786.203,-863.654,980.268,-1827.69,1221.88,-64.0667,-0.304424,0.0931501,0.947971,-1827.69,1221.88,-64.0667,-12504.7,19511.1,28,0
+options state variable "serial=1"
+animation for
+view scale out 0.263473,0.461073
+view scale out 0.263473,0.461073
+view scale out 0.263473,0.461073
+view scale in 0.420795,0.519031
+view scale in 0.420795,0.519031
+view scale in 0.420795,0.519031
+view scale in 0.421339,0.519896
+view scale in 0.421339,0.519896
+view set 1039.17,-328.53,952.088,-1112.88,432.687,110.855,-0.329225,0.106135,0.938268,-1112.88,432.687,110.855,-13575.1,18440.7,28,0
+animation off
+2:opt winstate "MetaPost" 14
+mouse 1 0.353838 0.930796 0
+mouse 1 0.353838 0.930796 0
+ani first
+view scale in 0.747959,0.523356
+view scale in 0.808928,0.478374
+view scale in 0.814371,0.458477
+view set 872.183,461.197,1508.04,-94.3265,331.873,492.556,-0.727118,0.0831716,0.681456,-94.3265,331.873,492.556,-14600,17415.7,28,0
+view scale out 0.553620,0.621107
+view scale out 0.553620,0.621107
+view scale out 0.659227,0.612457
+view scale in 0.186717,0.660900
+view scale in 0.186717,0.660900
+view scale in 0.187806,0.657439
+view set 996.446,-816.872,1514.5,143.24,-102.701,651.902,-0.611622,0.195312,0.766663,143.24,-102.701,651.902,-14600,17415.7,28,0
+view scale out 0.364181,0.435986
+view scale out 0.364181,0.435986
+view scale out 0.364181,0.435986
+view scale out 0.205226,0.471453
+view scale in 0.178552,0.467128
+view scale in 0.176919,0.466263
+view scale in 0.174741,0.462803
+view scale in 0.174741,0.459343
+view set 1109.25,-808.166,1318.4,98.7253,-227.491,528.624,-0.42761,0.374719,0.822639,98.7253,-227.491,528.624,-14600,17415.7,28,0
+view scale out 0.260207,0.513841
+view scale out 0.260207,0.513841
+view scale out 0.260207,0.513841
+view scale out 0.260207,0.513841
+view scale in 0.710942,0.065744
+view scale in 0.734894,0.064879
+view scale in 0.741971,0.071799
+view scale out 0.517148,0.378028
+view scale out 0.520414,0.377163
+view set 1254.81,1269.23,1459.5,-485.087,262,89.5684,-0.641819,0.0700366,0.763651,-485.087,262,89.5684,-13575.1,18440.7,28,0
+view scale in 0.517148,0.371972
+view scale in 0.517148,0.371972
+view scale in 0.517148,0.371972
+view scale in 0.517148,0.371972
+view set 1012.73,1159,1788.96,285.168,751.551,963.682,-0.676899,-0.216348,0.703563,285.168,751.551,963.682,-14834.7,17181.1,28,0
+view scale out 0.596625,0.484429
+view scale out 0.596625,0.484429
+view scale out 0.596625,0.484429
+view scale out 0.597169,0.486159
+view scale out 0.597169,0.486159
+view scale out 0.597169,0.486159
+view scale in 0.262929,0.488754
+view scale in 0.258574,0.479239
+view scale in 0.255308,0.467128
+view scale in 0.248775,0.455017
+view set 2002.29,-411.852,1161.36,450.132,-10.7525,628.319,-0.316952,0.0331448,0.947862,450.132,-10.7525,628.319,-14318.4,17697.3,28,0
+view scale out 0.585738,0.569204
+view scale in 0.056070,0.550173
+view scale in 0.089276,0.525087
+view scale in 0.100163,0.517301
+view scale in 0.100163,0.517301
+view set 1853.49,-987.147,1161.74,955.256,-755.029,853.262,-0.316952,0.0331448,0.947862,955.256,-755.029,853.262,-15030.2,16985.6,28,0
+view scale out 0.305389,0.515571
+view scale out 0.305389,0.515571
+view scale out 0.305389,0.515571
+view scale out 0.296679,0.524221
+view scale out 0.293958,0.527682
+view scale out 0.290691,0.531142
+view scale in 0.430593,0.545848
+view scale in 0.430049,0.546713
+options state variable "serial=1"
+animation for
+animation off
+2:opt winstate "MetaPost" 21
+view scale out 0.219924,0.601211
+view scale out 0.219924,0.601211
+view scale out 0.218291,0.600346
+model active empty
+read geom Dyna3d /home/ndv/data/BUMPER/MAIN_SIM/121253.draco/d3plot
+3:read dis Dyna3d /home/ndv/data/BUMPER/MAIN_SIM/121253.draco/d3plot all Displacements
+3:read onlyfun Dyna3d /home/ndv/data/BUMPER/MAIN_SIM/121253.draco/d3plot all Stresses,VonMises,MaxofInOutMid
+model allhide 2
+view scale out 0.256396,0.391869
+view scale out 0.256396,0.391869
+view scale out 0.254219,0.397924
+options state variable "serial=1"
+animation for
+view scale in 0.789330,0.536332
+view scale in 0.786609,0.526817
+view scale in 0.572673,0.716263
+view scale in 0.571040,0.713668
+view set 233.57,-1117.54,975.781,-3125.32,1105,-2061.74,-0.0279993,0.791712,0.610252,-3125.32,1105,-2061.74,-10963.2,21052.5,28,0
+animation off
+3:opt winstate "MetaPost" 5
+mouse 1 0.608601 0.358997 0
+mouse 1 0.608601 0.358997 0
+mouse 1 0.406641 0.274221 0
+mouse 1 0.406641 0.274221 0
+mouse 1 0.560152 0.474048 0
+mouse 1 0.560152 0.474048 0
+view scale in 0.620577,0.455882
+view scale in 0.620577,0.448962
+view set 484.658,-905.14,783.993,-2470.94,251.182,-699.202,-0.375622,0.200501,0.904825,-2470.94,251.182,-699.202,-12504.7,19511.1,28,0
+view scale in 0.600435,0.540657
+view set 785.867,-166.01,760.003,-1677.13,797.591,-475.994,-0.375622,0.200501,0.904825,-1677.13,797.591,-475.994,-13088.5,18927.2,28,0
+view scale in 0.531301,0.443772
+view set 876.609,112.691,722.323,-1390.35,176.925,-158.148,-0.352645,0.169313,0.920312,-1390.35,176.925,-158.148,-13575.1,18440.7,28,0
+ani first
+ani first
+model allshow 2
+ani first
+model active all
+view scale out 0.565052,0.794983
+view scale out 0.566685,0.797578
+mouse 1 0.564507 0.786332 0
+mouse 1 0.564507 0.786332 0
+ani first
+view scale out 0.744148,0.569204
+view scale in 0.634186,0.489619
+view scale in 0.640719,0.488754
+view scale in 0.640719,0.488754
+view scale in 0.640174,0.488754
+view set 733.616,10.3643,932.528,-1054.54,445.078,81.8925,-0.396199,0.144516,0.90672,-1054.54,445.078,81.8925,-13980.6,18035.2,28,0
+view scale out 0.451824,0.782872
+view scale out 0.451279,0.784602
+view scale in 0.632009,0.675606
+view scale in 0.639630,0.644464
+view scale in 0.635275,0.633218
+view scale in 0.632553,0.624567
+view scale in 0.622210,0.617647
+view set 661.811,208.618,1108.17,-235.77,471.633,399.924,-0.608195,0.0565284,0.791773,-235.77,471.633,399.924,-14834.7,17181.1,28,0
+view scale out 0.584649,0.638408
+view scale out 0.584649,0.638408
+view scale in 0.581927,0.720588
+model active empty
+read geom Dyna3d /home/ndv/data/BUMPER/MAIN_SIM/120970.draco/d3plot
+view scale out -0.053348,0.731834
+view scale out -0.053348,0.731834
+view scale out -0.053892,0.732699
+view scale out -0.053892,0.732699
+view scale out 0.433315,0.680796
+view scale out 0.433315,0.680796
+view scale in 0.433315,0.680796
+view scale in 0.433315,0.680796
+4:read dis Dyna3d /home/ndv/data/BUMPER/MAIN_SIM/120970.draco/d3plot all Displacements
+4:read onlyfun Dyna3d /home/ndv/data/BUMPER/MAIN_SIM/120970.draco/d3plot all Stresses,VonMises,MaxofInOutMid
+view scale out 0.642896,0.551903
+view scale out 0.642896,0.551903
+view scale out 0.642896,0.551903
+view scale in 0.642352,0.551038
+view scale out 0.164398,0.805363
+view scale out 0.166032,0.814879
+view scale in 0.167665,0.815744
+view set 851.484,259.599,2600.93,-6067.3,18316,-7227.43,-0.129874,0.43518,0.890927,-6067.3,18316,-7227.43,5683.12,37698.9,28,0
+view scale in 0.338051,0.637543
+view scale in 0.338051,0.637543
+view default top
+mouse 1 0.69951 0.536332 0
+mouse 1 0.69951 0.536332 0
+add all
+view scale out 0.077300,0.581315
+view scale out 0.077300,0.581315
+mouse 1 0.781709 0.897924 0
+mouse 1 0.664126 0.718858 0
+mouse 1 0.649428 0.609862 0
+mouse 1 0.649428 0.609862 0
+view scale in 0.593903,0.685121
+view scale in 0.597714,0.682526
+view set -729.231,-962.519,1525.78,-6160.99,1705.28,1682.06,0.108036,0.162513,0.980774,-6160.99,1705.28,1682.06,-9954.32,22061.4,28,0
+view scale out 0.166576,0.585640
+view scale in 0.609690,0.842561
+view scale in 0.641807,0.839100
+view set -47.5997,501.986,216.972,-4574.07,2725.15,347.206,0.108036,0.162513,0.980774,-4574.07,2725.15,347.206,-10963.2,21052.5,28,0
+view scale in 0.422428,0.391003
+view scale in 0.422428,0.391003
+view scale in 0.422428,0.391003
+view set -112.008,387.021,345.376,-2956.41,473.201,-306.206,-0.219005,0.105536,0.969999,-2956.41,473.201,-306.206,-13088.5,18927.2,28,0
+view scale out 0.336962,0.557958
+view scale out 0.336962,0.557958
+view scale out 0.336962,0.557958
+view scale in 0.348394,0.536332
+view scale in 0.350027,0.537197
+view scale in 0.350027,0.539792
+view set -47.6523,378.684,400.714,-2627.43,1165.5,-716.542,-0.360023,0.131167,0.923677,-2627.43,1165.5,-716.542,-13088.5,18927.2,28,0
+view scale out 0.474143,0.427336
+view scale out 0.474143,0.427336
+view scale out 0.477953,0.448097
+view set -52.5544,401.78,315.206,-3978.05,-1093.93,-2477.93,-0.598957,0.0850098,0.796256,-3978.05,-1093.93,-2477.93,-10963.2,21052.5,28,0
+view scale in 0.486119,0.447232
+view scale in 0.487207,0.440311
+view scale in 0.493740,0.424740
+view scale in 0.498095,0.415225
+view scale in 0.502994,0.407439
+view set -111.477,393.163,402.632,-1689.05,-207.931,-719.868,-0.598957,0.0850098,0.796256,-1689.05,-207.931,-719.868,-13980.6,18035.2,28,0
+erase pid pick
+view set -152.876,405.929,404.146,-2036.85,-134.596,-114.023,-0.256808,-0.030921,0.965968,-2036.85,-134.596,-114.023,-13980.6,18035.2,28,0
+view scale out 0.532934,0.564014
+view scale out 0.555253,0.573529
+mouse 1 0.562874 0.730104 0
+mouse 1 0.563419 0.728374 0
+view scale out 0.195972,0.561419
+view scale out 0.196516,0.562284
+view set 256.044,642,484.237,-3579.45,1709.14,-865.802,-0.304083,0.10493,0.946849,-3579.45,1709.14,-865.802,-11804,20211.7,28,0
+view scale out 0.615678,0.708477
+view scale out 0.615678,0.708477
+view scale out 0.615133,0.708477
+options state variable "serial=1"
+animation for
+animation off
+4:opt winstate "MetaPost" 8
+view scale out 0.450191,0.702422
+view scale out 0.450735,0.703287
+view scale out 0.450735,0.703287
+view scale out 0.450735,0.703287
+view scale in 0.449102,0.702422
+view scale in 0.446924,0.698962
+view scale in 0.445291,0.693772
+view scale in 0.444747,0.690311
+view scale in 0.443658,0.685986
+view scale in 0.441481,0.679066
+view scale in 0.430593,0.660900
+view scale in 0.430593,0.660900
+view scale in 0.430593,0.660900
+ani first
+model active all
+ani first
+ani last
+view scale in 0.807839,0.688581
+view set 187.65,307.019,195.559,-1581.99,192.293,1860.99,0.682665,0.0513874,0.728922,-1581.99,192.293,1860.99,-13575.1,18440.7,28,0
+view scale out 0.296679,0.305363
+view scale out 0.374524,0.636678
+view set -418.098,384.379,-442.763,-2966.38,219.173,1955.46,0.682665,0.0513874,0.728922,-2966.38,219.173,1955.46,-12504.7,19511.1,28,0
+view scale in 0.429505,0.339965
+view set -452.595,728.672,-0.796082,-2306.33,-1512.45,-253.003,-0.151851,0.0143836,0.988299,-2306.33,-1512.45,-253.003,-13088.5,18927.2,28,0
+view scale out 0.496462,0.746540
+view scale out 0.496462,0.746540
+view scale in 0.205226,0.250865
+view scale in 0.194339,0.240484
+view scale in 0.194339,0.240484
+view set 273.863,445.634,580.393,-1968.38,-123.534,-172.496,-0.311597,-0.0288142,0.949777,-1968.38,-123.534,-172.496,-13575.1,18440.7,28,0
+view scale out 0.689167,0.671280
+view scale out 0.689167,0.671280
+ani first
+view scale in 0.383778,0.491349
+view scale in 0.107784,0.580450
+view set 551.895,-175.558,573.016,-1784.37,427.725,262.583,-0.114135,0.068012,0.991134,-1784.37,427.725,262.583,-13575.1,18440.7,28,0
+view scale in 0.270005,0.598616
+view scale in 0.272727,0.579585
+view scale in 0.273272,0.557958
+view scale in 0.273272,0.545848
+view set 428.401,-769.761,527.696,-312.41,128.171,381.545,-0.0311007,0.135525,0.990286,-312.41,128.171,381.545,-14834.7,17181.1,28,0
+ani first
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani first
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani first
+ani next
+view scale out 0.240610,0.702422
+view scale out 0.184540,0.717993
+view scale out 0.149156,0.702422
+view scale in 0.284703,0.498270
+view set 492.479,131.691,831.363,-996.319,103.401,33.3184,-0.460481,0.255906,0.849982,-996.319,103.401,33.3184,-14318.4,17697.3,28,0
+mouse 1 0.474143 0.500865 0
+mouse 1 0.474143 0.500865 0
+view set 456.475,240.904,847.26,-967.773,-96.1445,3.39349,-0.530602,0.156391,0.833068,-967.773,-96.1445,3.39349,-14318.4,17697.3,28,0
+ani first
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani first
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani first
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani first
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+ani next
+view scale out 0.269461,0.416955
+view scale out 0.269461,0.424740
+view scale out 0.269461,0.424740
+view scale out 0.269461,0.424740
+view set 243.104,648.639,509.482,-2932.52,-811.488,746.045,0.0557141,0.0404589,0.997627,-2932.52,-811.488,746.045,-12504.7,19511.1,28,0
+view scale in 0.557431,0.679931
+view scale in 0.555798,0.645329
+view scale in 0.547632,0.606401
+view set 142.045,712.04,494.177,-1494.68,-358.174,-40.4507,-0.229548,-0.130749,0.964475,-1494.68,-358.174,-40.4507,-13980.6,18035.2,28,0
+view scale in 0.458900,0.575260
+view scale in 0.466522,0.570069
+view scale in 0.471965,0.566609
+view scale in 0.475231,0.564879
+view set 174.938,661.245,473.532,-670.083,293.159,147.472,-0.305461,-0.133861,0.942749,-670.083,293.159,147.472,-15030.2,16985.6,28,0
+view scale out 0.431138,0.555363
+view scale out 0.422428,0.555363
+view scale out 0.401198,0.555363
+view scale out 0.393576,0.556228
+view scale out 0.392488,0.555363
+view scale out 0.392488,0.555363
+view scale out 0.392488,0.555363
+view scale out 0.402831,0.478374
+view scale out 0.402831,0.487889
+view scale out 0.402831,0.494810
+view scale out 0.402831,0.498270
+view scale in 0.396298,0.514706
+view scale in 0.396298,0.514706
+options var delete FLAG_RSS_KEEP_CURVES
