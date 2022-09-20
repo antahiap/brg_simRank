@@ -6,7 +6,7 @@ import sys
 import os
 from network2tikz import plot
 import matplotlib.pyplot as plt
-from fa2 import ForceAtlas2
+# from fa2 import ForceAtlas2
 import seaborn as sns
 import numpy as np
 import pandas as pd
@@ -1022,7 +1022,7 @@ def plot_simrankpp(cypherTxt, style):
     # scaling weight, spred from 0-2,3,4
     # ----------------------------------------
     print_yaris_simrank_result(
-        cypherTxt, 's-evd-we8P-sprd 5 1.6', 5, wscl=10e8, sprd=True, evd=True)
+        cypherTxt, 's-evd-we8P-sprd 5 1.6', 5, wscl=10e7, sprd=True, evd=True)
     print_yaris_simrank_result(
         cypherTxt, 's-evd-we8P-sprd 5 1', 5, wscl=1634664833 / 1, sprd=True, evd=True)
     # print_yaris_simrank_result(cypherTxt, 's-evd-we8P-sprd 5', 5, wscl=1634664833 / 2, sprd=True, evd=True)
@@ -1083,7 +1083,8 @@ def plot_simrankpp(cypherTxt, style):
 def print_yaris_simrank_result(cypherTxt, name, pidMax, wscl=False, sprd=False, evd=False):
 
     data = {}
-    cypherTxt = cypherTxt.format('', pidMax)
+    nFrmt = "CCSA_submodel_000.*"
+    cypherTxt = cypherTxt.format(nFrmt, pidMax)
     # wscl scaling the weight
     G = gm.get_graph(cypherTxt, style.nodeColor, w=wscl)
     _, _, data[name], top = gm.simRankpp(
@@ -1460,7 +1461,7 @@ def plot_simrankpp_HHLL(cypherTxt0, style,
 if __name__ == '__main__':
 
     driver = GraphDatabase.driver(
-        uri="bolt://localhost:7687", auth=("neo4j", "ivory123"))
+        uri="bolt://localhost:3687", auth=("neo4j", "ivory123"))
 
     style = gm.cyTxt()
 
@@ -1503,15 +1504,15 @@ if __name__ == '__main__':
 
 # simrankpp
   # YARIS_BUMPER
-    oem = oems.oems('YARIS_BUMPER')
-    errList = oem.err['release']['']['']['errList']
-    plot_simrankpp_single(style.sm_name_err.txt, style,
-                          pidMax=30, wscl=10e8, errList=errList)
-    plot_simrankpp_HHLL(style.sm_name_err.txt, style,
-                        sLimit=0.0, errList=errList, wscl=10e8)
+    # oem = oems.oems('YARIS_BUMPER')
+    # errList = oem.err['release']['']['']['errList']
+    # plot_simrankpp_single(style.sm_name_err.txt, style,
+    #                       pidMax=30, wscl=10e8, errList=errList)
+    # plot_simrankpp_HHLL(style.sm_name_err.txt, style,
+    #                     sLimit=0.0, errList=errList, wscl=10e8)
     # plt.show()
   # YARIS
-    # plot_simrankpp(style.sm.txt, style)
+    plot_simrankpp(style.sm_name.txt, style)
   # CEVT
     # plot_simrankpp_cevt(style.sm_name.txt, style)
     # simrank_cevt_inv_lc_rls_npid(style.sm_name_err.txt, style)
@@ -1523,7 +1524,7 @@ if __name__ == '__main__':
     # plot_simrankpp_cevt_cnvrg(style.sm_name_err.txt, style, rls=rls, lc=lc, sLimit=0.0, errList=errList)
     # KDE sample
     # plot_simrankpp_cevt_single(style.sm_name_err.txt, style, pidMax=15, rls=rls, lc=lc)
-    plt.show()
+    # plt.show()
 
   # off the method
     oem = oems.oems('CEVT')

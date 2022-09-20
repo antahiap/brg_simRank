@@ -25,13 +25,13 @@ if oem == 'CEVT':
     KG.neo4j_bolt('7687', 'localhost')
 
 elif oem == 'Porsche':
-        uri = "neo4j://localhost:3687"
-        driver = GraphDatabase.driver(uri, auth=("neo4j", "ivory123"))
-        KG.neo4j_bolt('3687', 'ivory')
+    uri = "neo4j://localhost:3687"
+    driver = GraphDatabase.driver(uri, auth=("neo4j", "ivory123"))
+    KG.neo4j_bolt('3687', 'ivory')
 elif oem == 'YARIS':
-        uri = "neo4j://localhost:7687"
-        driver = GraphDatabase.driver(uri, auth=("neo4j", "ivory123"))
-        KG.neo4j_bolt('7687', 'localhost')
+    uri = "neo4j://localhost:7687"
+    driver = GraphDatabase.driver(uri, auth=("neo4j", "ivory123"))
+    KG.neo4j_bolt('3687', 'localhost')
 
 
 def nrg_cypher(list, func, opr='=~'):
@@ -254,21 +254,21 @@ def plt_nrg_embed(sims_fts, pids, names, id=None, plt3=None,
         if plt3[0] == 1:
             # axs[ci].plot(y, x)
             fig, axs[ci] = sc_h.scatter_hoover(y, x, pid_names, cii, fig, axs[ci],
-                                          names[i], leg=leg)
+                                               names[i], leg=leg)
             axs[ci].set(xlabel='$t_i$', ylabel='$IE_{max}$')
             axs[ci].ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
             ci += 1
         if plt3[1] == 1:
             # axs[ci].plot(z, x)
             fig, axs[ci] = sc_h.scatter_hoover(z, x, pid_names, cii, fig, axs[ci],
-                                          names[i], leg=leg)
+                                               names[i], leg=leg)
             axs[ci].set(xlabel='$t_n$', ylabel='$IE_{max}$')
             axs[ci].ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
             ci += 1
         if plt3[2] == 1:
             # axs[ci].plot(y, z)
             fig, axs[ci] = sc_h.scatter_hoover(y, z, pid_names, cii, fig, axs[ci],
-                                          names[i], leg=leg)
+                                               names[i], leg=leg)
             axs[ci].set(xlabel='$t_i$', ylabel='$t_n$')
             ci += 1
 
@@ -277,8 +277,8 @@ def plt_nrg_embed(sims_fts, pids, names, id=None, plt3=None,
 
 
 def plt_nrg_embed_simple(sims_fts, pids, names, id=None, plt3=None,
-                  m=10, grp='Yes', leg=None, grpPid=None, grpOrd=None,
-                  fig=None, axs=None, cN=None, marker=None):
+                         m=10, grp='Yes', leg=None, grpPid=None, grpOrd=None,
+                         fig=None, axs=None, cN=None, marker=None):
 
     fig, axs = plt.subplots()
     axs = [axs]
@@ -301,9 +301,11 @@ def plt_nrg_embed_simple(sims_fts, pids, names, id=None, plt3=None,
                 mp = marker[str(int(p))]
             else:
                 mp = 'o'
-            axs[ci].scatter(z[pi], x[pi], c=c[ii], s=(sN - 1 - i) * 100, marker=mp)
+            axs[ci].scatter(z[pi], x[pi], c=c[ii], s=(
+                sN - 1 - i) * 100, marker=mp)
             axs[ci].set(xlabel='$t_n\ [ms]$', ylabel='$IE_{max}\\ [kNmm]$')
-            axs[ci].ticklabel_format(axis='y', style='sci', scilimits=(0, 0), useLocale=':f')
+            axs[ci].ticklabel_format(
+                axis='y', style='sci', scilimits=(0, 0), useLocale=':f')
         ci += 1
 
         fig.set_size_inches(5, 5)
@@ -311,7 +313,7 @@ def plt_nrg_embed_simple(sims_fts, pids, names, id=None, plt3=None,
 
 
 def plt_nrg_embed_3d(sims_fts, pids, names, id=None, m=10, grp='Yes', cN=None,
-                        grpSim=None, leg=None, grpPid=None):
+                     grpSim=None, leg=None, grpPid=None):
 
     fig = plt.figure()
     ax = fig.gca(projection='3d')
@@ -347,7 +349,7 @@ def plt_nrg_embed_3d(sims_fts, pids, names, id=None, m=10, grp='Yes', cN=None,
                         cii.append(c[ui])
 
             fig, ax = sc_h.scatter_hoover(
-                    z, y, pid_names, cii, fig, ax, names[i], z=x, leg=leg)
+                z, y, pid_names, cii, fig, ax, names[i], z=x, leg=leg)
         else:
             for k, item in enumerate(x):
                 fig, ax = sc_h.scatter_hoover(

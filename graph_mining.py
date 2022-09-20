@@ -34,6 +34,7 @@ def neo4jReturn(cypherTxt):
 
 def get_graph(cypherTxt, nc, w=False, err=[]):
     # cypherTxt = cypherTxt.format(sTxt, pidMax)
+    print(cypherTxt)
     nodes, rels = neo4jReturn(cypherTxt)
     G = nx.Graph()
 
@@ -1001,7 +1002,7 @@ class simrank_inv:
 
 
 driver = GraphDatabase.driver(
-    uri="bolt://localhost:7687", auth=("neo4j", "ivory123"))
+    uri="bolt://localhost:3687", auth=("neo4j", "ivory123"))
 
 
 class cyTxt:
@@ -1013,13 +1014,13 @@ class cyTxt:
             'Behav': 'green',
             'Des': 'slateblue',
             'Sim': 'cyan',
-            'picName': 'white', 
-            'Model':'darkviolet',
+            'picName': 'white',
+            'Model': 'darkviolet',
             'Barr': 'lightgrey',
-            'Veh': '#20B2AA', #'lightseegreen',
-            'Pltf': '#808000',#'olive',
-            'Ubdy':'cornflowerblue'
-            }
+            'Veh': '#20B2AA',  # 'lightseegreen',
+            'Pltf': '#808000',  # 'olive',
+            'Ubdy': 'cornflowerblue'
+        }
 
         self.node_label_pos = {
             'Sim': 'center',
@@ -1027,11 +1028,11 @@ class cyTxt:
             'Behav': 'center',
             'Part': 'center',
             'picName': 'below',
-            'Model':'center',
+            'Model': 'center',
             'Barr': 'center',
-            'Veh':'center',
-            'Pltf':'center',
-            'Ubdy':'center'}
+            'Veh': 'center',
+            'Pltf': 'center',
+            'Ubdy': 'center'}
 
         self.edge_color = {
             'SIM_DES': 'gray',
@@ -1043,12 +1044,12 @@ class cyTxt:
             'PART_BEHAV': 'gray',
             'INCL_PART': 'gray',
             'DES_SYM': 'gray',
-            'MODEL_REF':'gray',
-            'CNCT_TO':'gray',
-            'MODEL_VEH':'gray',
-            'SIM_MODEL':'gray',
-            'VEH_PLTF':'gray',
-            'VEH_UBDY':'gray'
+            'MODEL_REF': 'gray',
+            'CNCT_TO': 'gray',
+            'MODEL_VEH': 'gray',
+            'SIM_MODEL': 'gray',
+            'VEH_PLTF': 'gray',
+            'VEH_UBDY': 'gray'
         }
 
     def style(self, G, pos, w=False):

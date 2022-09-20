@@ -1,3 +1,7 @@
+import _paths
+import pylab
+import oems
+import KG_feed_OEM_data as kg
 import numpy as np
 import matplotlib.pyplot as plt
 import cypher_notebook_nrg as cyNrg
@@ -11,10 +15,7 @@ from matplotlib.ticker import StrMethodFormatter
 import tikzplotlib as tikz
 
 sys.path.append(os.path.abspath('../'))
-import KG_feed_OEM_data as kg
 sys.path.append(os.path.abspath('../note_scripts/'))
-import oems
-import pylab
 
 
 def plot_nrg_embd_similarity_PAG2(dst=''):
@@ -206,7 +207,8 @@ def plot_nrg_embd_similarity_cevt1(dst):
 
     # --------------------------------
     pids_sel = [10020100, 10020210, 55131230]
-    pids_sel = [10021520, 18620120, 10022010]  # , 10021350 ]  # , 55131390, 55131400]  # ]
+    # , 10021350 ]  # , 55131390, 55131400]  # ]
+    pids_sel = [10021520, 18620120, 10022010]
     SMALL_SIZE = 8
     MEDIUM_SIZE = 11
     plt.rc('axes', labelsize=MEDIUM_SIZE)  # fontsize of the x and y labels
@@ -254,9 +256,9 @@ def plot_nrg_embd_similarity_cevt1(dst):
     ax0.xaxis.set_rotate_label(False)
     ax0.yaxis.set_rotate_label(False)
     ax0.zaxis.set_rotate_label(False)
-    
+
     # tikz.save(dst.format('embd_3d'), standalone=True)
-    #-------------------------------------------------------------
+    # -------------------------------------------------------------
     fig1 = plt.figure(2)
     plot_nrg_curve(simList, sims_pid, c, grpPid=None)
     # plt.xlim([21, 22.5])
@@ -970,29 +972,29 @@ def plot_nrg_embd_2d_yaris_sub():
     norm_opt = []
 
     simLists = [
-        ['CCSA_submodel_0004'],
-        ['CCSA_submodel_0004', 'CCSA_submodel_0006'],
-        # ['CCSA_submodel_0004', 'CCSA_submodel_0007'],
-        ['CCSA_submodel_0006', 'CCSA_submodel_0007'],
-        ['CCSA_submodel_0005', 'CCSA_submodel_0006'],
-        # ['CCSA_submodel_0004', 'CCSA_submodel_0005', 'CCSA_submodel_0006']
+        # ['CCSA_submodel_0004'],
+        # ['CCSA_submodel_0004', 'CCSA_submodel_0006'],
+        # # ['CCSA_submodel_0004', 'CCSA_submodel_0007'],
+        # ['CCSA_submodel_0006', 'CCSA_submodel_0007'],
+        # ['CCSA_submodel_0005', 'CCSA_submodel_0006'],
+        ['CCSA_submodel_0004', 'CCSA_submodel_0005', 'CCSA_submodel_0006']
     ]
     dsts = [
-        # '../publication/06_KG_energyAbsorption/images/plot/submodel_0004.pdf',
-        '../publication/06_KG_energyAbsorption/images/plot/submodel_0004.svg',
-        '../publication/06_KG_energyAbsorption/images/plot/submodel_00046.pdf',
-        # '../publication/06_KG_energyAbsorption/images/plot/submodel_00047.pdf',
-        '../publication/06_KG_energyAbsorption/images/plot/submodel_00067.pdf',
-        '../publication/06_KG_energyAbsorption/images/plot/submodel_00056.pdf',
-        # '../publication/06_KG_energyAbsorption/images/plot/submodel_000456.pdf'
+        # # '../publication/06_KG_energyAbsorption/images/plot/submodel_0004.pdf',
+        # '../publication/06_KG_energyAbsorption/images/plot/submodel_0004.svg',
+        # '../publication/06_KG_energyAbsorption/images/plot/submodel_00046.pdf',
+        # # '../publication/06_KG_energyAbsorption/images/plot/submodel_00047.pdf',
+        # '../publication/06_KG_energyAbsorption/images/plot/submodel_00067.pdf',
+        # '../publication/06_KG_energyAbsorption/images/plot/submodel_00056.pdf',
+        '../publication/06_KG_energyAbsorption/images/plot/submodel_000456.pdf'
     ]
     cs = [
-        ['b'],
-        ['b', 'r'],
-        # ['b', 'lime'],
-        ['r', 'lime'],
-        ['y', 'r'],
-        # ['b', 'y', 'r'],
+        # ['b'],
+        # ['b', 'r'],
+        # # ['b', 'lime'],
+        # ['r', 'lime'],
+        # ['y', 'r'],
+        ['b', 'y', 'r'],
     ]
     SMALL_SIZE = 8
     MEDIUM_SIZE = 10
@@ -1009,7 +1011,8 @@ def plot_nrg_embd_2d_yaris_sub():
         nrmList = '.*'
 
         pids_sel = [2000001, 2000501, 2000502, 2000002, 2000000]
-        mDic = {"2000001": 4, "2000501": 5, "2000502": 5, "2000002":4, "2000000": 's'}
+        mDic = {"2000001": 4, "2000501": 5,
+                "2000502": 5, "2000002": 4, "2000000": 's'}
 
         sims_nrg, sims_pid = cyNrg.feed_normalization(
             nrmList, simList, norm_opt, ft_opt, pids_sel=pids_sel)
@@ -1033,7 +1036,7 @@ def plot_nrg_embd_2d_yaris_sub():
 
         fig.savefig(dst)
     plt.show()
-        # break
+    # break
     # return()
 
 
@@ -1084,7 +1087,8 @@ def plot_nrg_embd_2d_yaris_sub_9part():
         # simListAbb = [s.split('_')[-1] for s in simList]
         nrmList = '.*'
 
-        pids_sel = [2000001, 2000501, 2000502, 2000002, 2000511, 2000512, 2000011, 2000012, 2000000]
+        pids_sel = [2000001, 2000501, 2000502, 2000002,
+                    2000511, 2000512, 2000011, 2000012, 2000000]
         mDic = {
             "2000001": 4,
             "2000002": 4,
@@ -1095,7 +1099,7 @@ def plot_nrg_embd_2d_yaris_sub_9part():
             "2000511": "4",
             "2000512": "4",
             "2000000": '*'
-            }
+        }
 
         sims_nrg, sims_pid = cyNrg.feed_normalization(
             nrmList, simList, norm_opt, ft_opt, pids_sel=pids_sel)
@@ -1228,8 +1232,9 @@ def setProject(OEM, simList):
         rls = 'stv0'
         src_path = '../src/pic/CEVT/cm1e_stv0_{}_fp3__001'
         src_path = ('/export/work/anahita/CEVT/runs/cm1e_{0}_'.format(rls)
-                    +'{}' + '_{0}__001'.format(lc))
-        src_path = ('../dash-nrg/assets/CEVT/CEVT/Rep/3_stv0/fp3/runs/cm1e_{0}_'.format(rls) + '{}' + '_{0}__001'.format(lc))
+                    + '{}' + '_{0}__001'.format(lc))
+        src_path = ('../dash-nrg/assets/CEVT/CEVT/Rep/3_stv0/fp3/runs/cm1e_{0}_'.format(
+            rls) + '{}' + '_{0}__001'.format(lc))
         # simList = ['001', '055']
         simList = [s.split('_')[2] for s in simList]
     elif OEM == 'PAG':
@@ -1246,7 +1251,7 @@ def setProject(OEM, simList):
 def plot_doe_lc_ord():
     import seaborn as sns
     lcs = ['fp3']  # , 'fo5', 'fod_']
-    rls = ['stv0_'  , 'stcr', 'stv03']
+    rls = ['stv0_', 'stcr', 'stv03']
     # rls = ['stv03', 'm1']
     sns.set(color_codes=False)
     c_grp = 'c_grPID'
@@ -1255,17 +1260,18 @@ def plot_doe_lc_ord():
     ns = 100
     nPid = 8
     pids = ''
-    
+
     colors = px.colors.cyclical.IceFire_r[0::2]
     colors = [
         '#000000', '#820000', '#c65400', '#e7b000', '#9be4ef',
         # '#f3d573',
         # '#e1e9d1',
-         '#54c8df', '#217eb8', '#003786', '#000000']
+        '#54c8df', '#217eb8', '#003786', '#000000']
 
     for lc in lcs:
         for rl in rls:
-            dst = '../publication/06_KG_energyAbsorption/images/plot/doe_{0}_{1}_ord.svg'.format(lc, rl)
+            dst = '../publication/06_KG_energyAbsorption/images/plot/doe_{0}_{1}_ord.svg'.format(
+                lc, rl)
             sims = '.*{1}.*{0}.*'.format(lc, rl)
             oem = oems.oems('CEVT')
             df1 = oem.cypher().out_dataframe(
@@ -1279,25 +1285,26 @@ def plot_doe_lc_ord():
             # df1[c_grp] = df1[c_grp].astype(str)
 
             fig1 = px.scatter_matrix(
-                 df1, ["dt", "tn", "IE"], color=c_grp,
+                df1, ["dt", "tn", "IE"], color=c_grp,
                 #  df1, ["ti", "dt", "tn", "IE"], color=c_grp,
-                 hover_name="PID",
-                 labels={
+                hover_name="PID",
+                labels={
                     c_grp: "part enrgy<br>absorption order",
-                    "dt":u"\u0394 t",
-                    "ti":"t<sub>i</sub>",
-                    "tn":"t<sub>n</sub>",
-                    "IE":"IE<sub>max</sub>",
-                    },
-                 color_discrete_sequence=colors  # px.colors.sequential.Jet_r  # ["red","goldenrod", "blue", "gray"],
-             )
-             # for ti, trace in enumerate(fig1.data):
-                 #     trace.legendrank = ti
+                    "dt": u"\u0394 t",
+                    "ti": "t<sub>i</sub>",
+                    "tn": "t<sub>n</sub>",
+                    "IE": "IE<sub>max</sub>",
+                },
+                # px.colors.sequential.Jet_r  # ["red","goldenrod", "blue", "gray"],
+                color_discrete_sequence=colors
+            )
+            # for ti, trace in enumerate(fig1.data):
+            #     trace.legendrank = ti
 
             fig1.update_layout(
                 width=400, height=720,
                 # width=800, height=720,
-                font_size=20 ,
+                font_size=20,
                 showlegend=False,
                 # legend=dict(
                 #     yanchor='top', y=0.99, xanchor='right', x=0.98
@@ -1309,7 +1316,8 @@ def plot_doe_lc_ord():
             )
             # fig1.update_layout({'yaxis1': {'range': [5, 20]}, 'yaxis2': {'range': [0, 58]}, 'yaxis3': {'range': [15, 70]}, 'yaxis4': {'range': [2, 38]}})
 
-            fig1.update_layout({'yaxis1': {'range': [6, 58]}, 'yaxis2': {'range': [15, 70]}, 'yaxis3': {'range': [6, 34]}})
+            fig1.update_layout({'yaxis1': {'range': [6, 58]}, 'yaxis2': {
+                               'range': [15, 70]}, 'yaxis3': {'range': [6, 34]}})
 
             fig1.update_traces(
                 marker_size=6,
@@ -1343,7 +1351,8 @@ def plot_doe_lc_pid():
 
     for lc in lcs:
         for rl in rls:
-            dst = '../publication/06_KG_energyAbsorption/images/plot/doe_pid_{0}_{1}.pdf'.format(lc, rl)
+            dst = '../publication/06_KG_energyAbsorption/images/plot/doe_pid_{0}_{1}.pdf'.format(
+                lc, rl)
             sims = '.*{1}.*{0}.*'.format(lc, rl)
             oem = oems.oems('CEVT')
             df1 = oem.cypher().out_dataframe(
@@ -1354,16 +1363,16 @@ def plot_doe_lc_pid():
             df1['IE'] = df1['IE'] / 1000  # kNmm
 
             fig1 = px.scatter_matrix(
-                 df1, ["ti", "dt", "tn", "IE"], color=c_grp,
-                 hover_name="sim",
-                 labels={
+                df1, ["ti", "dt", "tn", "IE"], color=c_grp,
+                hover_name="sim",
+                labels={
                     c_grp: "PID",
-                    "dt":u"\u0394 t",
-                    "ti":"t<sub>i</sub>",
-                    "IE":"IE<sub>max</sub>",
-                    "tn":"t<sub>n</sub>",
-                    },
-             )
+                    "dt": u"\u0394 t",
+                    "ti": "t<sub>i</sub>",
+                    "IE": "IE<sub>max</sub>",
+                    "tn": "t<sub>n</sub>",
+                },
+            )
 
             fig1.update_layout(
                 width=600, height=600,
@@ -1382,8 +1391,8 @@ def plot_doe_lc_pid():
 
 
 def plot_doe_runs(runs='.*',
-    nPid=20
-):
+                  nPid=20
+                  ):
     import seaborn as sns
     sns.set(color_codes=False)
     c_grp = 'sim_abb'
@@ -1391,7 +1400,8 @@ def plot_doe_runs(runs='.*',
     ns = 100
     pids = ''
 
-    dst = '../publication/06_KG_energyAbsorption/images/plot/doe_pid_runs_{0}.svg'.format(runs.replace(',', '_'))
+    dst = '../publication/06_KG_energyAbsorption/images/plot/doe_pid_runs_{0}.svg'.format(
+        runs.replace(',', '_'))
     oem = oems.oems('CEVT')
     df1 = oem.cypher().out_dataframe(
         ns=int(ns), nPID=int(nPid), nOrd=ords, regs=runs, regp=pids)
@@ -1404,12 +1414,12 @@ def plot_doe_runs(runs='.*',
         hover_name="PID",
         labels={
             # c_grp: "PID",
-            "dt":u"\u0394 t",
-            "ti":"t<sub>i</sub>",
-            "IE":"IE<sub>max</sub>",
-            "tn":"t<sub>n</sub>",
-            })
-     
+            "dt": u"\u0394 t",
+            "ti": "t<sub>i</sub>",
+            "IE": "IE<sub>max</sub>",
+            "tn": "t<sub>n</sub>",
+        })
+
     fig1.update_traces(
         marker_size=8)
     fig1.update_layout(
@@ -1418,7 +1428,7 @@ def plot_doe_runs(runs='.*',
         # yaxis_range=[2, 32],
         # xaxis_range=[2, 59]
     )
-    
+
     fig1.write_image(dst)
     fig1.show()
 
@@ -1434,20 +1444,22 @@ def plot_doe_lc_pid_1fig():
     ns = 100
     nPid = 10  # 5
     # pids = [
-        # ' 10020420, 10021520, 55131400, 55132410, 18620120, 18620080, 55021060, 18620110, 18620070',  # stv0
-        # '18620090, 18620070, 10021870, 10021320, 55131440, 55131220, 55021060, 55021040',  # fp3 stv03
+    # ' 10020420, 10021520, 55131400, 55132410, 18620120, 18620080, 55021060, 18620110, 18620070',  # stv0
+    # '18620090, 18620070, 10021870, 10021320, 55131440, 55131220, 55021060, 55021040',  # fp3 stv03
     # ]
     pids = [
         ' 10020420, 10021520, 18620120, 18620080, 55021060, 55021040, 55131400, 55132410, 55131390, 18620110, 18620070, 10021350, 10022010',  # stv0
         '10021870, 10021320, 18620090, 18620070, 55021060, 55021040,  55131440, 55131220, 55132390, 55132820, 55131010, 10021220, 10021830',  # fp3 stv03
-        
+
     ]
     # pids = ['', '']
 
     for lc in lcs:
         for ri, rl in enumerate(rls):
-            dst = '../publication/06_KG_energyAbsorption/images/plot/doe_pid_{0}_{1}_1fig.pdf'.format(lc, rl)
-            dst = '../publication/06_KG_energyAbsorption/images/plot/doe_pid_{0}_{1}_dt_1fig_old.svg'.format(lc, rl)
+            dst = '../publication/06_KG_energyAbsorption/images/plot/doe_pid_{0}_{1}_1fig.pdf'.format(
+                lc, rl)
+            dst = '../publication/06_KG_energyAbsorption/images/plot/doe_pid_{0}_{1}_dt_1fig_old.svg'.format(
+                lc, rl)
             sims = '.*{1}.*{0}.*'.format(lc, rl)
             oem = oems.oems('CEVT')
             df1 = oem.cypher().out_dataframe(
@@ -1464,17 +1476,18 @@ def plot_doe_lc_pid_1fig():
                     df1.at[i, 'PID'] = ''
 
             fig1 = px.scatter(
-                 df1, x='dt', y="IE", color=c_grp,
-                 hover_name="PID",
-                 labels={
+                df1, x='dt', y="IE", color=c_grp,
+                hover_name="PID",
+                labels={
                     c_grp: "PID",
-                    "tn":"t<sub>n</sub> [ms]",
-                    "dt":u"\u0394 t [ms]",
-                    "IE":"IE<sub>max</sub> [kNmm]",
-                    },
-                 color_discrete_sequence=['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000']
+                    "tn": "t<sub>n</sub> [ms]",
+                    "dt": u"\u0394 t [ms]",
+                    "IE": "IE<sub>max</sub> [kNmm]",
+                },
+                color_discrete_sequence=['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe',
+                                         '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000']
                 #  px.colors.cyclical.HSV  # ["red","goldenrod", "blue", "gray"],
-             )
+            )
 
             fig1.update_layout(
                 width=380, height=560,
@@ -1526,25 +1539,27 @@ def plot_doe_ord_1fig():
                 ['ti', 'IE'],
                 # ['dt', 'tn'],
                 # ['tn', 'IE']
-                ]
+            ]
             leg = [False]
             # leg = [True, False, False, False]
             for pi, pairs in enumerate(pair_list):
                 print(xy_range[pi][0])
                 xp, yp = pairs
-                dst = '../publication/06_KG_energyAbsorption/images/plot/doe_ord_{0}_{1}_{2}{3}_{4}_1fig.svg'.format(lc, rl, xp, yp, leg[pi])
+                dst = '../publication/06_KG_energyAbsorption/images/plot/doe_ord_{0}_{1}_{2}{3}_{4}_1fig.svg'.format(
+                    lc, rl, xp, yp, leg[pi])
                 fig1 = px.scatter(
-                     df1, x=xp, y=yp, color=c_grp,
-                     hover_name="PID",
-                     labels={
+                    df1, x=xp, y=yp, color=c_grp,
+                    hover_name="PID",
+                    labels={
                         c_grp: "part enrgy<br>absorption order",
-                        "tn":"t<sub>n</sub> [ms]",
-                        "ti":"t<sub>i</sub> [ms]",
-                        "dt":u"\u0394 t [ms]",
-                        "IE":"IE<sub>max</sub> [kNmm]",
-                        },
-                     color_discrete_sequence=px.colors.cyclical.IceFire_r   [0::2]  # sequential.Blackbody  # ["red",  "goldenrod", "blue", "gray"],
-                 )
+                        "tn": "t<sub>n</sub> [ms]",
+                        "ti": "t<sub>i</sub> [ms]",
+                        "dt": u"\u0394 t [ms]",
+                        "IE": "IE<sub>max</sub> [kNmm]",
+                    },
+                    # sequential.Blackbody  # ["red",  "goldenrod", "blue", "gray"],
+                    color_discrete_sequence=px.colors.cyclical.IceFire_r[0::2]
+                )
 
                 fig1.update_layout(
                     # width=380, height=560,
@@ -1589,7 +1604,8 @@ def plot_doe_rls():
         sims_txt = ','.join(['.*' + x + '.*{0}.*' for x in rls])
         fName = '_'.join(rls)
 
-        dst = '../publication/06_KG_energyAbsorption/images/plot/doe_fp3_{0}_{1}.svg'.format(lc, fName)
+        dst = '../publication/06_KG_energyAbsorption/images/plot/doe_fp3_{0}_{1}.svg'.format(
+            lc, fName)
         sims = sims_txt.format(lc)
         oem = oems.oems('CEVT')
         df1 = oem.cypher().out_dataframe(
@@ -1598,7 +1614,8 @@ def plot_doe_rls():
         # df1 = df1.replace('m1', 'zm1')
         # df1 = df1.replace('zm1', 'm1')
 
-        df1['rlsNo'] = df1['c_rls'].map({'stcr': 10, 'stv0':20, 'stv03':30, 'm1':40})
+        df1['rlsNo'] = df1['c_rls'].map(
+            {'stcr': 10, 'stv0': 20, 'stv03': 30, 'm1': 40})
         df1 = df1.sort_values(by=['rlsNo'])
         df1['IE'] = df1['IE'] / 1000  # kNmm
         df1 = df1.replace(to_replace='stcr', value='Primary')
@@ -1612,12 +1629,12 @@ def plot_doe_rls():
             hover_name="sim",
             # hover_name="PID",
             labels={
-               c_grp: "Development Phase",
-               "dt":u"\u0394 t",
-               "ti":"t<sub>i</sub>",
-               "IE":"IE<sub>max</sub>",
-                "tn":"t<sub>n</sub>",
-               },
+                c_grp: "Development Phase",
+                "dt": u"\u0394 t",
+                "ti": "t<sub>i</sub>",
+                "IE": "IE<sub>max</sub>",
+                "tn": "t<sub>n</sub>",
+            },
             color_discrete_sequence=color[ri:ri + 2],
             # color_discrete_sequence=color,
         )
@@ -1634,7 +1651,8 @@ def plot_doe_rls():
         )
         # fig1.update_layout({'yaxis1': {'range': [5, 20]}, 'yaxis2': {'range': [0, 58]}, 'yaxis3': {'range': [15, 70]}, 'yaxis4': {'range': [2, 38]}})
 
-        fig1.update_layout({'yaxis1': {'range': [7, 20]}, 'yaxis2': {'range': [15, 70]}, 'yaxis3': {'range': [2, 38]}})
+        fig1.update_layout({'yaxis1': {'range': [7, 20]}, 'yaxis2': {
+                           'range': [15, 70]}, 'yaxis3': {'range': [2, 38]}})
 
         fig1.update_traces(
             marker_size=3,
@@ -1666,7 +1684,8 @@ def plot_doe_rls_1fig():
         sims_txt = ','.join(['.*' + x + '.*{0}.*' for x in rls])
         fName = '_'.join(rls)
 
-        dst = '../publication/06_KG_energyAbsorption/images/plot/doe_rls_{0}_{1}_1fig.pdf'.format(lc, fName)
+        dst = '../publication/06_KG_energyAbsorption/images/plot/doe_rls_{0}_{1}_1fig.pdf'.format(
+            lc, fName)
         sims = sims_txt.format(lc)
         oem = oems.oems('CEVT')
         df1 = oem.cypher().out_dataframe(
@@ -1675,7 +1694,8 @@ def plot_doe_rls_1fig():
         # df1 = df1.replace('m1', 'zm1')
         # df1 = df1.replace('zm1', 'm1')
 
-        df1['rlsNo'] = df1['c_rls'].map({'stcr': 10, 'stv0':20, 'stv03':30, 'm1':40})
+        df1['rlsNo'] = df1['c_rls'].map(
+            {'stcr': 10, 'stv0': 20, 'stv03': 30, 'm1': 40})
         df1 = df1.sort_values(by=['rlsNo'])
         df1['IE'] = df1['IE'] / 1000  # kNmm
         df1 = df1.replace(to_replace='stcr', value='Primary')
@@ -1687,12 +1707,12 @@ def plot_doe_rls_1fig():
             df1, x='tn', y='IE', color=c_grp,
             hover_name="sim",
             labels={
-               c_grp: "Development Phase",
-               "dt":u"\u0394 t",
-               "ti":"t<sub>i</sub>",
-               "IE":"IE<sub>max</sub>",
-                "tn":"t<sub>n</sub>",
-               },
+                c_grp: "Development Phase",
+                "dt": u"\u0394 t",
+                "ti": "t<sub>i</sub>",
+                "IE": "IE<sub>max</sub>",
+                "tn": "t<sub>n</sub>",
+            },
             color_discrete_sequence=color[ri:ri + 2]
         )
 
@@ -1746,10 +1766,10 @@ def plot_doe_lc_all():
         labels={
             c_grp: "Load Cases",
             "dt": u"\u0394 t",
-            "ti":"t<sub>i</sub>",
-            "tn":"t<sub>n</sub>",
-            "IE":"IE<sub>max</sub>",
-            },
+            "ti": "t<sub>i</sub>",
+            "tn": "t<sub>n</sub>",
+            "IE": "IE<sub>max</sub>",
+        },
     )
     fig1.update_layout(
         width=600, height=600,
@@ -1777,7 +1797,8 @@ def plot_doe_lc_all_dt_tn(rls):
     nPid = 5
     pids = ''
 
-    dst = '../publication/06_KG_energyAbsorption/images/plot/doe_{}_dt_tn.pdf'.format(rls.replace('.*', ''))  # with tn
+    dst = '../publication/06_KG_energyAbsorption/images/plot/doe_{}_dt_tn.pdf'.format(
+        rls.replace('.*', ''))  # with tn
     sims = '{0}.*fp3.*,{0}.*fod_.*,{0}.*fo5.*'.format(rls)
     oem = oems.oems('CEVT')
     df1 = oem.cypher().out_dataframe(
@@ -1791,10 +1812,10 @@ def plot_doe_lc_all_dt_tn(rls):
         hover_name="PID",
         labels={
             c_grp: "Load Cases",
-            "tn":"t<sub>n</sub>",
+            "tn": "t<sub>n</sub>",
             "dt": u"\u0394 t",
-            "ti":"t<sub>i</sub>",
-            },
+            "ti": "t<sub>i</sub>",
+        },
     )
     fig1.update_layout(
         width=600, height=600,
@@ -1819,12 +1840,14 @@ def plot_power_law():
     ords = 20
     ns = 1000
     nPid = 20
-    sims = ['.*_stv0_.*', '.*_stv0_.*fp3.*', '.*_stv0_.*fo5.*', '.*_stv0_.*fod_.*']
+    sims = ['.*_stv0_.*', '.*_stv0_.*fp3.*',
+            '.*_stv0_.*fo5.*', '.*_stv0_.*fod_.*']
     sims = ['.*_stv0_.*']
     pids = ''
 
     for s in sims:
-        dst = '../publication/06_KG_energyAbsorption/images/plot/powerlaw{0}.pdf'.format(s.replace('.*', ''))
+        dst = '../publication/06_KG_energyAbsorption/images/plot/powerlaw{0}.pdf'.format(
+            s.replace('.*', ''))
         df1 = oem.cypher().out_dataframe(
             ns=int(ns), nPID=int(nPid), nOrd=ords, regs=s, regp=pids)
         df1 = df1.drop_duplicates('PID', keep='first')
@@ -1841,13 +1864,13 @@ def plot_power_law():
             "dt": ':.2f',
             "tn": ':.2f'}
         fig1 = px.bar(df_top, x='PID', y='count',
-                        # color=c_grp,
-                        custom_data=["pic"],
-                        hover_name="PID",
-                        hover_data=h_data,
-                        labels={
-                            'count': 'DES Degree'
-                        },)
+                      # color=c_grp,
+                      custom_data=["pic"],
+                      hover_name="PID",
+                      hover_data=h_data,
+                      labels={
+                          'count': 'DES Degree'
+                      },)
         fig1.update_layout(
             # width=300, height=200,
             width=700, height=200,
@@ -1857,7 +1880,7 @@ def plot_power_law():
             margin=dict(t=0, r=0, l=0, b=0, pad=5),
             showlegend=False,
             xaxis_showticklabels=False
-                )
+        )
 
         fig1.write_image(dst)
         # fig1.show()
@@ -1893,24 +1916,24 @@ def plot_sym_part():
         scene_camera=dict(
             eye=dict(x=1.8, y=1.8, z=0.3)),
         scene=dict(
-                    xaxis_title="t<sub>i</sub> [ms]",
-                    yaxis_title=u'\u0394 t [ms]',
-                    zaxis_title='IE<sub>max</sub> [kNmm]',
-                    xaxis_nticks=3,
-                    yaxis_nticks=3,
-                    zaxis_nticks=3,
-                    # xaxis_linecolor = 'black',
-                    # yaxis_linecolor = 'black',
-                    # zaxis_linecolor = 'black',
-                    # xaxis_gridcolor = 'lightgray',
-                    # yaxis_gridcolor = 'lightgray',
-                    # zaxis_gridcolor = 'lightgray',
-                    ),
+            xaxis_title="t<sub>i</sub> [ms]",
+            yaxis_title=u'\u0394 t [ms]',
+            zaxis_title='IE<sub>max</sub> [kNmm]',
+            xaxis_nticks=3,
+            yaxis_nticks=3,
+            zaxis_nticks=3,
+            # xaxis_linecolor = 'black',
+            # yaxis_linecolor = 'black',
+            # zaxis_linecolor = 'black',
+            # xaxis_gridcolor = 'lightgray',
+            # yaxis_gridcolor = 'lightgray',
+            # zaxis_gridcolor = 'lightgray',
+        ),
         font_size=16,
         legend=dict(
             yanchor='top', y=0.8, xanchor='right', x=0.92),
         margin=dict(t=0, r=0, l=0, b=0, pad=5),
-                )
+    )
     fig1.update_traces(
         marker_size=6,
     )
@@ -1948,25 +1971,25 @@ def plot_3d_fp3_stv0():
             # eye=dict(x=-1.4, y=-1.8, z=1.8)),
             eye=dict(x=-1.4, y=1.8, z=0.8)),
         scene=dict(
-                    xaxis_title='t<sub>i</sub> [ms]',
-                    yaxis_title='t<sub>n</sub> [ms]',
-                    zaxis_title='IE<sub>max</sub> [kNmm]',
-                    xaxis_nticks=3,
-                    yaxis_nticks=3,
-                    zaxis_nticks=3,
-                    # xaxis_linecolor = 'black',
-                    # yaxis_linecolor = 'black',
-                    # zaxis_linecolor = 'black',
-                    # xaxis_gridcolor = 'lightgray',
-                    # yaxis_gridcolor = 'lightgray',
-                    # zaxis_gridcolor = 'lightgray',
+            xaxis_title='t<sub>i</sub> [ms]',
+            yaxis_title='t<sub>n</sub> [ms]',
+            zaxis_title='IE<sub>max</sub> [kNmm]',
+            xaxis_nticks=3,
+            yaxis_nticks=3,
+            zaxis_nticks=3,
+            # xaxis_linecolor = 'black',
+            # yaxis_linecolor = 'black',
+            # zaxis_linecolor = 'black',
+            # xaxis_gridcolor = 'lightgray',
+            # yaxis_gridcolor = 'lightgray',
+            # zaxis_gridcolor = 'lightgray',
 
-                    ),
+        ),
         font_size=16,
         legend=dict(
             yanchor='top', y=0.95, xanchor='right', x=0.97),
         margin=dict(t=0, r=0, l=0, b=0, pad=5),
-                )
+    )
     fig1.update_traces(
         marker_size=6,
     )
@@ -2005,25 +2028,25 @@ def plot_3d_fp3_stv03():
         scene_camera=dict(
             eye=dict(x=-2.25, y=0.63, z=0.72)),
         scene=dict(
-                    xaxis_title='t<sub>i</sub> [ms]',
-                    yaxis_title='t<sub>n</sub> [ms]',
-                    zaxis_title='IE<sub>max</sub> [kNmm]',
-                    xaxis_nticks=3,
-                    yaxis_nticks=3,
-                    zaxis_nticks=3,
-                    # xaxis_linecolor = 'black',
-                    # yaxis_linecolor = 'black',
-                    # zaxis_linecolor = 'black',
-                    # xaxis_gridcolor = 'lightgray',
-                    # yaxis_gridcolor = 'lightgray',
-                    # zaxis_gridcolor = 'lightgray',
+            xaxis_title='t<sub>i</sub> [ms]',
+            yaxis_title='t<sub>n</sub> [ms]',
+            zaxis_title='IE<sub>max</sub> [kNmm]',
+            xaxis_nticks=3,
+            yaxis_nticks=3,
+            zaxis_nticks=3,
+            # xaxis_linecolor = 'black',
+            # yaxis_linecolor = 'black',
+            # zaxis_linecolor = 'black',
+            # xaxis_gridcolor = 'lightgray',
+            # yaxis_gridcolor = 'lightgray',
+            # zaxis_gridcolor = 'lightgray',
 
-                    ),
+        ),
         font_size=16,
         legend=dict(
             yanchor='top', y=0.92, xanchor='right', x=0.99),
         margin=dict(t=0, r=0, l=0, b=0, pad=5),
-                )
+    )
     fig1.update_traces(
         marker_size=6,
     )
@@ -2080,7 +2103,7 @@ if __name__ == '__main__':
     # plot_sym_part()
     # plot_3d_fp3_stv0()
     # plot_3d_fp3_stv03()
-    plot_nrg_embd_similarity_cevt1('../publication/06_KG_energyAbsorption/images/plot/curve_sim_cevt_{}.pdf')
+    # plot_nrg_embd_similarity_cevt1('../publication/06_KG_energyAbsorption/images/plot/curve_sim_cevt_{}.pdf')
     # plot_doe_runs('cm1e_stcr_354_fo5__001,cm1e_stcr_387_fo5__001,cm1e_stcr_090_fo5__001', nPid=15)  # hard to judge, IE compensade with dt with np=20
 # # YARIS
     OEM = 'YARIS'
