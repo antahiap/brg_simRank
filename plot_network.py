@@ -1008,7 +1008,8 @@ def plot_simrankpp(cypherTxt, style):
     # print_yaris_simrank_result(cypherTxt, 's, 5', 5, wscl=False, sprd=False, evd=False)
     # print_yaris_simrank_result(cypherTxt, 's-wIE 5', 5, wscl=1, sprd=False, evd=False)
     # print_yaris_simrank_result(cypherTxt, 's-evd-wIE 5', 5, wscl=1, sprd=False, evd=True)
-    # print_yaris_simrank_result(cypherTxt, 's-evd-we6IE-sprd 5', 5, wscl=10e6, sprd=True, evd=True)
+    print_yaris_simrank_result(
+        cypherTxt, 's-evd-we6IE-sprd 5', 5, wscl=10e6, sprd=True, evd=True)
 
     # ----------------------------------------
     # result for weighted graph with P
@@ -1021,10 +1022,10 @@ def plot_simrankpp(cypherTxt, style):
     # ----------------------------------------
     # scaling weight, spred from 0-2,3,4
     # ----------------------------------------
-    print_yaris_simrank_result(
-        cypherTxt, 's-evd-we8P-sprd 5 1.6', 5, wscl=10e7, sprd=True, evd=True)
-    print_yaris_simrank_result(
-        cypherTxt, 's-evd-we8P-sprd 5 1', 5, wscl=1634664833 / 1, sprd=True, evd=True)
+    # print_yaris_simrank_result(
+    #     cypherTxt, 's-evd-we8P-sprd 5 1.6', 5, wscl=10e8, sprd=True, evd=True)
+    # print_yaris_simrank_result(
+    #     cypherTxt, 's-evd-we8P-sprd 5 1', 5, wscl=1634664833 / 1, sprd=True, evd=True)
     # print_yaris_simrank_result(cypherTxt, 's-evd-we8P-sprd 5', 5, wscl=1634664833 / 2, sprd=True, evd=True)
     # print_yaris_simrank_result(cypherTxt, 's-evd-we8P-sprd 5', 5, wscl=1634664833 / 3, sprd=True, evd=True)
     # print_yaris_simrank_result(cypherTxt, 's-evd-we8P-sprd 5', 5, wscl=1634664833 / 4, sprd=True, evd=True)
@@ -1098,7 +1099,7 @@ def print_yaris_simrank_result(cypherTxt, name, pidMax, wscl=False, sprd=False, 
     int_rel_id = []
     for ri in int_rel_simName:
         ids = []
-        ss = ['0' + str(x + 3) for x in ri]
+        ss = ['000' + str(x + 3) for x in ri]
 
         for n in top:
             nt = G.nodes(data=True)[n]
