@@ -445,7 +445,7 @@ def add_simsim(G, simMatrix, sLimit):
     return(G)
 
 
-def simRankpp(G, pidMax, sLimit, wscl=1, evd=True, sprd=True):
+def simRankpp(G, pidMax, sLimit, wscl=1, evd=True, sprd=True, importance_factor=0.9):
     style = cyTxt()
     # nx.draw(G, with_labels=True)
     # plt.show()
@@ -472,7 +472,7 @@ def simRankpp(G, pidMax, sLimit, wscl=1, evd=True, sprd=True):
     sNode = [
         k for k, v in nx.get_node_attributes(G, 'label').items() if v == 'Sim']
     sim = simrank_pp2_similarity_numpy(
-        G, max_iterations=1000000, evd_opt=evd, sprd_opt=sprd)  # , source=sNode)
+        G, max_iterations=1000000, evd_opt=evd, sprd_opt=sprd, importance_factor=importance_factor)  # , source=sNode)
     lol = sim
     # sim = sim[sNode, :]
     # ---------
