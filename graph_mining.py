@@ -1,3 +1,4 @@
+import _paths
 from neo4j import GraphDatabase
 import networkx as nx
 # from networkx.algorithms import approximation
@@ -14,6 +15,8 @@ from network2tikz import plot
 from itertools import product
 from networkx.readwrite.json_graph import adjacency
 
+import oems
+
 
 def get_color(n):
     colors = []
@@ -23,7 +26,7 @@ def get_color(n):
     return(colors)
 
 
-def neo4jReturn(cypherTxt):
+def neo4jReturn(cypherTxt, driver):
 
     results = driver.session().run(cypherTxt)
     nodes = list(results.graph()._nodes.values())
@@ -32,10 +35,18 @@ def neo4jReturn(cypherTxt):
     return (nodes, rels)
 
 
-def get_graph(cypherTxt, nc, w=False, err=[]):
+def get_graph(
+    cypherTxt, nc, w=False, err=[],
+    driver=None
+):
     # cypherTxt = cypherTxt.format(sTxt, pidMax)
-    print(cypherTxt)
-    nodes, rels = neo4jReturn(cypherTxt)
+    if not driver:
+        GraphDatabase.driver(
+            uri="bolt://localhost:3687", auth=("neo4j", "ivory123"))
+
+    # print(cypherTxt)
+    # print(driver)
+    nodes, rels = neo4jReturn(cypherTxt, driver)
     G = nx.Graph()
 
     cs, cm = 0, 0
@@ -76,11 +87,13 @@ def get_graph(cypherTxt, nc, w=False, err=[]):
             key=rel.id, type=rel.type, properties=rel._properties)
         if w:
             sampled_edge = (rel.start_node.id, rel.end_node.id)
+            # input(rel._properties['weight'])
             weight = rel._properties['weight'] / w
+            # input(weight)
             if math.isinf(weight):
                 weight = 0.0001
 
-            # print(weight)
+            # print(G.nodes()[rel.start_node.id]['name'], weight)
             nx.set_edge_attributes(
                 G, {sampled_edge: {'weight': weight}})
         # else:
@@ -460,6 +473,11 @@ def simRankpp(G, pidMax, sLimit, wscl=1, evd=True, sprd=True, importance_factor=
         plt.show()
         return(G, None, None, None)
     pos = nx.bipartite_layout(G, top)
+
+    labels = {}
+    for i, n in G.nodes(data=True):
+        labels[i] = (n['name'])
+    ws = nx.get_edge_attributes(G, 'weight')
 
     '''
     not weighted graph shoulb loaded to use the numpy version otherwise use
@@ -999,10 +1017,6 @@ class simrank_inv:
                 d['w:H1L1'].append(valu)
                 d['w:H2L2'].append(valv)
         return(d)
-
-
-driver = GraphDatabase.driver(
-    uri="bolt://localhost:3687", auth=("neo4j", "ivory123"))
 
 
 class cyTxt:
