@@ -978,6 +978,7 @@ def plot_nrg_embd_2d_yaris_sub():
         # ['CCSA_submodel_0006', 'CCSA_submodel_0007'],
         # ['CCSA_submodel_0005', 'CCSA_submodel_0006'],
         ['CCSA_submodel_0004', 'CCSA_submodel_0005', 'CCSA_submodel_0006']
+
     ]
     dsts = [
         # # '../publication/06_KG_energyAbsorption/images/plot/submodel_0004.pdf',
@@ -1007,6 +1008,84 @@ def plot_nrg_embd_2d_yaris_sub():
         dst = dsts[sub]
         simList.sort()
         simListAbb = ['00' + str(int(s.split('_')[-1]) - 3) for s in simList]
+        # simListAbb = [s.split('_')[-1] for s in simList]
+        nrmList = '.*'
+
+        pids_sel = [2000001, 2000501, 2000502, 2000002, 2000000]
+        mDic = {"2000001": 4, "2000501": 5,
+                "2000502": 5, "2000002": 4, "2000000": 's'}
+
+        sims_nrg, sims_pid = cyNrg.feed_normalization(
+            nrmList, simList, norm_opt, ft_opt, pids_sel=pids_sel)
+
+        # convert unit to ms and kNmm
+        sims_nrg = sims_nrg * [0.001, 1000, 1000]
+
+        fig, ax = cyNrg.plt_nrg_embed_simple(
+            # fig, ax = cyNrg.plt_nrg_embed(
+            sims_nrg[:], sims_pid[:], simListAbb,
+            m=20, plt3=[0, 1, 0], grp=None, grpPid=False,
+            cN=cs[sub], marker=mDic)
+        plot_center_embd(sims_nrg, cs[sub], simListAbb)
+        # plt.xlim([21, 22.5])
+        plt.xlim([6, 24])
+
+        fig.set_size_inches(3.1, 3.1)
+        plt.subplots_adjust(left=0.2, right=0.95, top=0.93, bottom=0.16)
+        plt.legend(loc=2)
+        # plt.gca().xaxis.set_major_formatter(StrMethodFormatter('{x:,.2f}'))
+
+        fig.savefig(dst)
+    plt.show()
+    # break
+    # return()
+
+
+def plot_nrg_embd_2d_yaris_sub_rev():
+    '''
+    view fo3 8411 2059639 7903
+
+    '''
+
+    ft_opt = ["nrg_max", "ti_grad", "tn_pct"]
+    norm_opt = []
+
+    simLists = [
+        ['CCSA_submodel_6003'],
+        ['CCSA_submodel_6003', 'CCSA_submodel_6030'],
+        ['CCSA_submodel_6030', 'CCSA_submodel_6031'],
+        ['CCSA_submodel_6030', 'CCSA_submodel_6060'],
+        # ['CCSA_submodel_0005', 'CCSA_submodel_0006'],
+        # ['CCSA_submodel_6003', 'CCSA_submodel_6030', 'CCSA_submodel_6031']
+
+    ]
+    dsts = [
+        '../publication/06_KG_energyAbsorption/submition/submodel_6003.svg',
+        '../publication/06_KG_energyAbsorption/submition/submodel_600br.pdf',
+        '../publication/06_KG_energyAbsorption/submition/submodel_600rg.pdf',
+        '../publication/06_KG_energyAbsorption/submition/submodel_600ry.pdf',
+        # '../publication/06_KG_energyAbsorption/submition/submodel_00056.pdf',
+        # '../publication/06_KG_energyAbsorption/submition/submodel_000456.pdf'
+    ]
+    cs = [
+        ['b'],
+        ['b', 'r'],
+        # ['b', 'lime'],
+        ['r', 'lime'],
+        ['r', 'y'],
+        # ['b', 'y', 'r'],
+    ]
+    SMALL_SIZE = 8
+    MEDIUM_SIZE = 10
+    BIGGER_SIZE = 12
+    plt.rc('axes', labelsize=MEDIUM_SIZE)  # fontsize of the x and y labels
+    plt.rc('xtick', labelsize=MEDIUM_SIZE)  # fontsize of the tick labels
+    plt.rc('ytick', labelsize=MEDIUM_SIZE)  # fontsize of the tick labels
+
+    for sub, simList in enumerate(simLists):
+        dst = dsts[sub]
+        simList.sort()
+        simListAbb = [str(int(s.split('_')[-1])) for s in simList]
         # simListAbb = [s.split('_')[-1] for s in simList]
         nrmList = '.*'
 
@@ -2112,6 +2191,7 @@ if __name__ == '__main__':
     # plot_nrg_embd_2d_yaris_sub_9part()
 
  # Manuscript
-    plot_nrg_embd_2d_yaris_sub()
+    # plot_nrg_embd_2d_yaris_sub()
+    plot_nrg_embd_2d_yaris_sub_rev()
 
 # plt.show()

@@ -29,7 +29,7 @@ elif oem == 'Porsche':
     driver = GraphDatabase.driver(uri, auth=("neo4j", "ivory123"))
     KG.neo4j_bolt('3687', 'ivory')
 elif oem == 'YARIS':
-    uri = "neo4j://localhost:7687"
+    uri = "neo4j://localhost:3687"
     driver = GraphDatabase.driver(uri, auth=("neo4j", "ivory123"))
     KG.neo4j_bolt('3687', 'localhost')
 

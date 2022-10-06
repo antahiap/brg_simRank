@@ -27,3 +27,8 @@
 - [ ] Run simrank for each simulation and ref seprately
 - [ ] What does SimRank do
 - [ ] Change the spread function
+
+## Extended data debug
+
+- get top color
+- decrease number of simulation range

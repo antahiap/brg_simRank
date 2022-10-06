@@ -9,13 +9,18 @@ s = pd.DataFrame()
 
 
 ti = 1
-dt = 0.05
+dt = 0.2
 dt_ui = 0.6
-id = '5'
+id = '1'
 simName_f = 'CCSA_submodel_'
 
-# set 1 dt_tu= 0.6
-# set 2 dt=tu=0.4
+# set 1 dt_tu= 0.6  wrong setup, ti > tu, overwriten pkl
+# set 2 dt_tu=0.4   wrong setup, ti > tu, overwriten pkl
+
+# set 3  dt_tu= 0.6 dt =2        tu > ti
+# set 4  dt_tu= 0.4 dt =2        tu > ti
+# set 5, dt=0.05, dt_ui=0.6      tu > ti
+# set 6, dt=1, dt_ui=0.6         tu > ti
 
 # flat mode
 j, sims_id = int(id) * 1000, []
