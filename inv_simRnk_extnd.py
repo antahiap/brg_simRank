@@ -1,4 +1,6 @@
+from cmath import nan
 import enum
+from itertools import count
 from operator import index
 from re import T
 import _paths
@@ -6,6 +8,7 @@ import glob
 import math
 import time
 import random
+from decimal import *
 
 import numpy as np
 import pandas as pd
@@ -24,7 +27,7 @@ import graph_mining as gm
 # self.driver = oem.driver
 
 
-class TestSimRank():
+class ExtndSimRank():
 
     def make_diff_mtrx(self, sims, siml, sims_d3plt):
 
@@ -46,7 +49,7 @@ class TestSimRank():
 
         return(simDisp_sort)
 
-    def test_sim_grnd_truth_single_time(self):
+    def sim_grnd_truth_single_time(self):
         '''
         use nodes deformation diff as the similarity measure
         and compare it with simrank++
@@ -60,6 +63,9 @@ class TestSimRank():
         sims_d3plt = {}
         siml = {}
         for i, s in enumerate(sims):
+            name = s.split('_')[-1]
+            if not name in ['0007', '0006', '0005', '0004']:
+                contine
             sim = kg.CaeSim(OEM)
             sim.dataYARIS(s)
             disp = d3plt.read_disp(s, states={-1})
@@ -71,7 +77,7 @@ class TestSimRank():
         for pair, dist in simDisp.items():
             print(pair, dist)
 
-    def test_sim_grnd_truth_all_time(self):
+    def sim_grnd_truth_all_time(self):
         '''
         use nodes deformation diff as the similarity measure
         and compare it with simrank++ for all the time steps
@@ -97,7 +103,7 @@ class TestSimRank():
         for pair, dist in simDisp.items():
             print(pair, dist)
 
-    def test_sim_grnd_truth_selective_part(self):
+    def sim_grnd_truth_selective_part(self):
         '''
         use nodes deformation diff as the similarity measure
         and compare it with simrank++ for last time step and
@@ -126,7 +132,7 @@ class TestSimRank():
         for pair, dist in simDisp.items():
             print(pair, dist)
 
-    def test_read_dsplcmnt_yaris(self):
+    def read_dsplcmnt_yaris(self):
         '''
         read displacement with lasso package for specific oem
         '''
@@ -137,8 +143,9 @@ class TestSimRank():
         s = glob.glob(oem.data_path)[0]
 
         disp = d3plt.read_disp(s)
+        print(disp)
 
-    def test_sim_GT_IE(self):
+    def sim_GT_IE(self):
         '''
         get energy features and evaluate distance based on IE and P_e
         '''
@@ -216,29 +223,25 @@ class TestSimRank():
 
     def simRank_pair(
         self, nFrmt, nFrmtM, simExt, key_ref, oem,
-        wscl=1e7,  # 1e7,  # 1e9,
-        evd=False,
-        sprd=False,
+        pidMax, wTag, wscl,
+        sprd, evd, C,
         M2='""'
     ):
         simExt = simExt.reset_index(drop=True)
         cypherTxt = self.query.simrank_G(
-            nFrmt, nFrmtM, self.pidMax, simM2=M2, simList=simExt.name.to_list())
+            nFrmt, nFrmtM, pidMax, simM2=M2, simList=simExt.name.to_list())
+
         # wscl scaling the weight
-        G = gm.get_graph(cypherTxt, '', w=wscl, driver=oem.driver)
-        _, _, spp, top = gm.simRankpp(
-            G, self.pidMax, 0.0, wscl=wscl, sprd=sprd, evd=evd,
-            importance_factor=0.9)
+        G = gm.get_graph(cypherTxt, wTag, w=wscl, driver=oem.driver)
+
+        spp = gm.simrank_pp_similarity_numpy(
+            G, sprd_opt=sprd, evd_opt=evd,
+            importance_factor=C
+        )
 
         sName = nx.get_node_attributes(G, 'name')
         keys = [k for k, v in sName.items() if v in key_ref]
         spp_filter = spp[keys]
-
-        # sim_tst = [nodeId for nodeId,
-        #            name in sName.items() if name in ['3023', '6051']]
-        # for s in sim_tst:
-        #     input(spp_filter[:, s])
-        # input(spp_filter[:, sim_tst].T)
 
         slct_subm = np.argmax(spp_filter, axis=0)
         slct_subm_2 = np.argsort(
@@ -253,72 +256,66 @@ class TestSimRank():
             except:
                 continue
             spp_v = spp_filter[v, i]
-            if spp_v > 0.59:
+            if spp_v > 0:
                 simExt.at[r, 'lc pair'] = sName[keys[v]]
                 simExt.at[r, 'similarity'] = spp_v
 
-        # simExt['lc pair'] = ''
-        # simExt['similarity'] = 0.0
-        # for ii, r in simExt.iterrows():
-        #     id = r.id
-        #     index_sim = [nodeId for nodeId,
-        #                  name in sName.items() if name == str(id)]
-        #     if not index_sim == []:
-        #         si = index_sim[0]
-        #         input(slct_subm[si])
-        #         sim_pair = slct_subm[index_sim][0]
-        #         sim_pair2 = slct_subm_2[index_sim][0]
-        #         spp_v = spp_filter[sim_pair, index_sim][0]
-        #         if spp_v > 0.4:
-        #             simExt.at[ii, 'lc pair'] = sName[keys[sim_pair]]
-        #             simExt.at[ii, 'similarity'] = spp_v
-        #         simExt.at[ii, 'lc pair 2'] = sName[keys[sim_pair2]]
-        #         simExt.at[ii, 'similarity2'] = spp_filter[sim_pair2,
-        #                                                   index_sim][0]
-        #     else:
-        #         simExt.at[ii, 'lc pair'] = 'miss result'
-        #         simExt.at[ii, 'similarity'] = 0.0
-        #         print('MISSING REF MODEL')
-        #         print(id)
         return(simExt)
 
     def simRank_perRef(
         self, nFrmt, nFrmtM, simExt, key_ref, oem,
-        n=5,
-        wscl=1e7,  # 1e7,  # 1e9,
-        evd=False,
-        sprd=False,
+        n,
+        pidMax, wTag, wscl,
+        sprd, evd, C,
         M2='""'
     ):
         simExt = simExt.reset_index(drop=True)
         cypherTxt = self.query.simrank_G(
-            nFrmt, nFrmtM, self.pidMax, simM2=M2, simList=simExt.name.to_list())
+            nFrmt, nFrmtM, pidMax, simM2=M2, simList=simExt.name.to_list())
         # wscl scaling the weight
-        G = gm.get_graph(cypherTxt, '', w=wscl, driver=oem.driver)
+        G = gm.get_graph(cypherTxt, wTag, w=wscl, driver=oem.driver)
 
-        _, _, spp, top = gm.simRankpp(
-            G, self.pidMax, 0.0, wscl=wscl, sprd=sprd, evd=evd,
-            importance_factor=0.9)
+        spp = gm.simrank_pp_similarity_numpy(
+            G, sprd_opt=sprd, evd_opt=evd,
+            importance_factor=C
+        )
 
         sName = nx.get_node_attributes(G, 'name')
         keys = [k for k, v in sName.items() if v in key_ref]
         spp_filter = spp[keys]
 
         # slct_subm = np.argmax(spp_filter, axis=0)
-        slct_subm = np.argsort(
-            spp_filter, axis=1)[:, -n-1:-1]  # [:, -7:]  # , kind='mergesort'
+        spp_sort = np.argsort(
+            spp_filter, axis=1)[:, :]  # -n-1:-1]  # [:, -7:]  # , kind='mergesort'
+        slct_subm = spp_sort[:, -n-1:-1]
+
+        # find replacement for duplicates
+        nHold = [-n-1 for x in key_ref]
+        sims, c = np.unique(slct_subm, return_counts=True)
+        while sum(c) > len(sims):
+            for i, ci in enumerate(c):
+                if ci > 1:
+                    smlrty_ci = np.where(slct_subm == sims[i])
+                    max_index = np.argmax(spp_filter[smlrty_ci[0], sims[i]])
+
+                    for i, ri in enumerate(smlrty_ci[0]):
+                        ci = smlrty_ci[1][i]
+                        if not max_index == i:
+                            nHold[ri] -= 1
+                            slct_subm[ri, ci] = spp_sort[ri, nHold[ri]]
+            sims, c = np.unique(slct_subm, return_counts=True)
 
         simExt['lc pair'] = ''
         simExt['similarity'] = 0.0
 
-        sims = np.unique(slct_subm)
+        # sims = np.unique(slct_subm)
         # input(n*len(keys))
         # n0 = n
         # while len(sims) < n0*len(keys):
         #     n += 1
         #     sims = np.unique(slct_subm[:, -n-1:-1])
 
-        count = [0 for k in keys]
+        counter = {x: 0 for x in key_ref}
         for si in sims:
             sNi = sName[si]
 
@@ -338,155 +335,94 @@ class TestSimRank():
 
         return(simExt)
 
-    def test_simRank_extnd(self):
+    def sort_IE_sim(self, nFrmt, nFrmt1, sims, simExt, lmt, nSim=2):
 
-        OEM = 'YARIS'
-        oem = oems.oems(OEM)
-        self.query = oem.query(oem)
-        self.pidMax = 4
+        def count_sim(s, sub4):
+            sub4 = np.delete(sub4, s)
+            s = np.argmin(sub4)     # most similar with least
+            return(s, sub4)
 
-        # nFrmt = '"CCSA_submodel_10.*"'
-        # nFrmtM = '"CCSA_submodel_00[2].*"'
-        # '0021': 'blue', '0022': 'yellow', '0023': 'red', '0024': 'green', '0025': '#9A0eea',
-        # key_ref1 = ['0021', '0024', '0023', '0022', '0025']
-        # random.shuffle(key_ref1)
-        # simExt10 = pd.read_pickle("extnd_mdl/sims_extnd_01.pkl")
-        # simExt10['data_id'] = 1
-        # simExt1 = self.simRank_pair(nFrmt, nFrmtM, simExt10, key_ref1)
+        simList = simExt.id.tolist()
+        simPair, similarity = [], []
+        counter = {x: 0 for x in sims}
+        for n1 in simList:
+            d = simExt.loc[simExt.id == n1]
+            tL, tR = d.tL_u, d.tR_u
+            sub4 = []
+            for n0 in sims:
+                sim0 = nFrmt.format(n0)
+                df0 = self.query.nrg_fts(sim0, lmt)
+                df0 = df0.sort_values(by=['PID'])
 
-        # nFrmt = '"CCSA_submodel_2.*"'
-        # nFrmtM = '"CCSA_submodel_00[1].*"'
-        # ref_2 = {
-        #     '2001': 'blue', '2008': 'yellow', '2009': 'red', '2064': 'green', '2065': '#9A0eea'}
-        # key_ref2 = [k for k, v in ref_2.items()]
-        # random.shuffle(key_ref2)
-        # simExt20 = pd.read_pickle("extnd_mdl/sims_extnd_02.pkl")
-        # simExt20['data_id'] = 2
-        # simExt2 = self.simRank_pair(nFrmt, nFrmtM, simExt20, key_ref2, oem)
+                sim1 = nFrmt1.format(n1)
+                df1 = self.query.nrg_fts(sim1, lmt)
+                try:
+                    df1 = df1.sort_values(by=['PID'])
+                except KeyError:
+                    continue
 
-        ref_3 = {
-            '3003': 'blue', '3006': 'red', '3007': 'green', '3064': 'yellow', '3065': '#9A0eea'}
-        nFrmt = '"CCSA_submodel_3.*"'
-        nFrmtM = '"CCSA_submodel_00[2].*"'
-        key_ref3 = [k for k, v in ref_3.items()]
-        random.shuffle(key_ref3)
-        simExt30 = pd.read_pickle("extnd_mdl/sims_extnd_03.pkl")
-        simExt30['data_id'] = 3
+                if not df1.PID.tolist() == df0.PID.tolist():
+                    print('ERR IN MATCHIN PIDs')
+                d01_IE = (df1.IE-df0.IE)/1000
+                MSE = np.square(d01_IE).mean()
+                d01_Pe = (df1.IE/(df1.tn - df1.ti) -
+                          df0.IE/(df0.tn - df0.ti))/1e6
+                MSE = np.square(d01_Pe).mean()
+                RMSE = math.sqrt(MSE)
 
-        simExt30_fltr = simExt30.loc[(
-            simExt30.tL_u < 5) & (simExt30.tR_u < 5)]
-        simExt30_fltr = simExt30_fltr.loc[(
-            simExt30_fltr.tL_u > 1.6) | (simExt30_fltr.tR_u > 1.6)]
+                sub4.append(RMSE)
+            sub4 = np.array(sub4)
+            if not sub4 == []:
+                sub4_0 = sub4
+                s = np.argmin(sub4)
+                # while counter[sims[s]]+1 > nSim:
+                #     s, sub4 = count_sim(s, sub4)
+                #     if len(sub4) == 1:
+                #         s = 0
+                #         break
+                s = np.where(sub4_0 == sub4[s])[0][0]
+                counter[sims[s]] += 1
+                simP, simV = str(sims[s]), sub4_0[s]
+            else:
+                simP, simV = 0, 0
 
-        simExt3 = self.simRank_pair(nFrmt, nFrmtM,
-                                    simExt30_fltr, key_ref3, oem)  # , M2='"CCSA_submodel_002.*"')
+            simPair.append(simP)
+            similarity.append(str(simV))
 
-        ref_5 = {
-            '5000': 'blue',
-            '5006': 'red', '5007': 'green', '5050': 'yellow', '5051': '#9A0eea'}
-        nFrmt = '"CCSA_submodel_5.*"'
-        nFrmtM = '"CCSA_submodel_5.*"'
-        key_ref5 = [k for k, v in ref_5.items()]
-        random.shuffle(key_ref3)
-        simExt50 = pd.read_pickle("extnd_mdl/sims_extnd_05.pkl")
-        simExt50['data_id'] = 5
+        simPair = np.array(simPair)
+        similarity = np.array(similarity)
 
-        simExt5 = self.simRank_pair(nFrmt, nFrmtM,
-                                    simExt50, key_ref5, oem)  # , M2='"CCSA_submodel_002.*"')
+        # filter number of similarities for each ref
 
-        # nFrmt = '"CCSA_submodel_40.*"'
-        # nFrmtM = '"CCSA_submodel_00[12].*"'
-        # key_ref4 = ['0011', '0015', '0013', '0014', '0012']
-        # random.shuffle(key_ref4)
-        # simExt40 = pd.read_pickle("extnd_mdl/sims_extnd_04.pkl")
-        # simExt40['data_id'] = 4
+        for refi, ni in counter.items():
+            if ni > nSim:
+                ids = np.where(simPair == str(refi))[0]
+                smlrty_i = similarity[ids]
+                top_id = np.argpartition(smlrty_i, -nSim)[-nSim:]
+                top_smlrty = smlrty_i[top_id]
 
-        # simExt40_fltr = simExt40.loc[(
-        #     simExt40.tL_u < 2.6) & (simExt40.tR_u < 2.6)]
+                # index of first occurrence of each value
+                sorter = np.argsort(similarity)
+                ids_nSim = sorter[np.searchsorted(
+                    similarity, top_smlrty, sorter=sorter)]
+                cln_id = ids[np.isin(ids, ids_nSim, invert=True)]
+                simPair[cln_id] = ''
+                similarity[cln_id] = 0
+                counter[refi] = nSim
 
-        # simExt4 = self.simRank_pair(nFrmt, nFrmtM, simExt40_fltr, key_ref4)
+        simExt['lc pair'] = simPair
+        simExt['similarity'] = similarity
 
-        # nFrmt = '"CCSA_submodel_[34].*"'
-        # nFrmtM = '"CCSA_submodel_00[12].*"'
-        # key_ref5 = key_ref3 + key_ref4
-        # simExt5 = pd.concat([simExt30, simExt40])
-        # simExt5 = simExt5.reset_index(drop=True)
-        # simExt5 = simExt5.assign(dt_ui='0.4-0.6')
-        # simExt5 = self.simRank_pair(nFrmt, nFrmtM, simExt5, key_ref5)
+        return(simExt)
 
-        color_discrete_map = {**ref_5}  # **ref_2, **ref_3, }  # , **ref_5}
-        # , simExt3])  # simExt1, simExt2,, simExt5
-        simExt = pd.concat([simExt5])  # simExt2, simExt3,  # ])
-        symbol_map = ['arrow-left', 'arrow-right', 'square', 'circle']
-        simExt = simExt.sort_values(by=['dt_ui', 'lc pair'])
-
-        fig = px.scatter(simExt, x='tL_u', y='tR_u',
-                         color='lc pair',  # size='markerSize',
-                         hover_data=["id", 'similarity', 'tL_i', 'tR_i',
-                                     'similarity2', 'lc pair 2'],
-                         facet_col="data_id",  # dt_ui",
-                         symbol='data_id',
-                         color_discrete_map=color_discrete_map,
-                         symbol_sequence=symbol_map,
-                         labels={"lc pair": "sim pair"},
-                         width=600, height=500)
-
-        fig = self.add_ref_all(fig, color_discrete_map, simExt)
-
-        fig.show()
-
-    def test_simRank_extnd_IE(self):
+    def simRank_extnd_IE(self):
         '''
         get energy features and evaluate distance based on IE and P_e
         '''
 
-        def sort_IE_sim(query, nFrmt, nFrmt1, sims, simExt, lmt):
-
-            simList = simExt.id.tolist()
-            simPair, similarity = [], []
-            for n1 in simList:
-                d = simExt.loc[simExt.id == n1]
-                tL, tR = d.tL_u, d.tR_u
-                sub4 = []
-                for n0 in sims:
-                    sim0 = nFrmt.format(n0)
-                    df0 = query.nrg_fts(sim0, lmt)
-                    df0 = df0.sort_values(by=['PID'])
-
-                    sim1 = nFrmt1.format(n1)
-                    df1 = query.nrg_fts(sim1, lmt)
-                    try:
-                        df1 = df1.sort_values(by=['PID'])
-                    except KeyError:
-                        continue
-
-                    if not df1.PID.tolist() == df0.PID.tolist():
-                        print('ERR IN MATCHIN PIDs')
-                    d01_IE = (df1.IE-df0.IE)/1000
-                    MSE = np.square(d01_IE).mean()
-                    # d01_Pe = (df1.IE/(df1.tn - df1.ti) -
-                    #           df0.IE/(df0.tn - df0.ti))/1e6
-                    # MSE = np.square(d01_Pe).mean()
-                    RMSE = math.sqrt(MSE)
-
-                    sub4.append(RMSE)
-                if not sub4 == []:
-                    s = np.argmin(sub4)     # most similar with least distance
-                    simP, simV = str(sims[s]), sub4[s]
-                else:
-                    simP, simV = 0, 0
-
-                simPair.append(simP)
-                similarity.append(simV)
-
-            simExt['lc pair'] = simPair
-            simExt['similarity'] = similarity
-
-            return(simExt)
-
         OEM = 'YARIS'
         oem = oems.oems(OEM)
-        query = oem.query(oem)
+        self.query = oem.query(oem)
 
         nFrmt = '"CCSA_submodel_00{}"'
         nFrmt1 = '"CCSA_submodel_{}"'
@@ -499,27 +435,36 @@ class TestSimRank():
             # random.shuffle(sims_1)
             # simExt_1 = pd.read_pickle("extnd_mdl/sims_extnd_04.pkl")
             # simExt_1['data_id'] = 3
-            # simExt_1 = sort_IE_sim(query, nFrmt, nFrmt1, sims_1, simExt_1, lmt)
+            # simExt_1 = self.sort_IE_sim(nFrmt, nFrmt1, sims_1, simExt_1, lmt)
 
-            sims_2_j = {
-                '3001': 'blue', '3020': 'red', '3021': 'green', '3060': 'yellow', '3061': '#9A0eea'}
-            sims_2 = [int(k) for k, v in sims_2_j.items()]
-            random.shuffle(sims_2)
-            simExt_2 = pd.read_pickle("extnd_mdl/sims_extnd_03.pkl")
-            simExt_2['data_id'] = 4
-            simExt_2 = sort_IE_sim(query, nFrmt1, nFrmt1,
-                                   sims_2, simExt_2, lmt)
+            # sims_2_j = {
+            #     '3001': 'blue', '3020': 'red', '3021': 'green', '3060': 'yellow', '3061': '#9A0eea'}
+            # sims_2 = [int(k) for k, v in sims_2_j.items()]
+            # random.shuffle(sims_2)
+            # simExt_2 = pd.read_pickle("extnd_mdl/sims_extnd_03.pkl")
+            # simExt_2['data_id'] = 4
+            # simExt_2 = self.sort_IE_sim(nFrmt1, nFrmt1,
+            #                        sims_2, simExt_2, lmt)
 
-            sims_3_j = {
-                '5001': 'blue', '5020': 'red', '5021': 'green', '5060': 'yellow', '5061': '#9A0eea'}
-            sims_3 = [int(k) for k, v in sims_3_j.items()]
-            random.shuffle(sims_3)
-            simExt_3 = pd.read_pickle("extnd_mdl/sims_extnd_05.pkl")
-            simExt_3['data_id'] = 5
-            simExt_3 = sort_IE_sim(query, nFrmt1, nFrmt1,
-                                   sims_3, simExt_3, lmt)
+            # sims_3_j = {
+            #     '5001': 'blue', '5020': 'red', '5021': 'green', '5060': 'yellow', '5061': '#9A0eea'}
+            # sims_3 = [int(k) for k, v in sims_3_j.items()]
+            # random.shuffle(sims_3)
+            # simExt_3 = pd.read_pickle("extnd_mdl/sims_extnd_05.pkl")
+            # simExt_3['data_id'] = 5
+            # simExt_3 = self.sort_IE_sim(nFrmt1, nFrmt1,
+            #                        sims_3, simExt_3, lmt)
 
-            color_discrete_map = {**sims_2_j, **sims_3_j}
+            sims_6_j = {
+                '6003': 'blue', '6030': 'red', '6031': 'green', '6060': 'yellow', '6061': '#9A0eea'}
+            sims_6 = [int(k) for k, v in sims_6_j.items()]
+            random.shuffle(sims_6)
+            simExt_6 = pd.read_pickle("extnd_mdl/sims_extnd_06.pkl")
+            simExt_6['data_id'] = 6
+            simExt_6 = self.sort_IE_sim(nFrmt1, nFrmt1,
+                                        sims_6, simExt_6, lmt)
+
+            color_discrete_map = {**sims_6_j}  # , **sims_3_j}
 
             # simExt_12 = pd.concat([simExt_1, simExt_2])
             # simExt_12 = simExt_12.assign(dt_ui='0.4-0.6')
@@ -528,7 +473,8 @@ class TestSimRank():
             # simExt_3 = sort_IE_sim(query, nFrmt, nFrmt1,
             #    sims_3, simExt_12, lmt)
 
-            simExt = pd.concat([simExt_2, simExt_3])  # , simExt_2, simExt_3])
+            # simExt_3])  # , simExt_2, simExt_3])
+            simExt = pd.concat([simExt_6])
             simExt.to_pickle(outPath)
 
         simExt = pd.read_pickle(outPath)
@@ -550,7 +496,7 @@ class TestSimRank():
         fig = self.add_ref_all(fig, color_discrete_map, simExt)
         fig.show()
 
-    def test_simRank_diagonal(self):
+    def simRank_diagonal(self):
         OEM = 'YARIS'
         oem = oems.oems(OEM)
         query = oem.query(oem)
@@ -558,14 +504,17 @@ class TestSimRank():
         nFrmt = '"CCSA_submodel_.*"'
         pidMax = 5
         wscl = 1e9
-        evd = True
+        wTag = 'P_e'
+        evd = 2
+        C = 0.9
         sprd = True
-        cypherTxt = query.simrank_G(nFrmt, pidMax)
+        cypherTxt = query.simrank_G(nFrmt, '""', pidMax)
 
         # wscl scaling the weight
-        G = gm.get_graph(cypherTxt, '', w=wscl)
-        _, _, spp, top = gm.simRankpp(
-            G, pidMax, 0.0, wscl=wscl, sprd=sprd, evd=evd)
+        G = gm.get_graph(cypherTxt, wTag, w=wscl)
+        spp = gm.simrank_pp_similarity_numpy(
+            G, sprd_opt=sprd, evd_opt=evd, importance_factor=C
+        )
 
         sName = nx.get_node_attributes(G, 'name')
         key_ref = [
@@ -576,7 +525,7 @@ class TestSimRank():
         spp_filter = spp[keys]  # [:, top]
         print(spp_filter)
 
-    def test_simRank_singleSim(self):
+    def simRank_singleSim(self):
         OEM = 'YARIS'
         oem = oems.oems(OEM)
         query = oem.query(oem)
@@ -586,15 +535,18 @@ class TestSimRank():
         simRef = '"CCSA_submodel_00[12].*"'
         pidMax = 5
         wscl = 1e9  # 1e7
-        evd = False
+        wTag = 'P_e'
+        evd = 2
         sprd = False
+        C = 0.9
         cypherTxt = query.simrank_G(nFrmt, simRef, pidMax)
 
         # wscl scaling the weight
-        G = gm.get_graph(cypherTxt, '', w=wscl)
-        _, _, spp, top = gm.simRankpp(
-            G, pidMax, 0.0, wscl=wscl, sprd=sprd, evd=evd,
-            importance_factor=0.9)
+        G = gm.get_graph(cypherTxt, wTag, w=wscl)
+
+        spp = gm.simrank_pp_similarity_numpy(
+            G, sprd_opt=sprd, evd_opt=evd, importance_factor=C
+        )
         print(spp)
 
         sName = nx.get_node_attributes(G, 'name')
@@ -611,16 +563,17 @@ class TestSimRank():
             ii = np.where(ord == i)[0][0]
             print(sName[ii], s_i[ii])
 
-    def test_simRank_extend_pltAll(self):
+    def simRank_extend_pltAll(self,
+                              pidMax, wTag, wscl,
+                              sprd, evd, C):
         OEM = 'YARIS'
         oem = oems.oems(OEM)
         self.query = oem.query(oem)
-        self.pidMax = 5
 
         ref = {
-            '6003': 'blue', '6016': 'red', '6017': 'green', '6064': 'yellow', '6065': '#9A0eea'}
+            '6003': 'blue', '6030': 'red', '6031': 'green', '6060': 'yellow', '6061': '#9A0eea'}
 
-        datasets = [6, 5]  # , 5, 3]  # 1, 2, 3, 4, 5, 6]
+        datasets = [6]  # , 5, 3]  # 1, 2, 3, 4, 5, 6]
         ds_str = ''.join([str(d) for d in datasets])
 
         nFrmt = '"CCSA_submodel_[{}].*"'.format(ds_str)
@@ -639,10 +592,13 @@ class TestSimRank():
         # simExt = simExt.drop_duplicates(subset=['tL_u', 'tR_u'])
 
         simExt_sR = self.simRank_pair(nFrmt, nFrmtM,
-                                      simExt, key_ref, oem)  # , M2='"CCSA_submodel_002.*"')
+                                      simExt, key_ref, oem,
+                                      pidMax, wTag, wscl,
+                                      sprd, evd, C,
+                                      )
+
         # simExt_sR = simExt_sR.loc[(
         #     simExt_sR.tL_u <= 1.9) & (simExt_sR.tR_u <= 1.9)]
-        # input(simExt_sR)
 
         color_discrete_map = {**ref}
         symbol_map = ['arrow-left', 'arrow-right', 'square', 'circle']
@@ -655,6 +611,8 @@ class TestSimRank():
                          color_discrete_map=color_discrete_map,
                          #  symbol_sequence=symbol_map,
                          labels={"lc pair": "sim pair"},
+                         title="Spread:{}, Evidence:{}, C:{}, wTag:{}, wScale{}, pidMax:{}".format(
+                             sprd, evd, C, wTag, wscl, pidMax),
                          width=1000, height=900)
 
         # fig.append_trace(
@@ -676,14 +634,17 @@ class TestSimRank():
 
         fig.show()
 
-    def test_simRank_extend_perRef(self):
+    def simRank_extend_perRef(self,
+                              nSim,
+                              pidMax, wTag, wscl,
+                              sprd, evd, C):
         OEM = 'YARIS'
         oem = oems.oems(OEM)
         self.query = oem.query(oem)
-        self.pidMax = 5
 
         ref = {
-            '6003': 'blue', '6030': 'red', '6031': 'green', '6060': 'yellow', '6061': '#9A0eea'}
+            '6003': 'blue', '6030': 'red', '6031': 'lime', '6060': 'yellow', '6061': '#9A0eea'}
+        # '6003': 'blue', '6016': 'red', '6017': 'lime', '6060': 'yellow', '6061': '#9A0eea'}
         # '5005': 'blue', '1016': 'red', '1017': 'green', '1064': 'yellow', '1065': '#9A0eea'}
         # '6005': 'blue', '6010': 'red',  '6011': 'green',
         # '6064': 'yellow', '6065': '#9A0eea'}
@@ -706,59 +667,61 @@ class TestSimRank():
 
         # simExt = simExt.drop_duplicates(subset=['tL_u', 'tR_u'])
 
-        simExt_sR = self.simRank_perRef(nFrmt, nFrmtM,
-                                        simExt, key_ref, oem, n=5)  # , M2='"CCSA_submodel_002.*"')
+        simExt_sR = pd.DataFrame()
+        for i, t in enumerate(wTag):
+            simExt_sR_i = self.simRank_perRef(nFrmt, nFrmtM,
+                                              simExt, key_ref, oem,
+                                              nSim,
+                                              pidMax, wTag[i], wscl[i],
+                                              sprd, evd, C)
+            simExt_sR_i['weight'] = t
+            simExt_sR = pd.concat([simExt_sR, simExt_sR_i])
+
         # simExt_sR = simExt_sR.loc[(
         #     simExt_sR.tL_u <= 1.9) & (simExt_sR.tR_u <= 1.9)]
-
+        print(simExt_sR)
         color_discrete_map = {**ref, '': 'white'}
         symbol_map = ['arrow-left', 'arrow-right', 'square', 'circle']
         fig = px.scatter(simExt_sR, x='tL_u', y='tR_u',
                          color='lc pair',  # size='markerSize',
                          hover_data=["id", 'similarity', 'tL_i', 'tR_i'],
-                         facet_col="dt_ui",  # "data_id",  #
-                         symbol='data_id',
+                         facet_col="weight",  # "data_id",  #
+                         symbol="data_id",
                          color_discrete_map=color_discrete_map,
                          #  symbol_sequence=symbol_map,
                          labels={"lc pair": "sim pair"},
-                         width=1000, height=900)
+                         title="Spread:{}, Evidence:{}, C:{}, wTag:{}, wScale{}, pidMax:{}, nSim:{}".format(
+                             sprd, evd, C, wTag, wscl, pidMax, nSim),
+                         width=1800, height=600)
 
         fig = self.add_ref_all(fig, ref, simExt_sR)
 
         fig.show()
 
-    def test_pick_color(self):
-
-        a = np.array([
-            [1, 0.1, 0.2, 0.3, 0.4],
-            [0.1, 1, 0.11, 0.21, 0.54],
-            [0.2, 0.11, 1, 0.7, 0.8],
-            [0.3, 0.21, 0.7, 1, 0.9],
-            [0.4, 0.54, 0.8, 0.9, 1]
-        ])
-
-        key = [1, 3]
-
-        a_key = a[key]
-        print(a_key)
-        print(np.argmax(a_key, axis=0))
-        # a_color =
-
 
 if __name__ == '__main__':
 
-    tst = TestSimRank()
-    # tst.test_sim_grnd_truth_selective_part()
-    # tst.test_sim_grnd_truth_all_time()
-    # tst.test_sim_grnd_truth_single_time()
-    # tst.test_read_dsplcmnt_yaris()
+    ext = ExtndSimRank()
+    # ext.read_dsplcmnt_yaris()
 
-    # tst.test_sim_GT_IE()
-    # tst.test_simRank_singleSim()
-    # tst.test_simRank_extnd()
-    # tst.test_simRank_extend_pltAll()
-    tst.test_simRank_extend_perRef()
-    # tst.test_simRank_extnd_IE()
+    wscl = 1  # 1e7  # 1e7,  # 1e9,
+    wTag = 'IE.t/KE'  # 'IE'
+    evd = 2
+    sprd = 'trgt'
+    C = 0.8
+    pidMax = 25
 
-    # tst.test_pick_color()
-    # tst.test_simRank_diagonal()
+    # ext.sim_grnd_truth_selective_part()
+    # ext.sim_grnd_truth_all_time()
+    ext.sim_grnd_truth_single_time()
+
+    # ext.sim_GT_IE()
+    # ext.simRank_singleSim()
+    # ext.simRank_extend_pltAll(pidMax, wTag, wscl, sprd, evd, C)
+
+    # wTag = ['P_e', 'IE', 'IE.t', 'IE.t/KE']
+    # wscl = [1e9, 1e7, 1e6, 1]
+    # ext.simRank_extend_perRef(6, pidMax, wTag, wscl, sprd, evd, C)
+    # ext.simRank_extnd_IE()
+
+    # ext.simRank_diagonal()

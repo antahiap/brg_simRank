@@ -1055,6 +1055,8 @@ def plot_nrg_embd_2d_yaris_sub_rev():
         ['CCSA_submodel_6003', 'CCSA_submodel_6030'],
         ['CCSA_submodel_6030', 'CCSA_submodel_6031'],
         ['CCSA_submodel_6030', 'CCSA_submodel_6060'],
+        ['CCSA_submodel_6003', 'CCSA_submodel_6030',
+            'CCSA_submodel_6031', 'CCSA_submodel_6060'],
         # ['CCSA_submodel_0005', 'CCSA_submodel_0006'],
         # ['CCSA_submodel_6003', 'CCSA_submodel_6030', 'CCSA_submodel_6031']
 
@@ -1064,6 +1066,7 @@ def plot_nrg_embd_2d_yaris_sub_rev():
         '../publication/06_KG_energyAbsorption/submition/submodel_600br.pdf',
         '../publication/06_KG_energyAbsorption/submition/submodel_600rg.pdf',
         '../publication/06_KG_energyAbsorption/submition/submodel_600ry.pdf',
+        '../publication/06_KG_energyAbsorption/submition/submodel_6brgy.pdf',
         # '../publication/06_KG_energyAbsorption/submition/submodel_00056.pdf',
         # '../publication/06_KG_energyAbsorption/submition/submodel_000456.pdf'
     ]
@@ -1073,7 +1076,7 @@ def plot_nrg_embd_2d_yaris_sub_rev():
         # ['b', 'lime'],
         ['r', 'lime'],
         ['r', 'y'],
-        # ['b', 'y', 'r'],
+        ['b', 'r', 'lime', 'y'],
     ]
     SMALL_SIZE = 8
     MEDIUM_SIZE = 10
@@ -1085,7 +1088,7 @@ def plot_nrg_embd_2d_yaris_sub_rev():
     for sub, simList in enumerate(simLists):
         dst = dsts[sub]
         simList.sort()
-        simListAbb = [str(int(s.split('_')[-1])) for s in simList]
+        simListAbb = [str(int(s.split('_')[-1])-6000) for s in simList]
         # simListAbb = [s.split('_')[-1] for s in simList]
         nrmList = '.*'
 

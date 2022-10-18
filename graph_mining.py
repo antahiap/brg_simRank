@@ -36,12 +36,12 @@ def neo4jReturn(cypherTxt, driver):
 
 
 def get_graph(
-    cypherTxt, nc, w=False, err=[],
+    cypherTxt, wTag, w=False, err=[],
     driver=None
 ):
     # cypherTxt = cypherTxt.format(sTxt, pidMax)
     if not driver:
-        GraphDatabase.driver(
+        driver = GraphDatabase.driver(
             uri="bolt://localhost:3687", auth=("neo4j", "ivory123"))
 
     # print(cypherTxt)
@@ -80,15 +80,22 @@ def get_graph(
     for rel in rels:
         if not rel.start_node in G or not rel.end_node in G:
             'works'
+
+        src = rel.start_node.id
+        trgt = rel.end_node.id
         G.add_edge(
-            rel.start_node.id,
-            rel.end_node.id,
+            src,
+            trgt,
             color='k',
             key=rel.id, type=rel.type, properties=rel._properties)
+
         if w:
-            sampled_edge = (rel.start_node.id, rel.end_node.id)
+            sampled_edge = (src, trgt)
             # input(rel._properties['weight'])
-            weight = rel._properties['weight'] / w
+            w_list = rel._properties['w_e_value']
+            wi = rel._properties['w_e_key'].index(wTag)
+            weight = w_list[wi] / w
+
             # input(weight)
             if math.isinf(weight):
                 weight = 0.0001
@@ -286,117 +293,6 @@ def w_cn(G, ebunch=None, alpha=0.8):
     return(vals)
 
 
-def _is_close(d1, d2, atolerance=0, rtolerance=0):
-    if not isinstance(d1, dict) and not isinstance(d2, dict):
-        return abs(d1 - d2) <= atolerance + rtolerance * abs(d2)
-    return all(all(_is_close(d1[u][v], d2[u][v]) for v in d1[u]) for u in d1)
-
-
-def simrank_similarity_numpy_off(
-    G,
-    source=None,
-    target=None,
-    importance_factor=0.9,
-    max_iterations=100,
-    tolerance=1e-4,
-):
-
-    # This algorithm follows roughly
-    #
-    #     S = max{C * (A.T * S * A), I}
-    #
-    # where C is the importance factor, A is the column normalized
-    # adjacency matrix, and I is the identity matrix.
-
-    adjacency_matrix = nx.to_numpy_array(G)
-
-    # column-normalize the ``adjacency_matrix``
-    adjacency_matrix /= adjacency_matrix.sum(axis=0)
-    # print(adjacency_matrix)
-    # adjacency_matrix_s = adjacency_matrix[source, :][:, source]
-
-    newsim = np.eye(adjacency_matrix.shape[0], dtype=np.float64)
-    # newsim_s = np.eye(adjacency_matrix_s.shape[0], dtype=np.float64)
-    for i in range(max_iterations):
-        prevsim = np.copy(newsim)
-        newsim = importance_factor * np.matmul(
-            np.matmul(adjacency_matrix.T, prevsim), adjacency_matrix
-        )
-        np.fill_diagonal(newsim, 1.0)
-
-        if np.allclose(prevsim, newsim, atol=tolerance):
-            print('Number of iteration: {}'.format(i))
-            break
-    print(newsim)
-    # prevsim_s = np.copy(newsim_s)
-    # newsim_s = importance_factor * np.matmul(
-    #     np.matmul(adjacency_matrix_s.T, prevsim_s), adjacency_matrix_s
-    # )
-    # np.fill_diagonal(newsim_s, 1.0)
-    #
-    # # print(newsim, newsim_s)
-    # break
-    #
-    # if np.allclose(prevsim, newsim, atol=tolerance):
-    #     print('Number of iteration: {}'.format(i))
-    #     break
-
-    # if source is not None and target is not None:
-    #     return newsim[source, target]
-    # if source is not None:
-    #     return newsim[source]
-    return newsim
-
-
-def simrank_similarity_me(
-    G,
-    source=None,
-    target=None,
-    importance_factor=0.9,
-    max_iterations=100,
-    tolerance=1e-4,
-):
-    nNode = len(G.nodes())
-    adjacency_matrix = nx.to_numpy_array(G)
-    nDgr = adjacency_matrix.sum(axis=0)
-    newsim = np.eye(nNode)
-
-    I = [n[1] for n in G.in_degree()]
-
-    for itr in range(max_iterations):
-        prevsim = np.copy(newsim)
-        for i in range(0, nNode):
-            for j in range(0, nNode):
-                if I[i] == 0 or I[j] == 0:
-                    newsim[i][j] = 0
-                    continue
-                if i == j:
-                    newsim[i][j] = 1
-                    continue
-                normFactor = importance_factor / I[i] / I[j]
-                s = 0
-                for a in range(0, I[j]):
-                    print('-------')
-                    print('i: {}'.format(i))
-                    for b in range(0, I[j]):
-                        print(s, prevsim[a, b], I[i], I[j])
-                        s += normFactor * prevsim[a, b]
-                        print(s)
-                        # print(prevsim[a,b])
-                newsim[i][j] = s
-            print(newsim[i][j])
-
-        # np.fill_diagonal(newsim, 1.0)
-        if itr == 1:
-            break
-
-        # break
-        if np.allclose(prevsim, newsim, atol=tolerance):
-            print('Number of iteration: {}'.format(itr))
-            break
-    print(newsim)
-
-
 def simRank(pidMax, sLimit):
     style = cyTxt()
     G = get_graph(
@@ -489,7 +385,7 @@ def simRankpp(G, pidMax, sLimit, wscl=1, evd=True, sprd=True, importance_factor=
     # sim = nx.simrank_similarity_numpy(G, max_iterations=1000000)
     sNode = [
         k for k, v in nx.get_node_attributes(G, 'label').items() if v == 'Sim']
-    sim = simrank_pp2_similarity_numpy(
+    sim = simrank_pp_similarity_numpy(
         G, max_iterations=1000000, evd_opt=evd, sprd_opt=sprd, importance_factor=importance_factor)  # , source=sNode)
     lol = sim
     # sim = sim[sNode, :]
@@ -589,231 +485,79 @@ def print_sort_weight(B, nPred=6):
     return(edge_w)
 
 
-def simrank_simple_ex():
-    C = nx.DiGraph()
-    C.add_nodes_from(['Unv', 'ProfA', 'StudA', 'ProfB', 'StudB'])
-    C.add_edges_from([
-        ('Unv', 'ProfA'), ('Unv', 'ProfB'),
-        ('ProfA', 'StudA'),
-        ('ProfB', 'StudB'),
-        ('StudA', 'Unv'),
-        ('StudB', 'ProfB')
-    ])
+def evidence(G, opt):
+    '''
+    chose among two differnt method
 
-    pos = nx.planar_layout(C)
-    plot(
-        C, vertex_label=list(C.nodes()), vertex_label_pos='above',
-        edge_curved=0.5, layout=pos)
-    print(C.nodes())
-    sim1 = nx.simrank_similarity(
-        C, max_iterations=1000, importance_factor=0.8, tolerance=1e-5)
-    sim2 = nx.simrank_similarity_numpy(
-        C, max_iterations=1000, importance_factor=0.8, tolerance=1e-5)
+    opt=1 , evidence(a, b) = 1 − e^-(|E(a) common E(b)| )
+    opt=2 , evidence(a, b) = sum(1 /2^i)
+        '''
 
-    print(sim1)
-    print(sim2)
-    print(sim1['ProfA']['ProfB'])
-    print(sim2[1, 3])
-
-
-def simrank_bipartite_ex():
-    B = nx.Graph()
-    # Add nodes with the node attribute "bipartite"
-    B.add_nodes_from(["A", "B"], bipartite=0)
-    B.add_nodes_from(["sugar", "frosting", "egg", "flour"], bipartite=1)
-    # Add edges only between nodes of opposite node sets
-    B.add_edges_from([
-        ("A", "sugar"), ("A", "frosting"), ("A", "egg"),
-        ("B", "frosting"), ("B", "egg"), ("B", "flour")])
-    top, btw = nx.bipartite.sets(B)
-    pos = nx.bipartite_layout(B, top)
-    plot(B, layout=pos, vertex_label=list(B.nodes()))
-    sim1 = nx.simrank_similarity(
-        B, max_iterations=1000, importance_factor=0.8, tolerance=1e-5)
-    sim2 = nx.simrank_similarity_numpy(
-        B, max_iterations=1000, importance_factor=0.8, tolerance=1e-5)
-    print(sim1['sugar']['flour'])
-    print(sim2)
-    print(sim2[2, 5])
-    print(sim1)
-
-
-def simrank_pp_ex():
-    B = nx.Graph()
-    B.add_nodes_from(["pc", "camera", "dcamera", "tv"],
-                     bipartite=0)  # , "flower"
-    # , "Teleflora", "Orchids"
-    B.add_nodes_from(["Hp", "Beatsbuy"], bipartite=1)
-
-    B.add_edges_from([
-        ("camera", "Hp"), ("camera", "Beatsbuy"),
-        ("dcamera", "Hp"), ("dcamera", "Beatsbuy"),
-        ("pc", "Hp"),
-        ("tv", "Beatsbuy"),
-        # ("flower", "Teleflora"), ("flower", "Orchids")
-    ])
-
-    top, btw = nx.bipartite.sets(B)
-    pos = nx.bipartite_layout(B, top)
-    # plot(B, layout=pos, vertex_label=list(B.nodes()))
-    sim1 = simrank_pp_similarity_numpy(
-        B, max_iterations=1000, importance_factor=0.8, tolerance=1e-5)
-    print(sim1)
-
-
-def simrank_pp_ex2():
-    B = nx.Graph()
-    B.add_nodes_from(["pc", "camera", "dcamera"], bipartite=0)  # , "flower"
-    # , "Teleflora", "Orchids"
-    B.add_nodes_from(["Hp", "Beatsbuy"], bipartite=1)
-
-    B.add_edges_from([
-        ("camera", "Hp"), ("camera", "Beatsbuy"),
-        ("dcamera", "Hp"), ("dcamera", "Beatsbuy"),
-        ("pc", "Hp"),
-        # ("flower", "Teleflora"), ("flower", "Orchids")
-    ])
-
-    B1 = nx.Graph()
-    B1.add_nodes_from(["camera", "dcamera"], bipartite=0)  # , "flower"
-    # , "Teleflora", "Orchids"
-    B1.add_nodes_from(["Hp", "Beatsbuy"], bipartite=1)
-
-    B1.add_edges_from([
-        ("camera", "Hp"), ("camera", "Beatsbuy"),
-        ("dcamera", "Hp"), ("dcamera", "Beatsbuy"),
-    ])
-
-    B2 = nx.Graph()
-    B2.add_nodes_from(["camera", "pc"], bipartite=0)
-    B2.add_nodes_from(["Hp"], bipartite=1)
-
-    B2.add_edges_from([
-        ("camera", "Hp"),
-        ("pc", "Hp"),
-    ])
-
-    top, btw = nx.bipartite.sets(B)
-    pos = nx.bipartite_layout(B, top)
-    # plot(B, layout=pos, vertex_label=list(B.nodes()))
-    sim = nx.simrank_similarity_numpy(
-        B, max_iterations=1000, importance_factor=0.8, tolerance=1e-5)
-    # print(sim)
-
-    simB1 = simrank_pp_similarity_numpy(
-        B1, max_iterations=1000, importance_factor=0.8, tolerance=1e-5)
-    print(simB1)
-
-    simB2 = simrank_pp_similarity_numpy(
-        B2, max_iterations=1000, importance_factor=0.8, tolerance=1e-5)
-    print(simB2)
-
-
-def simrank_pp_ex3():
-    B1 = nx.Graph()
-    B1.add_nodes_from(["flower", "orchids", "teleflora"], bipartite=0)
-    B1.add_nodes_from(["Teleflora"], bipartite=1)
-    B1.add_edge("flower", "Teleflora", weight=1000)
-    B1.add_edge("orchids", "Teleflora", weight=1000)
-    B1.add_edge("teleflora", "Teleflora", weight=1000)
-
-    # B2 = nx.Graph()
-    # B2.add_nodes_from(["flower", "teleflora"], bipartite=0)
-    # B2.add_nodes_from(["Teleflora"], bipartite=1)
-    # B2.add_edge("flower", "Teleflora", weight=1000)
-    # B2.add_edge("teleflora", "Teleflora", weight=1)
-
-    B = nx.Graph()
-    # Add nodes with the node attribute "bipartite"
-    B.add_nodes_from(["A", "B"], bipartite=0)
-    B.add_nodes_from(["sugar", "frosting", "egg", "flour"], bipartite=1)
-    # Add edges only between nodes of opposite node sets
-    edges = [
-        ("A", "sugar"), ("A", "frosting"), ("A", "egg"),
-        ("B", "frosting"), ("B", "egg"), ("B", "flour")]
-    wlist = [1, 5, 1, 5, 1, 1]
-    for e, edge in enumerate(edges):
-        print(edge[0], edge[1])
-        B.add_edge(edge[0], edge[1], weight=wlist[e])
-
-    top, btw = nx.bipartite.sets(B)
-    pos = nx.bipartite_layout(B, top)
-    # plot(B, layout=pos, vertex_label=list(B.nodes()), edge_label=w_func(B))
-    sim1 = simrank_pp2_similarity_numpy(
-        B, max_iterations=1000, importance_factor=0.8, tolerance=1e-5)
-    sim3 = nx.simrank_similarity(
-        B, max_iterations=1000, importance_factor=0.8, tolerance=1e-5)
-    print(sim3['frosting']['egg'])
-    # print(sim1)
-    # print(sim3)
-    for row in sim1:
-        print(row)
-    # print(sim3[3,4])
-    # sim2 = simrank_pp2_similarity_numpy(
-    #     B2, max_iterations=1000, importance_factor=0.8, tolerance=1e-5)
-    # print(sim1)
-
-
-def evidence(G):
-    top, btw = nx.bipartite.sets(G)
     nNodes = G.number_of_nodes()
     evdi = np.zeros((nNodes, nNodes))
     nodes = np.array(list(G.nodes()))
     evd2 = np.zeros((nNodes, nNodes))
 
-    for bpart in (top, btw):
-        for u in bpart:
-            for v in bpart:
-                cn_nbr = sorted(nx.common_neighbors(G, u, v))
-                uu = np.where(nodes == u)[0][0]
-                vv = np.where(nodes == v)[0][0]
+    for u in G.nodes():
+        for v in G.nodes():
+            cn_nbr = sorted(nx.common_neighbors(G, u, v))
+            uu = np.where(nodes == u)[0][0]
+            vv = np.where(nodes == v)[0][0]
+            s = 0
+            for i in range(1, len(cn_nbr) + 1):
+                s += 1 / pow(2, i)
+            evd2[uu, vv] = s
+            evdi[uu, vv] = len(cn_nbr)
+    if opt == 1:
+        evd = 1 - np.exp(-evdi)
+        np.fill_diagonal(evd, 1.0)
+        return(evd)
+    if opt == 2:
+        np.fill_diagonal(evd2, 1.0)
+        return(evd2)
 
-                s = 0
-                for i in range(1, len(cn_nbr) + 1):
-                    s += 1 / pow(2, i)
-                evd2[uu, vv] = s
-                evdi[uu, vv] = len(cn_nbr)
 
-    np.fill_diagonal(evd2, 1.0)
-    evd = 1 - np.exp(-evdi)
-    np.fill_diagonal(evd, 1.0)
+def spread(G, opt, old=False):
 
-    return(evd2)
-
-
-def simrank_pp1_similarity_numpy(
-    G,
-    source=None,
-    target=None,
-    importance_factor=0.9,
-    max_iterations=100,
-    tolerance=1e-5,
-):
     adjacency_matrix = nx.to_numpy_array(G)
 
-    # column-normalize the ``adjacency_matrix``
-    adjacency_matrix /= adjacency_matrix.sum(axis=0)
-    evd = evidence(G)
+    if old:
+        normalized_w = adjacency_matrix / adjacency_matrix.sum(axis=1)
+        var = np.nanvar(
+            np.where(adjacency_matrix == 0, np.nan, adjacency_matrix), axis=0)
 
-    newsim = np.eye(adjacency_matrix.shape[0], dtype=np.float64)
-    # newsim = np.multiply(evd, newsim)
-    for i in range(max_iterations):
+    # vaiance for normalized weights /
+        var = np.nanvar(
+            np.where(adjacency_matrix == 0, np.nan, normalized_w), axis=0)
+        spread = np.exp(-var)
+        normalized_w = adjacency_matrix / adjacency_matrix.max(axis=1)
+        W = spread * normalized_w
+        return (W)
 
-        prevsim = np.copy(newsim)
-        newsim = importance_factor * np.matmul(
-            np.matmul(adjacency_matrix.T, prevsim), adjacency_matrix
-        )
-        newsim_evd = np.multiply(evd, newsim)
+    nNodes = G.number_of_nodes()
+    sprd = np.zeros((nNodes, nNodes))
 
-        if np.allclose(prevsim, newsim, atol=tolerance):
-            break
+    W = np.zeros((nNodes, nNodes))
+    var = np.nanvar(
+        np.where(adjacency_matrix == 0, np.nan, adjacency_matrix), axis=0)
+    sprd = np.exp(-var)
 
-    newsim = newsim_evd
-    if source is not None and target is not None:
-        return newsim[source, target]
-    if source is not None:
-        return newsim[source]
-    return newsim
+    for i, r in enumerate(adjacency_matrix):
+        normalized_w = r / r.sum()
+
+        W[i, :] = sprd * normalized_w
+
+    W = np.zeros((nNodes, nNodes))
+    for r, row in enumerate(W):
+        for c, cel in enumerate(row):
+            if opt == 'src':
+                W[r, c] = (sprd[c] * adjacency_matrix[r, c] /  # normalized vs source
+                           adjacency_matrix[r, :].sum())
+            elif opt == 'trgt':
+                W[r, c] = (sprd[c] * adjacency_matrix[r, c] /  # normalized vs target
+                           adjacency_matrix[:, c].sum())
+
+    return(W)
 
 
 def w_func(G):
@@ -821,36 +565,26 @@ def w_func(G):
     return(weights)
 
 
-def simrank_pp2_similarity_numpy(
+def simrank_pp_similarity_numpy(
     G,
     source=None,
     target=None,
     importance_factor=0.9,
     max_iterations=100,
     tolerance=1e-5,
-    evd_opt=True,
-    sprd_opt=True
+    evd_opt=2,
+    sprd_opt=False,
+
+
 ):
     adjacency_matrix = nx.to_numpy_array(G)
-    normalized_w = adjacency_matrix / adjacency_matrix.sum(axis=1)
-    var = np.nanvar(
-        np.where(adjacency_matrix == 0, np.nan, adjacency_matrix), axis=0)
-    # vaiance for normalized weights
-    # var = np.nanvar(
-    #     np.where(adjacency_matrix == 0, np.nan, normalized_w), axis=0)
-    spread = np.exp(-var)
-    # return
-    # normalized_w = adjacency_matrix / adjacency_matrix.max(axis=1)
-    # print(spread)
-    W = spread * normalized_w
-
-    # column-normalize the ``adjacency_matrix``
-    adjacency_matrix /= adjacency_matrix.sum(axis=0)
 
     if sprd_opt:
-        adjacency_matrix = W
+        adjacency_matrix = spread(G, sprd_opt)
+    else:
+        adjacency_matrix /= adjacency_matrix.sum(axis=0)
     if evd_opt:
-        evd = evidence(G)
+        evd = evidence(G, evd_opt)
 
     newsim = np.eye(adjacency_matrix.shape[0], dtype=np.float64)
     # newsim = np.multiply(evd, newsim)
@@ -860,16 +594,14 @@ def simrank_pp2_similarity_numpy(
         newsim = importance_factor * np.matmul(
             np.matmul(adjacency_matrix.T, prevsim), adjacency_matrix
         )
-        # print(newsim)
+
         if evd_opt:
-            newsim_evd = np.multiply(evd, newsim)
+            newsim = evd * newsim
         np.fill_diagonal(newsim, 1.0)
 
         if np.allclose(prevsim, newsim, atol=tolerance):
             break
 
-    if evd_opt:
-        newsim = newsim_evd
     if source is not None and target is not None:
         return newsim[source, target]
     if source is not None:
@@ -1026,7 +758,7 @@ class cyTxt:
         self.nodeColor = {
             'Part': 'red',
             'Behav': 'green',
-            'Des': 'slateblue',
+            'Des': 'blue',  # slate
             'Sim': 'cyan',
             'picName': 'white',
             'Model': 'darkviolet',
@@ -1066,10 +798,24 @@ class cyTxt:
             'VEH_UBDY': 'gray'
         }
 
+        self.nodeSize = {
+            'Part': 0.8,
+            'Behav': 0.8,
+            'Des': 1.1,
+            'Sim': 0.8,
+            'picName': 0.8,
+            'Model': 0.8,
+            'Barr': 0.8,
+            'Veh': 0.8,
+            'Pltf': 0.8,
+            'Ubdy': 0.8
+        }
+
     def style(self, G, pos, w=False):
         nodesD = G.nodes(data=True)
 
         node_color = [self.nodeColor[u[1]['label']] for u in nodesD]
+        node_size = [self.nodeSize[u[1]['label']] for u in nodesD]
         node_name = [u[1]['name'] for u in nodesD]
         node_label_pos = [self.node_label_pos[u[1]['label']] for u in nodesD]
         edge_color = [self.edge_color[G[u][v]['type']] for u, v in G.edges()]
@@ -1080,6 +826,7 @@ class cyTxt:
             if key == 'weight':
                 edge_label = [
                     '{:.2f}'.format(G[u][v][key]) if key in G[u][v] else ''
+                    # '{:d}'.format(int(G[u][v][key])) if key in G[u][v] else ''
                     for u, v in G.edges()]
                 # node_pairs= [
                 #     '{0}-{1}:'.format(nodesD[u]['name'],nodesD[v]['name']) for u, v in G.edges()]
@@ -1106,6 +853,7 @@ class cyTxt:
             "margin": 0.8,
             "edge_color": edge_color,
             "edge_label": edge_label,
+            "node_size": node_size,
             # "edge_label": ['test', 'test','test','test\_tst']
 
         }
@@ -1180,15 +928,28 @@ class cyTxt:
             CALL{{
                 with s
                 match p=(s)-[rm:SIM_DES]-(m:Des)
-                return m,rm order by rm.weight desc limit {}
+                return m,rm order by rm.w_e_value  desc limit {}
             }}
             return s,m, rm
             """
         # where m.des_type='pid'
 
+        txt_list = """
+            //embd_nrg_graph
+            match (s:Sim)
+            where s.sim_abb in {}
+            with s limit 30
+            CALL{{
+                with s
+                match p=(s)-[rm:SIM_DES]->(m:Des)
+                return m,rm order by rm.w_e_value  desc  limit {}
+            }}
+            return s,m, rm order by s.sim_name
+            """
+
         nodeColor = {
-            'Des': 'b',
-            'Sim': 'c'}
+            'Des': 'blue',
+            'Sim': 'cyan'}
 
     class sm_err:
         txt = """
@@ -1199,7 +960,7 @@ class cyTxt:
             CALL{{
                 with s
                 match p=(s)-[rm:SIM_DES]-(m:Des)
-                return m,rm order by rm.weight desc limit {}
+                return m,rm order by rm.w_e_value  desc limit {}
             }}
             return s,m, rm
             """
@@ -1217,11 +978,23 @@ class cyTxt:
             CALL{{
                 with s
                 match p=(s)-[rm:SIM_DES]-(m:Des)
-                return m,rm order by rm.weight desc limit {}
+                return m,rm order by rm.w_e_value desc limit {}
             }}
             return s,m, rm order by s.sim_name
             """
-        # return m,rm order by rm.weight desc limit {}
+        # return m,rm order by rm.w_e_value  desc limit {}
+
+        txt_list = """
+            //embd_nrg_graph
+            match (s:Sim)
+            where s.sim_abb in {}
+            CALL{{
+                with s
+                match p=(s)-[rm:SIM_DES]-(m:Des)
+                return m,rm order by rm.w_e_value desc limit {}
+            }}
+            return s,m, rm order by s.sim_name
+            """
 
     class sm_name_err:
         txt = """
@@ -1231,11 +1004,11 @@ class cyTxt:
             CALL{{
                 with s
                 match p=(s)-[rm:SIM_DES]-(m:Des)
-                return m,rm order by rm.weight desc limit {}
+                return m,rm order by rm.w_e_value  desc limit {}
             }}
             return s,m, rm order by s.sim_name
             """
-        # return m,rm order by rm.weight desc limit {}
+        # return m,rm order by rm.w_e_value  desc limit {}
 
 
 class gModels:
@@ -1322,29 +1095,7 @@ class gModels:
             'bins': 32}
 
 # if __name__ == '__main__':
-    # simrank_bipartite_ex()
-    # simrank_simple_ex()
-    # simrank_pp_ex()
-    # simrank_pp_ex2()
-    # simrank_pp_ex3()
-    # ----------------------------------------------------------------------------
-    # simRank
-    # ----------------------------------------------------------------------------
-    # simRank(4, 0.3)
-    # simRank(8, 0.6)
-    # simRank(12, 0.58)
 
-    # ----------------------------------------------------------------------------
-    # simRankpp
-    # ----------------------------------------------------------------------------
-    # pidMax = 4
-    # style = cyTxt()
-    # G = get_graph(style.sm.txt, style.nodeColor, pidMax=pidMax)
-    # # top, btw = nx.bipartite.sets(G)
-    # # print(top)
-    # sim2 = nx.simrank_similarity_numpy(G, max_iterations=1000, importance_factor=0.8, tolerance=1e-5)
-    # print(sim2)
-    # ----------------------------------------------------------------------------
     # simRank ++
     # ----------------------------------------------------------------------------
 
@@ -1371,7 +1122,6 @@ class gModels:
         # df = pd.DataFrame(data)
         # df.to_excel(f, sheet_name='part_{}'.format('simrank nW'))
     # -----------------------------------------------
-    # sim = simrank_similarity_me(C, max_iterations=1000, importance_factor=0.8, tolerance=1e-10)
     # ----------------------------------------------------------------------------
     #  weisfeiler_lehman_graph_hash
     # ----------------------------------------------------------------------------

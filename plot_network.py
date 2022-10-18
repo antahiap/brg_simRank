@@ -4,6 +4,7 @@ from neo4j import GraphDatabase
 import networkx as nx
 import sys
 import os
+import glob
 from network2tikz import plot
 import matplotlib.pyplot as plt
 # from fa2 import ForceAtlas2
@@ -11,8 +12,10 @@ import seaborn as sns
 import numpy as np
 import pandas as pd
 import plotly.express as px
+import math
 
 import graph_mining as gm
+import KG_feed_OEM_data as kg
 
 
 def plot_schema(cypherTxt, style):
@@ -96,6 +99,81 @@ def plot_bipartite(cypherTxt, style):
     plot(
         G,
         '../publication/06_KG_energyAbsorption/images/tikz/bipartite.tex',
+        **styleG, **styleAdd)  # , standalone = False)
+
+
+def plot_bipartite_rev(cypherTxt, style):
+    pidMax = 5
+    wscl = 1e9  # 10e6
+    wTag = 'P_e'  # 'IE'  #
+
+    ref = {
+        '6003': 'blue',
+        '6030': 'red',
+        '6031': 'green',
+        '6060': 'amber',
+        '6061': 'violet'
+    }
+    dist = {
+        '6003': 0.12,
+        '6030': 0.88,
+        '6031': 0.88,
+        '6060': 0.88,
+        '6061': 0.87
+    }
+    key_ref = [k for k, v in ref.items()]
+    cypherTxt = cypherTxt.format(
+        "['6003', '6031', '6060', '6030', '6061']",
+        pidMax)
+    G = gm.get_graph(
+        cypherTxt, wTag, w=wscl)
+
+    # ---------
+    # Bipartite
+    # ---------
+    nodesD = G.nodes(data=True)
+    top, btw = nx.bipartite.sets(G)
+    pos = nx.bipartite_layout(G, top, aspect_ratio=2.5, align='horizontal')
+
+    styleG = style.style(G, pos, w='weight')
+    # styleG['vertex_label'] = ['' for u in G.nodes()]
+    styleG['edge_color'] = 'gray!40'
+    styleG['margin'] = 0.6
+
+    edge_L = np.array([[u, v] for u, v in G.edges()])
+    edge_c = np.empty(edge_L.shape[0], dtype='U25')
+    edge_d = np.empty(edge_L.shape[0], dtype=float)
+
+    sims = [n[0] for n in nodesD if n[1]['name'] in ref.keys()]
+
+    for si in sims:
+        sEdge0 = G.edges([si])
+        sEdge = [[u, v] for u, v in sEdge0]
+        color = ref[nodesD[si]['name']]
+        disti = dist[nodesD[si]['name']]
+
+        edge_c[np.all(np.isin(edge_L, sEdge), axis=1)] = color
+        edge_d[np.all(np.isin(edge_L, sEdge), axis=1)] = disti
+
+    edge_color = edge_c.tolist()
+    edge_distance = edge_d.tolist()
+
+    styleG['edge_color'] = [e+'!40' for e in edge_color]
+
+    styleAdd = {
+        'canvas': (15, 6),
+        'vertex_size': 0.8,
+        'edge_label_color': 'black!80',
+        'edge_label_size': 8,
+        'node_style': '{draw=white}',
+        'keep_aspect_ratio': False,
+        'edge_label_distance': 0.15,
+        'edge_label_color': edge_color,
+        'edge_label_distance': edge_distance
+    }
+    plot(
+        G,
+        '../publication/06_KG_energyAbsorption/images/tikz/bipartite_rev.tex',
         **styleG, **styleAdd)  # , standalone = False)
 
 
@@ -298,7 +376,8 @@ def plot_spring_yaris_forceatlas(cypherTxt, style,
 
         # Log
         verbose=True)
-    pos = forceatlas2.forceatlas2_networkx_layout(G, pos=None, iterations=5000)
+    pos = forceatlas2.forceatlas2_networkx_layout(
+        G, pos=None, iterations=5000)
 
     styleG = style.style(G, pos)
     # styleG['vertex_label'] = ['' for u in G.nodes()]
@@ -992,6 +1071,376 @@ def plot_bundle_cevt(cypherTxt, style,
         **styleG, **styleAdd, standalone=False)
 
 
+def print_simrankpp_rev(cTxt, style):
+
+    pidMax = 5
+    C = 0.8
+    itr = 1000
+    tol = 1e-5,
+
+    int_rel_simName = [
+        [6030, 6031], [6003, 6030],
+        [6003, 6031], [6061, 6031],
+        [6061, 6030], [6003, 6061]
+    ]
+    top = np.unique(np.array(int_rel_simName).flatten()).tolist()
+    pairs = ['Method', 'Weight'] + \
+        ['{}-{}'.format(u, v) for u, v in int_rel_simName]
+    df = pd.DataFrame(dict.fromkeys(pairs, []))
+    df['Method'] = df['Method'].astype(str)
+    df['Weight'] = df['Weight'].astype(str)
+
+    def simrank_result(row, df, wTag,
+                       wscl, sprd, evd):
+
+        cypherTxt = cTxt.format(
+            "['6003', '6031', '6060', '6030', '6061']",
+            pidMax)
+        # wscl scaling the weight
+        G = gm.get_graph(cypherTxt, wTag, w=wscl)
+        data = gm.simrank_pp_similarity_numpy(
+            G, max_iterations=itr, evd_opt=evd, sprd_opt=sprd, importance_factor=C, tolerance=tol)
+        # -----------------------------
+        # get interesting relations
+        int_rel_id = []
+        for ri in int_rel_simName:
+            ids = []
+            ss = ri
+
+            for n in G.nodes():
+                nt = G.nodes(data=True)[n]
+                name = int(nt['name'])
+                if name in ss:
+                    ids.append(n)
+            int_rel_id.append(ids)
+        # print('==================================')
+        # print('---------------------')
+        for i, r in enumerate(int_rel_id):
+            u, v = r[0], r[1]
+            un, vn = int_rel_simName[i]
+            # print(u, v, r, top)
+            # print(un, '-', vn, '|', data[u][v])
+            df.at[row, '{}-{}'.format(un, vn)] = data[u][v]
+        df.at[row, 'Method'] = mthd
+        df.at[row, 'Weight'] = wTag
+        return(df)
+
+    # simrank
+    mthd = 's'
+    wTag = ''
+    ri = 1
+    df = simrank_result(0, df, wTag, wscl=False, sprd=False, evd=False)
+
+    mthd = 's_w'
+    tags = ['P_e']  # , 'IE.t/KE'] ,  'IE.t'
+    for wTag in tags:
+        df = simrank_result(ri, df, wTag, wscl=1, sprd=False, evd=False)
+        ri += 1
+
+    mthd = 's_w,evd'
+    tags = ['P_e']  # 'IE.t',
+    wscl = [1e9]  # 1e8,
+    for i, wTag in enumerate(tags):
+        df = simrank_result(ri, df, wTag, wscl=wscl[i], sprd=False, evd=2)
+        ri += 1
+
+    mthd = 's++'
+    tags = ['P_e']  # 'IE.t/KE']#, 'P_e', 'IE'] #'IE.t',
+    wscl = [1e9]  # 1e7, 1, 1e9, 1e8]  # 1e8,
+    for i, wTag in enumerate(tags):
+        df = simrank_result(ri, df, wTag, wscl=wscl[i], sprd='src', evd=2)
+        ri += 1
+
+    mthd = 's++_trgt'
+    tags = ['P_e']  # 'IE.t/KE']#, 'P_e', 'IE'] #'IE.t',
+    wscl = [1e9]  # 1e7, 1, 1e9, 1e8]  # 1e8,
+    for i, wTag in enumerate(tags):
+        df = simrank_result(ri, df, wTag, wscl=wscl[i], sprd='trgt', evd=2)
+        ri += 1
+
+    print(df.to_latex(index=False, float_format="%.4f"))
+    # print('')
+    # print('------------------------------')
+    # print('')
+    # print(df)
+    dfR0 = df.rank(axis=1, ascending=False)
+    print(dfR0.to_latex(index=False, float_format="%d"))
+    # print('')
+    # print('------------------------------')
+    # print('')
+
+
+def print_simRankpp_npart_rev(cTxt, style):
+
+    pidMaxList = [2, 5, 15, 28]
+    C = 0.8
+    itr = 1000
+    tol = 1e-5,
+
+    int_rel_simName = [
+        [6030, 6031], [6003, 6030],
+        [6003, 6031], [6061, 6031],
+        [6061, 6030], [6003, 6061]
+    ]
+    top = np.unique(np.array(int_rel_simName).flatten()).tolist()
+    pairs = ['No. Parts'] + \
+        ['{}-{}'.format(u, v) for u, v in int_rel_simName] + ['Range']
+    df = pd.DataFrame(dict.fromkeys(pairs, []))
+
+    def simrank_result(row, df, nPart, wTag,
+                       wscl, sprd, evd):
+
+        cypherTxt = cTxt.format(
+            "['6003', '6031', '6060', '6030', '6061']",
+            pidMax)
+        # wscl scaling the weight
+        G = gm.get_graph(cypherTxt, wTag, w=wscl)
+        data = gm.simrank_pp_similarity_numpy(
+            G, max_iterations=itr, evd_opt=evd, sprd_opt=sprd, importance_factor=C, tolerance=tol)
+        # -----------------------------
+        # get interesting relations
+        int_rel_id = []
+        for ri in int_rel_simName:
+            ids = []
+            ss = ri
+
+            for n in G.nodes():
+                nt = G.nodes(data=True)[n]
+                name = int(nt['name'])
+                if name in ss:
+                    ids.append(n)
+            int_rel_id.append(ids)
+        # print('==================================')
+        # print('---------------------')
+        for i, r in enumerate(int_rel_id):
+            u, v = r[0], r[1]
+            un, vn = int_rel_simName[i]
+            df.at[row, '{}-{}'.format(un, vn)] = data[u][v]
+        df.at[row, 'Range'] = df.iloc[row].max() - df.iloc[row].min()
+        df.at[row, 'No. Parts'] = nPart
+        return(df)
+
+    wTag = 'P_e'
+    wscl = 1e9
+    ri = 0
+    for pidMax in pidMaxList:
+        df = simrank_result(ri, df, pidMax, wTag,
+                            wscl=wscl, sprd='trgt', evd=2)
+        ri += 1
+
+    print(df.to_latex(index=False, float_format="%.4f"))
+    # print('')
+    # print('------------------------------')
+    # print('')
+    # print(df)
+    dfR0 = df.rank(axis=1, ascending=False)
+    print(dfR0.to_latex(index=False, float_format="%d"))
+    # print('')
+    # print('------------------------------')
+    # print('')
+
+
+def print_rank_IE_Pe_rev():
+    '''
+    get energy features and evaluate distance based on IE and P_e
+    '''
+
+    OEM = 'YARIS'
+    oem = oems.oems(OEM)
+    query = oem.query(oem)
+
+    nFrmt = '"CCSA_submodel_{}"'
+    lmt = 5
+
+    int_rel_simName = [
+        [6060, 6061], [6030, 6031],
+        [6003, 6060], [6003, 6061],
+        [6003, 6031], [6003, 6030],
+        [6031, 6060], [6031, 6061],
+        [6030, 6060], [6030, 6061]
+    ]
+    int_rel_simName = [
+        [6003, 6060], [6003, 6031],
+        [6003, 6030], [6061, 6031],
+        [6061, 6030], [6030, 6031],
+    ]
+    int_rel_simName = [
+        [6030, 6031], [6003, 6030],
+        [6003, 6031], [6061, 6031],
+        [6061, 6030], [6003, 6061]
+    ]
+
+    simIE = {}
+    for n0, n1 in int_rel_simName:
+        # for n1 in sims:
+        # if n0 == n1:
+        #     continue
+        sim0 = nFrmt.format(n0)
+        df0 = query.nrg_fts(sim0, lmt)
+        df0 = df0.sort_values(by=['PID'])
+
+        sim1 = nFrmt.format(n1)
+        df1 = query.nrg_fts(sim1, lmt)
+        df1 = df1.sort_values(by=['PID'])
+
+        d01_IE = (df1.IE-df0.IE)
+        MSE_IE = np.square(d01_IE).mean()
+
+        d01_Pe = (df1.IE/(df1.tn - df1.ti) -
+                  df0.IE/(df0.tn - df0.ti))
+        MSE_Pe = np.square(d01_Pe).mean()
+
+        d01_IEt = (df1.IE*(df1.tn - df1.ti) -
+                   df0.IE*(df0.tn - df0.ti))
+        MSE_IEt = np.square(d01_IEt).mean()
+
+        d01_IEtKE = (df1.IE*(df1.tn - df1.ti)/df1.KE_t -
+                     df0.IE*(df0.tn - df0.ti)/df0.KE_t)
+        MSE_IEtKE = np.square(d01_IEtKE).mean()
+
+        RMSE_IE = math.sqrt(MSE_IE)/1000
+        RMSE_Pe = math.sqrt(MSE_Pe)/1e6
+        RMSE_IEt = math.sqrt(MSE_IEt)/1e3
+        RMSE_IEtKE = math.sqrt(MSE_IEtKE)
+
+        tag = '{}-{}'.format(n0-6000, n1-6000)
+        simIE[tag] = [RMSE_Pe]  # RMSE_IE, RMSE_IEt,  RMSE_IEtKE,
+
+    # simIE = dict(simIE.items())
+
+    df = pd.DataFrame.from_dict(simIE)
+    print(df)
+    # df = df.sort_values(by=1, axis=1)
+    dfR0 = df.rank(axis=1)
+    df = pd.concat([df])
+
+    print(df.to_latex(index=False, float_format="%.1f"))
+    print(dfR0.to_latex(index=False, float_format="%d"))
+    # print(df)
+    print('')
+    print('------------------------------')
+    print('')
+
+
+def print_rank_disp_rev():
+
+    def make_diff_mtrx(sims, sims_d3plt):
+
+        simDisp = {}
+        for si, sj in sims:
+
+            dispi = sims_d3plt[str(si)]
+            dispj = sims_d3plt[str(sj)]
+
+            MSE = np.square(np.subtract(dispi, dispj)).mean()
+            RMSE = math.sqrt(MSE)
+
+            tag = '{}-{}'.format(si, sj)
+
+            # tag = '{}-{}'.format(si-6000, sj-6000)
+            simDisp[tag] = [RMSE]
+
+        return(simDisp)
+
+    OEM = 'YARIS'
+    oem = oems.oems(OEM)
+    d3plt = kg.DataD3plot('dispENVS')
+
+    int_rel_simName = [
+        [6003, 6060], [6003, 6031],
+        [6003, 6030], [6061, 6031],
+        [6061, 6030], [6030, 6031],
+    ]
+
+    int_rel_simName = [
+        ['6030', '6031'], ['6003', '6030'],
+        ['6003', '6031'], ['6060', '6031'],
+        ['6060', '6030'], ['6003', '6060']
+    ]
+
+    # int_rel_simName = [
+    #     ['0006', '0007'], ['0004', '0006'],
+    #     ['0004', '0007'], ['0005', '0006'],
+    #     ['0005', '0007'], ['0004', '0005']]
+    pairs = ['{}-{}'.format(u, v) for u, v in int_rel_simName]
+
+    sims = np.unique(np.array(int_rel_simName).flatten())
+
+    '''
+    use nodes deformation diff as the similarity measure
+    and compare it with simrank++
+    '''
+    # t_max
+    # tst.test_sim_grnd_truth_single_time()
+    sims_d3plt0 = {}
+    for i, si in enumerate(sims):
+        s = glob.glob(oem.data_path + str(si) + '*')[0]
+        sim = kg.CaeSim(OEM)
+        sim.dataYARIS(s)
+
+        disp = d3plt.read_disp(s, states={-1})
+        sims_d3plt0[sim.abb] = disp
+
+    simDisp0 = make_diff_mtrx(int_rel_simName, sims_d3plt0)
+    df0 = pd.DataFrame.from_dict(simDisp0)
+
+    dfR0 = df0.rank(axis=1)
+    df = pd.concat([df0])
+
+    '''
+    use nodes deformation diff as the similarity measure
+    and compare it with simrank++ for all the time steps
+    '''
+    # t_all
+    # tst.test_sim_grnd_truth_all_time()
+    sims_d3plt1 = {}
+    for i, si in enumerate(sims):
+        s = glob.glob(oem.data_path + str(si) + '*')[0]
+        sim.dataYARIS(s)
+        disp = d3plt.read_disp(s)
+        sims_d3plt1[sim.abb] = disp
+
+    simDisp1 = make_diff_mtrx(int_rel_simName, sims_d3plt1)
+    df1 = pd.DataFrame.from_dict(simDisp1)
+
+    dfR1 = df1.rank(axis=1)
+    df = pd.concat([df, df1])
+
+    # part_5
+    # tst.test_sim_grnd_truth_selective_part()
+    '''
+    use nodes deformation diff as the similarity measure
+    and compare it with simrank++ for last time step and
+    only 5 energetic part
+    '''
+
+    parts = [2000000,  2000001,  2000002,  2000501,  2000502]
+
+    sims_d3plt2 = {}
+    for i, si in enumerate(sims):
+        s = glob.glob(oem.data_path + str(si) + '*')[0]
+        sim = kg.CaeSim(OEM)
+        sim.dataYARIS(s)
+        disp = d3plt.read_disp(s, states={-1}, part_ids=parts)
+        sims_d3plt2[sim.abb] = disp
+
+    simDisp2 = make_diff_mtrx(int_rel_simName, sims_d3plt2)
+
+    simDisp2 = make_diff_mtrx(int_rel_simName, sims_d3plt2)
+    df2 = pd.DataFrame.from_dict(simDisp2)
+
+    dfR2 = df2.rank(axis=1)
+    df = pd.concat([df, df2])
+    dfR = pd.concat([dfR0, dfR1, dfR2])
+
+    print(df.to_latex(index=False, float_format="%.2f"))
+    print(dfR.to_latex(index=False, float_format="%d"))
+    # print(df)
+    print('')
+    print('------------------------------')
+    print('')
+
+
 def plot_simrankpp(cypherTxt, style):
 
     # ----------------------------------------
@@ -1075,10 +1524,10 @@ def plot_simrankpp(cypherTxt, style):
         'edge_label_size': 10,
         'node_style': '{draw=white}',
     }
-    # plot(
-    #     G2,
-    #     # '../publication/06_KG_energyAbsorption/images/tikz/simrankpp.tex',
-    #     **styleG, **styleAdd,  standalone=False)
+    plot(
+        G2,
+        # '../publication/06_KG_energyAbsorption/images/tikz/simrankpp.tex',
+        **styleG, **styleAdd,  standalone=False)
 
 
 def print_yaris_simrank_result(cypherTxt, name, pidMax, wscl=False, sprd=False, evd=False):
@@ -1472,6 +1921,7 @@ if __name__ == '__main__':
 # BIPARTITE
  # YARIS
     # plot_bipartite(style.sm.txt, style)  # yaris
+    # plot_bipartite_rev(style.sm.txt_list, style)  # yaris_rev
  # CEVT
     # plot_bipartite_cevt_1(style.sm_name.txt, style)  # stv03 82 sim fp3, stcr cevt 50 sim fp3, stcr fo5
     # plot_bipartite_cevt_2(style.sm_name.txt, style)  # cevt 2 simulation
@@ -1512,8 +1962,13 @@ if __name__ == '__main__':
     # plot_simrankpp_HHLL(style.sm_name_err.txt, style,
     #                     sLimit=0.0, errList=errList, wscl=10e8)
     # plt.show()
+
   # YARIS
-    plot_simrankpp(style.sm_name.txt, style)
+    # plot_simrankpp(style.sm_name.txt, style)
+    # print_simrankpp_rev(style.sm_name.txt_list, style)
+    # print_rank_IE_Pe_rev()
+    print_rank_disp_rev()
+    # print_simRankpp_npart_rev(style.sm_name.txt_list, style)
   # CEVT
     # plot_simrankpp_cevt(style.sm_name.txt, style)
     # simrank_cevt_inv_lc_rls_npid(style.sm_name_err.txt, style)
