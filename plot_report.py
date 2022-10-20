@@ -1475,6 +1475,7 @@ def plot_doe_lc_pid():
 def plot_doe_runs(runs='.*',
                   nPid=20
                   ):
+
     import seaborn as sns
     sns.set(color_codes=False)
     c_grp = 'sim_abb'
@@ -1485,10 +1486,15 @@ def plot_doe_runs(runs='.*',
     dst = '../publication/06_KG_energyAbsorption/images/plot/doe_pid_runs_{0}.svg'.format(
         runs.replace(',', '_'))
     oem = oems.oems('CEVT')
+
     df1 = oem.cypher().out_dataframe(
         ns=int(ns), nPID=int(nPid), nOrd=ords, regs=runs, regp=pids)
 
-    df1 = df1.sort_values(by=['c_grOrd'])
+    # color order for HHL
+    sims = runs.split(',')
+    df1['order'] = pd.Categorical(df1.sim, sims, ordered=True)
+    df1 = df1.sort_values(by=['order'])
+
     df1[c_grp] = df1[c_grp].astype(str)
     df1['IE'] = df1['IE'] / 1000  # kNm
     fig1 = px.scatter(
@@ -1512,7 +1518,81 @@ def plot_doe_runs(runs='.*',
     )
 
     fig1.write_image(dst)
-    fig1.show()
+    print(dst)
+    # fig1.show()
+
+
+def plot_doe_runs_HHLL(runs='.*',
+                       nPid=20
+                       ):
+
+    import seaborn as sns
+    sns.set(color_codes=False)
+    c_grp = 'sim_abb'
+    ords = 20
+    ns = 100
+    pids = ''
+
+    dst = '../publication/06_KG_energyAbsorption/submition/HHLL_{0}_{1}_{2}.pdf'
+    oem = oems.oems('CEVT')
+
+    df1 = oem.cypher().out_dataframe(
+        ns=int(ns), nPID=int(nPid), nOrd=ords, regs=runs, regp=pids)
+
+    # ORDER OF HHL
+    sims = runs.split(',')
+    sims_abb = [s.split('_')[2] for s in sims]
+    df1['order'] = pd.Categorical(df1.sim, sims, ordered=True)
+    df1 = df1.sort_values(by=['order'])
+
+    # ADD TAGS
+    tags = [
+        'H<sub>1</sub>: ',
+        'H<sub>2</sub>: ',
+        'L  : '
+    ]
+    for i, s in enumerate(sims_abb):
+        df1.loc[df1.sim_abb == s, 'sim_abb'] = tags[i] + s
+
+    # SET THE COLOR CODE
+    cList = ['#636EFA', '#00CC96', '#EF553B']
+    colors = {tags[i]+x: cList[i] for i, x in enumerate(sims_abb)}
+
+    # PLOT
+    df1[c_grp] = df1[c_grp].astype(str)
+    df1['IE'] = df1['IE'] / 1000  # kNm
+    fig1 = px.scatter(
+        df1, x="dt", y="IE", color=c_grp,
+        hover_name="PID",
+        color_discrete_map=colors,
+        labels={
+            # c_grp: "PID",
+            "dt": u"\u0394 t",
+            "ti": "t<sub>i</sub>",
+            "IE": "IE<sub>max</sub>",
+            "tn": "t<sub>n</sub>",
+            "sim_abb": 'Simulations',
+        })
+
+    fig1.update_traces(
+        marker_size=10)
+    fig1.update_layout(
+        width=400, height=500,
+        font_size=20,
+        # yaxis_range=[2, 32],
+        # xaxis_range=[2, 59]
+    )
+    fig1.update_layout(legend=dict(
+        yanchor="top",
+        y=1,
+        xanchor="right",
+        x=1.1
+    ))
+
+    dst = dst.format(sims[0], sims_abb[1], sims_abb[2])
+    fig1.write_image(dst)
+    # fig1.show()
+    # input(dst)
 
 
 def plot_doe_lc_pid_1fig():
@@ -2186,7 +2266,20 @@ if __name__ == '__main__':
     # plot_3d_fp3_stv0()
     # plot_3d_fp3_stv03()
     # plot_nrg_embd_similarity_cevt1('../publication/06_KG_energyAbsorption/images/plot/curve_sim_cevt_{}.pdf')
-    # plot_doe_runs('cm1e_stcr_354_fo5__001,cm1e_stcr_387_fo5__001,cm1e_stcr_090_fo5__001', nPid=15)  # hard to judge, IE compensade with dt with np=20
+    # hard to judge, IE compensade with dt with np=20
+    # plot_doe_runs(
+    #     'cm1e_stcr_354_fo5__001,cm1e_stcr_387_fo5__001,cm1e_stcr_090_fo5__001', nPid=15)
+
+    plot_doe_runs_HHLL(
+        'cm1e_stcr_354_fo5__001,cm1e_stcr_387_fo5__001,cm1e_stcr_017_fo5__001', nPid=20)
+    plot_doe_runs_HHLL(
+        'cm1e_stcr_004_fo5__001,cm1e_stcr_007_fo5__001,cm1e_stcr_287_fo5__001', nPid=20)
+    plot_doe_runs_HHLL(
+        'cm1e_stcr_004_fo5__001,cm1e_stcr_007_fo5__001,cm1e_stcr_354_fo5__001', nPid=20)
+    plot_doe_runs_HHLL(
+        'cm1e_stcr_354_fo5__001,cm1e_stcr_387_fo5__001,cm1e_stcr_237_fo5__001', nPid=20)
+
+
 # # YARIS
     OEM = 'YARIS'
  # mining
@@ -2195,6 +2288,6 @@ if __name__ == '__main__':
 
  # Manuscript
     # plot_nrg_embd_2d_yaris_sub()
-    plot_nrg_embd_2d_yaris_sub_rev()
+    # plot_nrg_embd_2d_yaris_sub_rev()
 
-# plt.show()
+plt.show()

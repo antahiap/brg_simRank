@@ -56,4 +56,22 @@
 - [ ] change weight manipulation to weight subtraction
 
 ## Make new result
-- [ ] IE plot with selecting only closest
+
+- [x] Pe plot with selecting only closest
+
+## update cevt result
+
+- [x] run the result
+- [x] change the method
+- [x] verify the result
+  - [x] whey there is similarities close to zero, is it 0 or sth else> tehre are smaller than 0.11 but not zero
+  - [x] why hh-ll doen't pick small HH anymore > errList is active
+  - [x] check the KDE if the smlll similarities belong to pid than sims > the errList was empty
+
+### scatter plot comparison
+
+- [x] the color code, L sim to be red
+- [x] legend order
+- [x] save four plot
+- [x] add four pic in tex
+- [ ] legend inside

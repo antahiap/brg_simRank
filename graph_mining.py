@@ -44,7 +44,7 @@ def get_graph(
         driver = GraphDatabase.driver(
             uri="bolt://localhost:3687", auth=("neo4j", "ivory123"))
 
-    # print(cypherTxt)
+    # input(cypherTxt)
     # print(driver)
     nodes, rels = neo4jReturn(cypherTxt, driver)
     G = nx.Graph()
@@ -712,7 +712,35 @@ class simrank_inv:
             print(self.simM[pair[0], pair[1]])
             print('----------------------')
 
-    def simRank_rng(self, nPID, d):
+    def simRank_rng(self, nPID, d, opt='max'):
+
+        def set_data(u, v, opt):
+
+            rowu = self.simM[u, :]
+            rowv = self.simM[v, :]
+
+            if opt == 'max':
+                valu = np.min(rowu[np.where(rowu > 0)])
+                valv = np.amin(rowv[np.where(rowv > 0)])
+            else:
+                valu = np.max(rowu[np.where(rowu < 1)])
+                valv = np.amax(rowv[np.where(rowv < 1)])
+
+            iu = np.where(rowu == valu)[0][0]
+            iv = np.where(rowv == valv)[0][0]
+
+            d['nPID'].append(nPID)
+            d['H1'].append(nodes[u]['name'].split('_')[0])
+            d['H2'].append(nodes[v]['name'].split('_')[0])
+            d['L1'].append(nodes[iu]['name'].split('_')[0])
+            d['L2'].append(nodes[iv]['name'].split('_')[0])
+            # d['H1' ].append(nodes[u]['properties']['sim_name'])
+            # d['H2'].append(nodes[v]['properties']['sim_name'])
+            # d['L1' ].append(nodes[iu]['properties']['sim_name'])
+            # d['L2'].append(nodes[iv]['properties']['sim_name'])
+            d['w:H1H2'].append(w)
+            d['w:H1L1'].append(valu)
+            d['w:H2L2'].append(valv)
 
         nodes = self.G.nodes(data=True)
         wList = []
@@ -720,34 +748,22 @@ class simrank_inv:
             u, v = s
             w = self.G[u][v]['weight']
             wList.append(w)
-        smin = max(wList)
+
+        if opt == 'max':
+            smax = max(wList)
+        else:
+            smin = min(wList)
 
         for s in self.simP:
             u, v = s
             w = self.G[u][v]['weight']
 
-            if w >= smin:
-                rowu = self.simM[u, :]
-                rowv = self.simM[v, :]
-
-                valu = np.min(rowu[np.where(rowu > 0)])
-                valv = np.amin(rowv[np.where(rowv > 0)])
-
-                iu = np.where(rowu == valu)[0][0]
-                iv = np.where(rowv == valv)[0][0]
-
-                d['nPID'].append(nPID)
-                d['H1'].append(nodes[u]['name'])
-                d['H2'].append(nodes[v]['name'])
-                d['L1'].append(nodes[iu]['name'])
-                d['L2'].append(nodes[iv]['name'])
-                # d['H1' ].append(nodes[u]['properties']['sim_name'])
-                # d['H2'].append(nodes[v]['properties']['sim_name'])
-                # d['L1' ].append(nodes[iu]['properties']['sim_name'])
-                # d['L2'].append(nodes[iv]['properties']['sim_name'])
-                d['w:H1H2'].append(w)
-                d['w:H1L1'].append(valu)
-                d['w:H2L2'].append(valv)
+            if opt == 'max':
+                if w >= smax:
+                    set_data(u, v, opt)
+            else:
+                if w <= smin:
+                    set_data(u, v, opt)
         return(d)
 
 

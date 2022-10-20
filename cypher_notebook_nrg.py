@@ -13,25 +13,25 @@ try:
 except NameError:
     raise
 
-# oem = 'Porsche'
+# # oem = 'Porsche'
 # oem = 'CEVT'
-oem = 'YARIS'
-print(oem)
-if oem == 'CEVT':
-    # KG.neo4j_bolt('7687', 'ivory')
-    # uri = "neo4j://ivory:7687"
-    uri = "bolt://ivory:7687"
-    driver = GraphDatabase.driver(uri, auth=("neo4j", "ivory123"))
-    KG.neo4j_bolt('7687', 'localhost')
+# # oem = 'YARIS'
+# print(oem)
+# if oem == 'CEVT':
+#     # KG.neo4j_bolt('7687', 'ivory')
+#     # uri = "neo4j://ivory:7687"
+#     uri = "bolt://ivory:7687"
+#     driver = GraphDatabase.driver(uri, auth=("neo4j", "ivory123"))
+#     KG.neo4j_bolt('7687', 'localhost')
 
-elif oem == 'Porsche':
-    uri = "neo4j://localhost:3687"
-    driver = GraphDatabase.driver(uri, auth=("neo4j", "ivory123"))
-    KG.neo4j_bolt('3687', 'ivory')
-elif oem == 'YARIS':
-    uri = "neo4j://localhost:3687"
-    driver = GraphDatabase.driver(uri, auth=("neo4j", "ivory123"))
-    KG.neo4j_bolt('3687', 'localhost')
+# elif oem == 'Porsche':
+#     uri = "neo4j://localhost:3687"
+#     driver = GraphDatabase.driver(uri, auth=("neo4j", "ivory123"))
+#     KG.neo4j_bolt('3687', 'ivory')
+# elif oem == 'YARIS':
+#     uri = "neo4j://localhost:3687"
+#     driver = GraphDatabase.driver(uri, auth=("neo4j", "ivory123"))
+#     KG.neo4j_bolt('3687', 'localhost')
 
 
 def nrg_cypher(list, func, opr='=~'):

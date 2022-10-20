@@ -1076,7 +1076,10 @@ def print_simrankpp_rev(cTxt, style):
     pidMax = 5
     C = 0.8
     itr = 1000
-    tol = 1e-5,
+    tol = 1e-5
+
+    oem.backend_server()
+    driver = oem.driver
 
     int_rel_simName = [
         [6030, 6031], [6003, 6030],
@@ -1097,7 +1100,8 @@ def print_simrankpp_rev(cTxt, style):
             "['6003', '6031', '6060', '6030', '6061']",
             pidMax)
         # wscl scaling the weight
-        G = gm.get_graph(cypherTxt, wTag, w=wscl)
+        G = gm.get_graph(cypherTxt, wTag, w=wscl, driver=driver)
+
         data = gm.simrank_pp_similarity_numpy(
             G, max_iterations=itr, evd_opt=evd, sprd_opt=sprd, importance_factor=C, tolerance=tol)
         # -----------------------------
@@ -1165,9 +1169,6 @@ def print_simrankpp_rev(cTxt, style):
     # print(df)
     dfR0 = df.rank(axis=1, ascending=False)
     print(dfR0.to_latex(index=False, float_format="%d"))
-    # print('')
-    # print('------------------------------')
-    # print('')
 
 
 def print_simRankpp_npart_rev(cTxt, style):
@@ -1235,9 +1236,6 @@ def print_simRankpp_npart_rev(cTxt, style):
     # print(df)
     dfR0 = df.rank(axis=1, ascending=False)
     print(dfR0.to_latex(index=False, float_format="%d"))
-    # print('')
-    # print('------------------------------')
-    # print('')
 
 
 def print_rank_IE_Pe_rev():
@@ -1743,15 +1741,20 @@ def plot_simrankpp_single(cypherTxt, style,
 def plot_simrankpp_cevt_single(cypherTxt, style,
                                pidMax=20,
                                sLimit=0,
-                               evd=True,
-                               sprd=True,
+                               evd=2,
+                               sprd='trgt',
                                # wscl=10e5,  # IE
                                wscl=10e4,  # P
-                               rls='stcr',
-                               lc='fp3',
+                               rls='',
+                               lc='',
                                errList=[],
-                               wc=0.9
+                               wc=0.9,
+                               C=0.95,
+                               wTag='P_e'
                                ):
+
+    oem.backend_server()
+    driver = oem.driver
 
     MEDIUM_SIZE = 12
     plt.rc('axes', labelsize=MEDIUM_SIZE)  # fontsize of the x and y labels
@@ -1760,15 +1763,18 @@ def plot_simrankpp_cevt_single(cypherTxt, style,
     # --------------------------------
 
     sims = '.*{}_.*{}.*'.format(rls, lc)
-    name = 'simrank_cevt_{}_{}_{}_wPe4_single.pdf'.format(lc, rls, pidMax)
-    dst = '../publication/06_KG_energyAbsorption/images/plot/{}'.format(name)
+    name = 'simrank_cevt_{}_{}_{}_wPe4_single_rev.pdf'.format(lc, rls, pidMax)
+    if not errList == []:
+        name = 'err_' + name
+    dst = '../publication/06_KG_energyAbsorption/submition/{}'.format(name)
 
     cypherTxt = cypherTxt.format(sims, '", "'.join(errList), pidMax)
     G = gm.get_graph(
-        cypherTxt, style.nodeColor, w=wscl)
+        cypherTxt, wTag,  w=wscl, driver=driver)
 
     G, simsim, simMatrix, top = gm.simRankpp(
-        G, pidMax, sLimit, wscl=wscl, sprd=True, evd=True)
+        G, pidMax, sLimit, wscl=wscl, sprd=sprd, evd=evd,
+        importance_factor=C)
 
     inv = gm.simrank_inv(simMatrix, G, top, simsim)
     df = pd.DataFrame(data=inv.density())
@@ -1793,7 +1799,8 @@ def plot_simrankpp_cevt_single(cypherTxt, style,
         df.score, kde=True, hist=False, ax=ax2,
     )
     ax2.set_ylabel('')
-    xticks = [0, 0.1, 0.2, 0.3]
+    # xticks = [0, 0.1, 0.2, 0.3]
+    xticks = [0, 0.1, 0.2, 0.4]
     ax2.set(xticks=xticks)
     ax2.get_yaxis().set_visible(False)
     plt.subplots_adjust(left=0.17, right=0.87, top=0.95, bottom=0.18)
@@ -1836,14 +1843,18 @@ def simrank_cevt_inv_lc_rls_npid(cypherTxt, style):
 
 def plot_simrankpp_cevt_cnvrg(cypherTxt0, style,
                               sLimit=0,
-                              evd=True,
-                              sprd=True,
+                              evd=2,
+                              sprd='trgt',
+                              wTag='P_e',
+                              C=.95,
                               # wscl=10e5,  # IE
                               wscl=10e4,  # P
-                              rls='stcr',
+                              rls='trgt',
                               lc='fp3',
-                              errList=[],
-                              wc=0.9):
+                              errList=[]):
+
+    oem.backend_server()
+    driver = oem.driver
 
     sims = '.*{}_.*{}.*'.format(rls, lc)
     # name = 'simrank_cevt_cnvrg_{}_{}_{}_wPe4_.pdf'.format(lc, rls)
@@ -1853,13 +1864,14 @@ def plot_simrankpp_cevt_cnvrg(cypherTxt0, style,
         'nPID': [], 'H1': [], 'H2': [],
         'L1': [], 'L2': [], 'w:H1H2': [], 'w:H1L1': [], 'w:H2L2': []}
 
-    for pidMax in range(2, 21, 1):
+    for pidMax in range(2, 21, 2):
         cypherTxt = cypherTxt0.format(sims, '", "'.join(errList), pidMax)
         G = gm.get_graph(
-            cypherTxt, style.nodeColor, w=wscl)
+            cypherTxt, wTag, w=wscl, driver=driver)
 
         G, simsim, simMatrix, top = gm.simRankpp(
-            G, pidMax, sLimit, wscl=wscl, sprd=sprd, evd=evd)
+            G, pidMax, sLimit, wscl=wscl, sprd=sprd, evd=evd,
+            importance_factor=C)
 
         if not simsim is None:
             inv = gm.simrank_inv(simMatrix, G, top, simsim)
@@ -1910,8 +1922,8 @@ def plot_simrankpp_HHLL(cypherTxt0, style,
 
 if __name__ == '__main__':
 
-    driver = GraphDatabase.driver(
-        uri="bolt://localhost:3687", auth=("neo4j", "ivory123"))
+    # driver = GraphDatabase.driver(
+    #     uri="bolt://localhost:3687", auth=("neo4j", "ivory123"))
 
     style = gm.cyTxt()
 
@@ -1964,22 +1976,31 @@ if __name__ == '__main__':
     # plt.show()
 
   # YARIS
+    oem = oems.oems('YARIS')
+
     # plot_simrankpp(style.sm_name.txt, style)
     # print_simrankpp_rev(style.sm_name.txt_list, style)
     # print_rank_IE_Pe_rev()
-    print_rank_disp_rev()
+    # print_rank_disp_rev()
     # print_simRankpp_npart_rev(style.sm_name.txt_list, style)
   # CEVT
     # plot_simrankpp_cevt(style.sm_name.txt, style)
     # simrank_cevt_inv_lc_rls_npid(style.sm_name_err.txt, style)
     # -------------------------------------------------
     oem = oems.oems('CEVT')
+
     rls, lc = 'stcr', 'fo5'
     errList = oem.err['release'][rls][lc]['errList']
-    # table of convergence
-    # plot_simrankpp_cevt_cnvrg(style.sm_name_err.txt, style, rls=rls, lc=lc, sLimit=0.0, errList=errList)
-    # KDE sample
-    # plot_simrankpp_cevt_single(style.sm_name_err.txt, style, pidMax=15, rls=rls, lc=lc)
+    # ---------------
+    # TABLE OF CONVERGENCE
+    # ---------------
+    plot_simrankpp_cevt_cnvrg(
+        style.sm_name_err.txt, style, rls=rls, lc=lc, sLimit=0.0, C=0.95, wTag='P_e', errList=errList)
+    # ---------------
+    # KDE SAMPLE
+    # ---------------
+    # plot_simrankpp_cevt_single(
+    #     style.sm_name_err.txt, style, pidMax=15, rls=rls, lc=lc, C=0.95, wTag='P_e', errList=errList)
     # plt.show()
 
   # off the method
