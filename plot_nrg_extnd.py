@@ -169,7 +169,11 @@ def plt_rank_Pe():
     fig = px.scatter(sim_rIE, x='tL_u', y='tR_u',
                      color='lc pair',
                      color_discrete_map=ref1,
-                     labels={"lc pair": ""},
+                     labels={
+                         "lc pair": "",
+                         'tL_u': 'T<sub>2</sub> LHS [mm]',
+                         'tR_u': 'T<sub>2</sub> RHS [mm]',
+                     },
                      width=400, height=400)
     fig.update_traces(
         marker_size=7,
@@ -196,5 +200,5 @@ def plt_rank_Pe():
 if __name__ == '__main__':
 
     # plt_dataset()
-    plt_simrankpp()
-    # plt_rank_Pe()
+    # plt_simrankpp()
+    plt_rank_Pe()

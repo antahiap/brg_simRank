@@ -1575,12 +1575,12 @@ def plot_doe_runs_HHLL(runs='.*',
         })
 
     fig1.update_traces(
-        marker_size=10)
+        marker_size=10,
+    )
     fig1.update_layout(
         width=400, height=500,
         font_size=20,
-        # yaxis_range=[2, 32],
-        # xaxis_range=[2, 59]
+        # yaxis_range=[2, 22],
     )
     fig1.update_layout(legend=dict(
         yanchor="top",
@@ -1590,8 +1590,8 @@ def plot_doe_runs_HHLL(runs='.*',
     ))
 
     dst = dst.format(sims[0], sims_abb[1], sims_abb[2])
-    fig1.write_image(dst)
-    # fig1.show()
+    # fig1.write_image(dst)
+    fig1.show()
     # input(dst)
 
 
@@ -2270,14 +2270,17 @@ if __name__ == '__main__':
     # plot_doe_runs(
     #     'cm1e_stcr_354_fo5__001,cm1e_stcr_387_fo5__001,cm1e_stcr_090_fo5__001', nPid=15)
 
+    # on with the yaxis_range
     plot_doe_runs_HHLL(
         'cm1e_stcr_354_fo5__001,cm1e_stcr_387_fo5__001,cm1e_stcr_017_fo5__001', nPid=20)
     plot_doe_runs_HHLL(
         'cm1e_stcr_004_fo5__001,cm1e_stcr_007_fo5__001,cm1e_stcr_287_fo5__001', nPid=20)
     plot_doe_runs_HHLL(
         'cm1e_stcr_004_fo5__001,cm1e_stcr_007_fo5__001,cm1e_stcr_354_fo5__001', nPid=20)
-    plot_doe_runs_HHLL(
-        'cm1e_stcr_354_fo5__001,cm1e_stcr_387_fo5__001,cm1e_stcr_237_fo5__001', nPid=20)
+
+    # off with the yaxis_range
+    # plot_doe_runs_HHLL(
+    # 'cm1e_stcr_354_fo5__001,cm1e_stcr_387_fo5__001,cm1e_stcr_237_fo5__001', nPid = 20)
 
 
 # # YARIS
@@ -2290,4 +2293,4 @@ if __name__ == '__main__':
     # plot_nrg_embd_2d_yaris_sub()
     # plot_nrg_embd_2d_yaris_sub_rev()
 
-plt.show()
+# plt.show()
