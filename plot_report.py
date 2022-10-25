@@ -2270,17 +2270,24 @@ if __name__ == '__main__':
     # plot_doe_runs(
     #     'cm1e_stcr_354_fo5__001,cm1e_stcr_387_fo5__001,cm1e_stcr_090_fo5__001', nPid=15)
 
-    # on with the yaxis_range
-    plot_doe_runs_HHLL(
-        'cm1e_stcr_354_fo5__001,cm1e_stcr_387_fo5__001,cm1e_stcr_017_fo5__001', nPid=20)
-    plot_doe_runs_HHLL(
-        'cm1e_stcr_004_fo5__001,cm1e_stcr_007_fo5__001,cm1e_stcr_287_fo5__001', nPid=20)
-    plot_doe_runs_HHLL(
-        'cm1e_stcr_004_fo5__001,cm1e_stcr_007_fo5__001,cm1e_stcr_354_fo5__001', nPid=20)
+#---------------------------------------------------------------------------
+    ### REVISION
 
-    # off with the yaxis_range
+    ## on with the yaxis_range
+    
+    # plot_doe_runs_HHLL(
+    #     'cm1e_stcr_354_fo5__001,cm1e_stcr_387_fo5__001,cm1e_stcr_017_fo5__001', nPid=20)
+    # plot_doe_runs_HHLL(
+    #     'cm1e_stcr_004_fo5__001,cm1e_stcr_007_fo5__001,cm1e_stcr_287_fo5__001', nPid=20)
+    # plot_doe_runs_HHLL(
+    #     'cm1e_stcr_004_fo5__001,cm1e_stcr_007_fo5__001,cm1e_stcr_354_fo5__001', nPid=20)
+
+
+    ## off with the yaxis_range
+
     # plot_doe_runs_HHLL(
     # 'cm1e_stcr_354_fo5__001,cm1e_stcr_387_fo5__001,cm1e_stcr_237_fo5__001', nPid = 20)
+#---------------------------------------------------------------------------
 
 
 # # YARIS

@@ -1805,7 +1805,82 @@ def plot_simrankpp_cevt_single(cypherTxt, style,
     ax2.get_yaxis().set_visible(False)
     plt.subplots_adjust(left=0.17, right=0.87, top=0.95, bottom=0.18)
 
-    # fig.savefig(dst)
+    print(dst)
+    fig.savefig(dst)
+
+
+def plot_simrankpp_cevt_single_displot(cypherTxt, style,
+                                       pidMax=20,
+                                       sLimit=0,
+                                       evd=2,
+                                       sprd='trgt',
+                                       # wscl=10e5,  # IE
+                                       wscl=10e4,  # P
+                                       rls='',
+                                       lc='',
+                                       errList=[],
+                                       wc=0.9,
+                                       C=0.95,
+                                       wTag='P_e'
+                                       ):
+
+    oem.backend_server()
+    driver = oem.driver
+
+    MEDIUM_SIZE = 18
+    plt.rc('axes', labelsize=MEDIUM_SIZE)  # fontsize of the x and y labels
+    plt.rc('xtick', labelsize=MEDIUM_SIZE)  # fontsize of the tick labels
+    plt.rc('ytick', labelsize=MEDIUM_SIZE)  # fontsize of the tick labels
+    # --------------------------------
+
+    sims = '.*{}_.*{}_.*'.format(rls, lc)
+    name = 'simrank_cevt_{}_{}_{}_wPe4_single_rev.pdf'.format(lc, rls, pidMax)
+    if not errList == []:
+        name = 'err_' + name
+    dst = '../publication/06_KG_energyAbsorption/submition/{}'.format(name)
+
+    cypherTxt = cypherTxt.format(sims, '", "'.join(errList), pidMax)
+    G = gm.get_graph(
+        cypherTxt, wTag,  w=wscl, driver=driver)
+
+    G, simsim, simMatrix, top = gm.simRankpp(
+        G, pidMax, sLimit, wscl=wscl, sprd=sprd, evd=evd,
+        importance_factor=C)
+
+    inv = gm.simrank_inv(simMatrix, G, top, simsim)
+    df = pd.DataFrame(data=inv.density())
+
+    # -----------------------
+    # matplotlib density plot
+    # -----------------------
+    d = .2
+    x_max = max(df.score)
+    x_min = float(str(min(df.score))[0:4])
+    while x_max - x_min < d:
+        d /= 2
+
+    custom_params = {"axes.spines.right": False, "axes.spines.top": False}
+    sns.set_theme(rc=custom_params)
+    # sns.axes_style()
+    sns.set_style("white")
+    ax = sns.displot(
+        df.score, kde=True,
+        height=2, aspect=4 / 3,
+        binwidth=d/15
+        # palette="pastel"
+    )
+    ax.set(
+        xlabel='SIM_SIM score',
+        ylabel='Count'
+    )
+
+    ax.ax.set_xticks(np.arange(x_min, x_max, d))
+    plt.subplots_adjust(left=0.3, right=0.97, top=0.95, bottom=0.3)
+
+    print(dst)
+    # plt.savefig(dst)
+    # plt.show()
+    # input('')
 
 
 def simrank_cevt_inv_lc_rls_npid(cypherTxt, style):
@@ -1856,7 +1931,7 @@ def plot_simrankpp_cevt_cnvrg(cypherTxt0, style,
     oem.backend_server()
     driver = oem.driver
 
-    sims = '.*{}_.*{}.*'.format(rls, lc)
+    sims = '.*{}_.*{}_.*'.format(rls, lc)
     # name = 'simrank_cevt_cnvrg_{}_{}_{}_wPe4_.pdf'.format(lc, rls)
     # dst = '../publication/06_KG_energyAbsorption/images/plot/{}'.format(name)
 
@@ -1864,7 +1939,7 @@ def plot_simrankpp_cevt_cnvrg(cypherTxt0, style,
         'nPID': [], 'H1': [], 'H2': [],
         'L1': [], 'L2': [], 'w:H1H2': [], 'w:H1L1': [], 'w:H2L2': []}
 
-    for pidMax in range(2, 21, 2):
+    for pidMax in range(20, 21, 2):
         cypherTxt = cypherTxt0.format(sims, '", "'.join(errList), pidMax)
         G = gm.get_graph(
             cypherTxt, wTag, w=wscl, driver=driver)
@@ -1875,7 +1950,7 @@ def plot_simrankpp_cevt_cnvrg(cypherTxt0, style,
 
         if not simsim is None:
             inv = gm.simrank_inv(simMatrix, G, top, simsim)
-            d = inv.simRank_rng(pidMax, d)
+            d = inv.simRank_rng(pidMax, d, opt='max')
         else:
             print('notbgraph', pidMax)
 
@@ -1994,13 +2069,27 @@ if __name__ == '__main__':
     # ---------------
     # TABLE OF CONVERGENCE
     # ---------------
-    plot_simrankpp_cevt_cnvrg(
-        style.sm_name_err.txt, style, rls=rls, lc=lc, sLimit=0.0, C=0.95, wTag='P_e', errList=errList)
+    # rls, lc = 'stcr', 'fod'
+    # errList = oem.err['release'][rls][lc]['errList']
+    # plot_simrankpp_cevt_cnvrg(
+    #     style.sm_name_err.txt, style, rls=rls, lc=lc, sLimit=0.0, C=0.95, wTag='P_e', errList=errList)
+    # plot_simrankpp_cevt_single_displot(
+    #     style.sm_name_err.txt, style, pidMax=20, rls=rls, lc=lc, C=0.95, wTag='P_e', errList=errList)
+    # plt.show()
+
     # ---------------
     # KDE SAMPLE
     # ---------------
     # plot_simrankpp_cevt_single(
     #     style.sm_name_err.txt, style, pidMax=15, rls=rls, lc=lc, C=0.95, wTag='P_e', errList=errList)
+
+    # APPENDIX
+    for lci in ['fo5', 'fp3', 'fod']:
+        for rlsi in ['stcr', 'stv0', 'stv03', 'm1']:
+            errList = oem.err['release'][rlsi][lci]['errList']
+            plot_simrankpp_cevt_single_displot(
+                style.sm_name_err.txt, style, pidMax=20, rls=rlsi, lc=lci, C=0.95, wTag='P_e', errList=errList)
+
     # plt.show()
 
   # off the method
