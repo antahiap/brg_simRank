@@ -14,9 +14,6 @@ import plotly.express as px
 from matplotlib.ticker import StrMethodFormatter
 import tikzplotlib as tikz
 
-sys.path.append(os.path.abspath('../'))
-sys.path.append(os.path.abspath('../note_scripts/'))
-
 
 def plot_nrg_embd_similarity_PAG2(dst=''):
 
@@ -1051,10 +1048,10 @@ def plot_nrg_embd_2d_yaris_sub_rev():
     norm_opt = []
 
     simLists = [
+        ['CCSA_submodel_6031', 'CCSA_submodel_6061'],
         ['CCSA_submodel_6003'],
         ['CCSA_submodel_6003', 'CCSA_submodel_6030'],
         ['CCSA_submodel_6030', 'CCSA_submodel_6031'],
-        ['CCSA_submodel_6030', 'CCSA_submodel_6060'],
         ['CCSA_submodel_6003', 'CCSA_submodel_6030',
             'CCSA_submodel_6031', 'CCSA_submodel_6060'],
         # ['CCSA_submodel_0005', 'CCSA_submodel_0006'],
@@ -1062,20 +1059,20 @@ def plot_nrg_embd_2d_yaris_sub_rev():
 
     ]
     dsts = [
+        '../publication/06_KG_energyAbsorption/submition/submodel_600gp.pdf',
         '../publication/06_KG_energyAbsorption/submition/submodel_6003.svg',
         '../publication/06_KG_energyAbsorption/submition/submodel_600br.pdf',
         '../publication/06_KG_energyAbsorption/submition/submodel_600rg.pdf',
-        '../publication/06_KG_energyAbsorption/submition/submodel_600ry.pdf',
         '../publication/06_KG_energyAbsorption/submition/submodel_6brgy.pdf',
         # '../publication/06_KG_energyAbsorption/submition/submodel_00056.pdf',
         # '../publication/06_KG_energyAbsorption/submition/submodel_000456.pdf'
     ]
     cs = [
+        ['lime', '#9A0eea'],
         ['b'],
         ['b', 'r'],
         # ['b', 'lime'],
         ['r', 'lime'],
-        ['r', 'y'],
         ['b', 'r', 'lime', 'y'],
     ]
     SMALL_SIZE = 8
@@ -1117,6 +1114,7 @@ def plot_nrg_embd_2d_yaris_sub_rev():
         # plt.gca().xaxis.set_major_formatter(StrMethodFormatter('{x:,.2f}'))
 
         fig.savefig(dst)
+        break
     plt.show()
     # break
     # return()
@@ -2222,6 +2220,8 @@ if __name__ == '__main__':
     global OEM
 # PAG
     OEM = 'PAG'
+    # oem = oems.oems(OEM)
+    # oemQ = oem.query(oem)
  # mining
     # plot_ti_selection()
     # plot_ti_selection_sum()
@@ -2235,6 +2235,8 @@ if __name__ == '__main__':
 
 # CEVT
     OEM = 'CEVT'
+    # oem = oems.oems(OEM)
+    # oemQ = oem.query(oem)
 
  # mining
     # plot_CEVT().dna()#
@@ -2270,11 +2272,11 @@ if __name__ == '__main__':
     # plot_doe_runs(
     #     'cm1e_stcr_354_fo5__001,cm1e_stcr_387_fo5__001,cm1e_stcr_090_fo5__001', nPid=15)
 
-#---------------------------------------------------------------------------
-    ### REVISION
+# ---------------------------------------------------------------------------
+    # REVISION
 
-    ## on with the yaxis_range
-    
+    # on with the yaxis_range
+
     # plot_doe_runs_HHLL(
     #     'cm1e_stcr_354_fo5__001,cm1e_stcr_387_fo5__001,cm1e_stcr_017_fo5__001', nPid=20)
     # plot_doe_runs_HHLL(
@@ -2282,22 +2284,23 @@ if __name__ == '__main__':
     # plot_doe_runs_HHLL(
     #     'cm1e_stcr_004_fo5__001,cm1e_stcr_007_fo5__001,cm1e_stcr_354_fo5__001', nPid=20)
 
-
-    ## off with the yaxis_range
+    # off with the yaxis_range
 
     # plot_doe_runs_HHLL(
     # 'cm1e_stcr_354_fo5__001,cm1e_stcr_387_fo5__001,cm1e_stcr_237_fo5__001', nPid = 20)
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 
 
 # # YARIS
     OEM = 'YARIS'
+    oem = oems.oems(OEM)
+    oemQ = oem.query(oem)
  # mining
     # plot_nrg_embd_2d_yaris_sub_debug_tn()
     # plot_nrg_embd_2d_yaris_sub_9part()
 
  # Manuscript
     # plot_nrg_embd_2d_yaris_sub()
-    # plot_nrg_embd_2d_yaris_sub_rev()
+    plot_nrg_embd_2d_yaris_sub_rev()
 
 # plt.show()

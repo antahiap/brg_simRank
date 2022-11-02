@@ -74,4 +74,9 @@
 - [x] legend order
 - [x] save four plot
 - [x] add four pic in tex
-- [ ] legend inside
+- [x] legend inside
+
+- [x] fix the bolt for plot_report.py
+- [x] section 6.2, 4 pid -> components
+- [ ] split the paper
+- [ ] cite the conf paper modeling
