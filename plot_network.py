@@ -693,9 +693,9 @@ def plot_spring_cevt_fd_w(cypherTxt, style,
         plt.figure(3, figsize=(5, 5))
         nx.draw(G, **styleGM, with_labels=False)
 
-        plt.savefig(
-            '../publication/06_KG_energyAbsorption/submission/{}.pdf'.format(filename))
-        plt.show()
+        # plt.savefig(
+        #     '../publication/06_KG_energyAbsorption/submission/{}_newName.pdf'.format(filename))
+        # plt.show()
 
         # if ri < 10:
         #     plot(
