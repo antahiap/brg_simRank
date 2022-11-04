@@ -7,7 +7,7 @@ import os
 import glob
 from network2tikz import plot
 import matplotlib.pyplot as plt
-# from fa2 import ForceAtlas2
+from fa2 import ForceAtlas2
 import seaborn as sns
 import numpy as np
 import pandas as pd
@@ -188,7 +188,7 @@ def plot_bipartite_cevt_1(cypherTxt, style):
     while not con:
         cypherTxt = cypherTxt.format(sTxt, pidMax)
         G = gm.get_graph(
-            cypherTxt, style.nodeColor)
+            cypherTxt, '', driver=driver)
         con = nx.is_connected(G)
         print(con, pidMax)
         pidMax += 1
@@ -211,6 +211,7 @@ def plot_bipartite_cevt_1(cypherTxt, style):
     styleG['vertex_label'] = ['' for u in G.nodes()]
     styleG['edge_color'] = 'gray!70'
     styleG['margin'] = 0.3
+    styleG['node_size'] = [0.4 for u in G.nodes()]
     styleAdd = {
         'canvas': (35, 17),
         # 'canvas': (12, 32),
@@ -223,8 +224,8 @@ def plot_bipartite_cevt_1(cypherTxt, style):
     # plt.show()
     plot(
         G,
-        '../publication/06_KG_energyAbsorption/images/plot/{}.pdf'.format(
-            filename),
+        # '../publication/06_KG_energyAbsorption/images/plot/{}.pdf'.format(
+        #     filename),
         **styleG, **styleAdd, standalone=False)
 
 
@@ -437,11 +438,11 @@ def plot_spring_cevt_fd_w2(cypherTxt, style,
                            ):
     filename0 = 'spring_layout_cevt_FA2_{}_{}'.format(rls, lc)
 
-    oem = oems.oems('CEVT')
     errList = '", "'.join(oem.err['release'][rls][lc]['errList'])
 
     cypherTxt = cypherTxt.format('.*{}.*{}.*'.format(rls, lc), errList, pidMax)
-    G = gm.get_graph(cypherTxt, style.nodeColor, w=wscl)
+    G = gm.get_graph(cypherTxt, 'P_e', w=wscl,
+                     driver=driver)  # , style.nodeColor
 
     figTex = '''
     \\begin{{subfigure}}[b]{{0.16\\textwidth}}
@@ -519,11 +520,11 @@ def plot_spring_cevt_fd_w2(cypherTxt, style,
         }
         # nx.draw(G, with_labels=True, pos=pos)
         # plt.show()
-        print(filename)
+        # print(filename)
         plot(
             G,
-            '../publication/06_KG_energyAbsorption/images/plot/{}.pdf'.format(
-                filename),
+            # '../publication/06_KG_energyAbsorption/images/plot/{}.pdf'.format(
+            #     filename),
             **styleG, **styleAdd, standalone=False)
     # -------------------------------------------------------------
         for n in out_list:
@@ -541,98 +542,11 @@ def plot_spring_cevt_fd_w(cypherTxt, style,
                           lc='fo5',
                           wscl=False
                           ):
-    filename0 = 'spring_layout_cevt_FA2_dMean_{}_{}'.format(rls, lc)
-    # filename0 = 'spring_layout_cevt_FR_dMean_{}_{}'.format(rls, lc)
+    def style_G():
 
-    oem = oems.oems('CEVT')
-    errList = '", "'.join(oem.err['release'][rls][lc]['errList'])
-    print(errList)
-    cypherTxt = cypherTxt.format('.*{}.*{}.*'.format(rls, lc), errList, pidMax)
-    print(cypherTxt)
-    G = gm.get_graph(cypherTxt, style.nodeColor, w=wscl)
-
-    figTex = '''
-    \\begin{{subfigure}}[b]{{0.12\\textwidth}}
-        \centering
-        \includegraphics[width=\\textwidth]{{images/plot/{}.pdf}}
-        \caption{{{}}}
-        \label{{{}}}
-    \end{{subfigure}}%
-    \hfill'''
-    outTex = ''
-    wi = 1
-    sr = 2
-    itr = '2'
-    flt = 0.8
-
-    forceatlas2 = ForceAtlas2(
-        # Behavior alternatives
-        outboundAttractionDistribution=False,  # Dissuade hubs
-        linLogMode=False,  # NOT IMPLEMENTED
-        adjustSizes=False,  # Prevent overlap (NOT IMPLEMENTED)
-        edgeWeightInfluence=wi,
-        # Performance
-        jitterTolerance=1.0,  # Tolerance
-        barnesHutOptimize=True,
-        barnesHutTheta=1.2,
-        multiThreaded=False,  # NOT IMPLEMENTED
-        # Tuning
-        scalingRatio=sr,
-        strongGravityMode=False,
-        # gravity=1.0,
-        # Log
-        verbose=True)
-    pos = forceatlas2.forceatlas2_networkx_layout(
-        G, pos=None, iterations=10000)
-    # pos = nx.spring_layout(G, weight='weight')  # FR
-
-    for ri in range(0, 10):
-        fi = flt
-        print('---------------------------------------------------------')
-        # filename = '{}_flt{}n{}_w{}_sr{}_itr{}'.format(filename0, fi, ri, wi, sr, itr)
-        filename = '{}_flt{}n{}_itr{}'.format(filename0, fi, ri, itr)
-
-        # pos = nx.shell_layout(G)
-
-        df = pd.DataFrame()
-        posMean = np.mean(np.asarray(list(pos.values())), axis=0)
-        print(posMean)
-
-        for n in G.nodes():
-            nPos = np.asarray(pos[n])
-            dist = np.linalg.norm(nPos - posMean)
-            dfi = pd.DataFrame(np.array([[n, dist]]), columns=['n', 'dist'])
-            df = df.append(dfi)
-
-        df = df.sort_values(by=['dist'])
-        dist_max = df.max()['dist']
-        G2 = G
-
-        print('Dist of nodes:')
-        print(df)
-        print('---------------------------')
-
-        filtLimit = dist_max * fi
-        dfilt = df[df['dist'] > filtLimit]
-        print(df)
-
-        print('low limit:', filtLimit)
-        print('High dist edges:')
-        print(dfilt)
-        print('---------------------------')
-
-        rNodes = [int(dfilt.n.tolist()[i]) for i in range(len(dfilt))]
-        print(rNodes)
-        # ------------------------------------------------------
         styleG = style.style(G, pos)
         styleG['vertex_label'] = ['' for u in G.nodes()]
         GNodes = G.nodes(data=True)
-        pair_out = []
-        for p in rNodes:
-            pair = list(list(G.edges(p))[0])
-            pair.remove(p)
-            if not pair[0] in pair_out:
-                pair_out.append(pair[0])
 
         vsize = [0.2 for u in G.nodes()]
         styleG['edge_color'] = 'gray!40'
@@ -651,19 +565,145 @@ def plot_spring_cevt_fd_w(cypherTxt, style,
                 styleG['vertex_label'][i] = ''
         styleAdd = {
             'canvas': (10, 10),
-            'vertex_size': vsize,
+            'node_size': vsize,
             'edge_label_color': 'black!60',
             'node_style': '{draw=none}',
             'keep_aspect_ratio': False,
         }
 
-        # nx.draw(G, with_labels=True, pos=pos)
-        # plt.show()
-        if ri < 10:
-            plot(
-                G,
-                # '../publication/06_KG_energyAbsorption/images/plot/{}.pdf'.   format  (filename),
-                **styleG, **styleAdd, standalone=False)
+        return {**styleG, **styleAdd}
+
+    def printOut():
+        print('---------------------------------------------------------')
+        print(posMean)
+        print('Dist of nodes:')
+        print(df)
+        print('---------------------------')
+        print('low limit:', filtLimit)
+        print('High dist edges:')
+        print(dfilt)
+        print('---------------------------')
+        print(rNodes)
+
+    def FA_config(eInf=1, sclR=1):
+        forceatlas2 = ForceAtlas2(
+            # Behavior alternatives
+            outboundAttractionDistribution=False,  # Dissuade hubs
+            linLogMode=False,  # NOT IMPLEMENTED
+            adjustSizes=False,  # Prevent overlap (NOT IMPLEMENTED)
+            edgeWeightInfluence=eInf,
+
+            # Performance
+            jitterTolerance=1.0,  # Tolerance
+            barnesHutOptimize=True,
+            barnesHutTheta=1.2,
+            multiThreaded=False,  # NOT IMPLEMENTED
+
+            # Tuning
+            scalingRatio=sr,
+            strongGravityMode=False,
+            # gravity=1.0,
+
+            # Log
+            verbose=True)
+        return forceatlas2
+
+    def styleToMplt(styleG):
+        node_color = styleG['vertex_color']
+        alpha = styleG['vertex_opacity']
+        # node_label = {n: styleG['vertex_label'][n] for n in G.nodes()}
+        linewidth = styleG['edge_width']
+        pos = styleG['layout']
+        node_size = [x*200 for x in styleG['node_size']]
+
+        styleG = {
+            'node_color': node_color,
+            'alpha': alpha,
+            # 'labels': node_label,
+            'linewidths': linewidth,
+            'pos': pos,
+            'node_size': node_size,
+
+            'edge_color': 'lightgray',
+        }
+        return styleG
+
+    filename0 = 'spring_layout_cevt_FA2_dMean_{}_{}'.format(rls, lc)
+
+    errList = '", "'.join(oem.err['release'][rls][lc]['errList'])
+    errList = ''
+    cypherTxt = cypherTxt.format('.*{}.*{}.*'.format(rls, lc), errList, pidMax)
+    G = gm.get_graph(cypherTxt, 'P_e', w=wscl, driver=driver)
+
+    figTex = '''
+    \\begin{{subfigure}}[b]{{0.24\\textwidth}}
+        \centering
+        \includegraphics[width=\\textwidth]{{{}.pdf}}
+        \caption{{{}}}
+        \label{{{}}}
+    \end{{subfigure}}%
+    \hfill'''
+    outTex = ''
+    wi = 1
+    sr = 1
+    itr = '2'
+    flt = 0.8
+
+    cnfgFA2 = FA_config(eInf=wi, sclR=sr)
+    pos = cnfgFA2.forceatlas2_networkx_layout(
+        G, pos=None, iterations=10000)
+    # pos = nx.spring_layout(G, weight='weight')  # FR
+
+    for ri in range(0, 8):
+        fi = flt
+        filename = '{}_flt{}n{}_w{}_sr{}_itr{}'.format(
+            filename0, fi, ri, wi, sr, itr)
+        # filename = '{}_flt{}n{}_itr{}_rev'.format(filename0, fi, ri, itr)
+
+        # pos = nx.shell_layout(G)
+
+        df = pd.DataFrame()
+        posMean = np.mean(np.asarray(list(pos.values())), axis=0)
+
+        for n in G.nodes():
+            nPos = np.asarray(pos[n])
+            dist = np.linalg.norm(nPos - posMean)
+            dfi = pd.DataFrame(np.array([[n, dist]]), columns=['n', 'dist'])
+            df = df.append(dfi)
+
+        df = df.sort_values(by=['dist'])
+        dist_max = df.max()['dist']
+        G2 = G
+
+        filtLimit = dist_max * fi
+        dfilt = df[df['dist'] > filtLimit]
+        rNodes = [int(dfilt.n.tolist()[i]) for i in range(len(dfilt))]
+        printOut()
+
+        pair_out = []
+        for p in rNodes:
+            pair = list(list(G.edges(p))[0])
+            pair.remove(p)
+            if not pair[0] in pair_out:
+                pair_out.append(pair[0])
+        os.system("rm default_network.*")
+        styleG = style_G()
+
+        styleGM = styleToMplt(styleG)
+        plt.figure(3, figsize=(5, 5))
+        nx.draw(G, **styleGM, with_labels=False)
+
+        plt.savefig(
+            '../publication/06_KG_energyAbsorption/submission/{}.pdf'.format(filename))
+        plt.show()
+
+        # if ri < 10:
+        #     plot(
+        #         G,
+        #         # '../publication/06_KG_energyAbsorption/images/plot/{}
+        #         'invstigation/{}.pdf'.format(filename),
+        #         **styleG)  # , standalone=True)
+
         # ------------------------------------------------------
 
         print('removed nodes:')
@@ -671,7 +711,6 @@ def plot_spring_cevt_fd_w(cypherTxt, style,
             print(ni)
             G.nodes(data=True)[ni]
             G.remove_node(ni)
-
         print('---------------------------')
 
         print('removed free nodes')
@@ -679,7 +718,6 @@ def plot_spring_cevt_fd_w(cypherTxt, style,
         for n in unattach_node:
             G.remove_node(n)
             rNodes.append(n)
-
             print(n)
         print('---------------------------')
 
@@ -687,11 +725,13 @@ def plot_spring_cevt_fd_w(cypherTxt, style,
         # caption = 'fltr ' + str(fi) + ', ' + ', '.join([str(n) for n in l_caption])
         caption = 'fltr ' + str(fi) + ', ' + \
             ', '.join([str(n) for n in rNodes])
-        outTex += figTex.format(filename, caption, 'filename')
+        outTex += figTex.format(filename, caption,
+                                'subfig:gVis_n{}'.format(ri))
         print(outTex)
-        # pos = forceatlas2.forceatlas2_networkx_layout(G, pos=None, iterations=10000)
+        pos = cnfgFA2.forceatlas2_networkx_layout(
+            G, pos=None, iterations=10000)
 
-        pos = nx.spring_layout(G, weight='weight')  # FR
+        # pos = nx.spring_layout(G, weight='weight')  # FR
 
 
 def plot_spring_yaris_fd_w(cypherTxt, style,
@@ -851,14 +891,14 @@ def plot_spring_cevt_simrank_forceatlas(cypherTxt, style,
     filename = 'spring_layout_cevt_simrank_{}_{}'.format(rls, lc)
 
     cypherTxt = cypherTxt.format('.*{}.*{}.*'.format(rls, lc), [], pidMax)
-    G = gm.get_graph(cypherTxt, style.nodeColor, w=wscl)
+    G = gm.get_graph(cypherTxt, 'P_e', w=wscl, driver=driver)
 
     # sum_w = sum([G[u][v]['weight'] for u, v in G.edges()])
     # for u, v in G.edges():
     #     G[u][v]['weight'] = abs(G[u][v]['weight']/sum_w)
 
     source, btw = nx.bipartite.sets(G)
-    simMatrix = gm.simrank_pp2_similarity_numpy(
+    simMatrix = gm.simrank_pp_similarity_numpy(
         G, max_iterations=100000000, evd_opt=evd, sprd_opt=sprd, source=list(source))
 
     G = gm.add_simsim(G, simMatrix, sLimit)
@@ -936,6 +976,74 @@ def plot_spring_cevt_KK(cypherTxt, style,
         **styleG, **styleAdd, standalone=False)
 
 
+def plot_frcAtls_cevt_err_rmv(
+    cypherTxt, style,
+    pidMax=20,
+    con=False,
+    rls='stv03',
+    lc='fo5',
+    wscl=False
+):
+    def style_G():
+        styleG = style.style(G, pos)
+        styleG['vertex_label'] = ['' for u in G.nodes()]
+        styleG['edge_color'] = 'gray!40'
+        styleG['node_size'] = [0.2 for u in G.nodes()]
+        styleG['margin'] = 0.3
+        styleAdd = {
+            'canvas': (20, 20),
+            'edge_label_color': 'black!60',
+            'node_style': '{draw=none}',
+            'keep_aspect_ratio': False,
+        }
+
+        return {**styleG, **styleAdd}
+
+    def FA_config(eInf=1):
+        forceatlas2 = ForceAtlas2(
+            # Behavior alternatives
+            outboundAttractionDistribution=False,  # Dissuade hubs
+            linLogMode=False,  # NOT IMPLEMENTED
+            adjustSizes=False,  # Prevent overlap (NOT IMPLEMENTED)
+            edgeWeightInfluence=eInf,
+
+            # Performance
+            jitterTolerance=1.0,  # Tolerance
+            barnesHutOptimize=True,
+            barnesHutTheta=1.2,
+            multiThreaded=False,  # NOT IMPLEMENTED
+
+            # Tuning
+            scalingRatio=1,
+            strongGravityMode=False,
+            # gravity=1.0,
+
+            # Log
+            verbose=True)
+        return forceatlas2
+
+    errList = '", "'.join(oem.err['release'][rls][lc]['errList'])
+
+    filename = 'rev_FA2_cevt_{}_{}_pid{}_errRmv'.format(
+        rls, lc, pidMax)
+    sims = '.*{}.*{}.*'.format(rls, lc)
+
+    eL = []
+    for errCnt, e in enumerate(errList):
+        eL.append(e)
+        cypherTxt_I = cypherTxt.format(sims, eL, pidMax)
+        G = gm.get_graph(cypherTxt_I, 'P_e', driver=driver, w=wscl)
+
+        cnfgFA2 = FA_config(eInf=1)
+        pos = cnfgFA2.forceatlas2_networkx_layout(G, pos=None, iterations=5000)
+        styleG = style_G()
+
+        plot(G,
+             #  '../publication/06_KG_energyAbsorption/submission/{}_errRmv{}.pdf'.format(
+             #      filename, errCnt),
+             **styleG, standalone=False)
+
+
 def plot_spring_cevt_forceatlas(cypherTxt, style,
                                 pidMax=15,
                                 con=False,
@@ -944,25 +1052,30 @@ def plot_spring_cevt_forceatlas(cypherTxt, style,
                                 wscl=False
                                 ):
 
-    filename2 = 'spring_layout_cevt_FA2_{}_{}_pid{}_wErr'.format(
-        rls, lc, pidMax)
     filename1 = 'spring_layout_cevt_FA2_{}_{}_pid{}_noErr'.format(
         rls, lc, pidMax)
+    filename2 = 'spring_layout_cevt_FA2_{}_{}_pid{}_wErr'.format(
+        rls, lc, pidMax)
 
-    oem = oems.oems('CEVT')
     errList = '", "'.join(oem.err['release'][rls][lc]['errList'])
     cypherTxt1 = cypherTxt.format(
-        '.*{}.*{}.*'.format(rls, lc), errList, pidMax)
-    cypherTxt2 = cypherTxt.format('.*{}.*{}.*'.format(rls, lc), '', pidMax)
-    G1 = gm.get_graph(cypherTxt1, style.nodeColor, w=wscl)
-    G2 = gm.get_graph(cypherTxt2, style.nodeColor, w=wscl)
+        '.*{}.*{}.*'.format(rls, lc),
+        errList,
+        pidMax)
+    cypherTxt2 = cypherTxt.format(
+        '.*{}.*{}.*'.format(rls, lc),
+        '',
+        pidMax)
+
+    G1 = gm.get_graph(cypherTxt1, 'P_e', driver=driver, w=wscl)
+    G2 = gm.get_graph(cypherTxt2, 'P_e', driver=driver, w=wscl)
 
     forceatlas2 = ForceAtlas2(
         # Behavior alternatives
         outboundAttractionDistribution=False,  # Dissuade hubs
         linLogMode=False,  # NOT IMPLEMENTED
         adjustSizes=False,  # Prevent overlap (NOT IMPLEMENTED)
-        edgeWeightInfluence=10.0,
+        edgeWeightInfluence=.05,
 
         # Performance
         jitterTolerance=1.0,  # Tolerance
@@ -971,48 +1084,64 @@ def plot_spring_cevt_forceatlas(cypherTxt, style,
         multiThreaded=False,  # NOT IMPLEMENTED
 
         # Tuning
-        scalingRatio=2.0,
+        scalingRatio=1,
         strongGravityMode=False,
         # gravity=1.0,
 
         # Log
         verbose=True)
 
-    # pos1 = forceatlas2.forceatlas2_networkx_layout(G1, pos=None, iterations=5000)
+    # pos1 = forceatlas2.forceatlas2_networkx_layout(
+    #     G1, pos=None, iterations=5000)
+
+    # pCal = pd.DataFrame.from_dict(pos1, orient='index')
+    # pCal['dist'] = (pCal[0]**2 + pCal[1]**2)**.5
+    # dMax = pCal['dist'].idxmax()
+    # try:
+    #     print(G1.nodes()[dMax]['properties']['sim_name'])
+    # except KeyError:
+    #     for es in G1.edges(dMax):
+    #         for ei in es:
+    #             if not ei == dMax:
+    #                 print(G1.nodes()[ei]['properties']['sim_name'])
+
     # styleG1 = style.style(G1, pos1)
     # styleG1['vertex_label'] = ['' for u in G1.nodes()]
     # styleG1['edge_color'] = 'gray!40'
+    # styleG1['node_size'] = [0.2 for u in G1.nodes()]
     # styleG1['margin'] = 0.3
     # styleAdd1 = {
     #     'canvas': (20, 20),
-    #     'vertex_size': 0.2,
     #     'edge_label_color': 'black!60',
     #     'node_style': '{draw=none}',
     #     'keep_aspect_ratio': False,
     # }
     # plot(G1,
-    #     '../publication/06_KG_energyAbsorption/images/plot/{}.pdf'.format(filename1),
-    #     **styleG1, **styleAdd1, standalone=False)
+    #      # '../publication/06_KG_energyAbsorption/images/plot/{}.pdf'.format(filename1),
+    #      **styleG1, **styleAdd1, standalone=False)
     # -------------------------------------------------
-    # pos2 = forceatlas2.forceatlas2_networkx_layout(G2, pos=None, iterations=5000)
+    pos2 = forceatlas2.forceatlas2_networkx_layout(
+        G2, pos=None, iterations=5000)
     # print(pos2)
-    pos2 = {
+
+    pos2_off = {
         0: (-195.0145211594972, 183.6363342344237), 1: (-136.90818931829756, 74.83801650693968), 2: (-153.1377244211523, 160.85040722022865), 3: (-165.51565285371188, 118.95922828185178), 4: (-188.18361607549315, 150.53225270770506), 5: (-136.17934865785455, 109.92683689995778), 6: (-227.14281465177655, 207.93218948322283), 7: (-136.5893552656457, 226.0654437302483), 8: (-226.7668586286411, 183.70788919270538), 9: (-160.3002088600143, 200.3481874972534), 10: (-46.294296333977826, 170.92121062437312), 11: (-84.77665670198559, 99.67553012026615), 12: (-242.88271316693115, 191.0175557757347), 13: (-125.53139086463244, 195.42216300200528), 14: (-117.57403027857872, 236.7621374017818), 15: (-144.29331652842757, 184.530837357448), 16: (-109.59700940730687, 157.58275348976915), 17: (-49.834874541144615, 107.21347056700122), 18: (-131.77043928775825, 149.98444977462998), 19: (-151.22589711751246, 24.697749075261594), 20: (-120.75757564153734, 104.20710787954268), 21: (-91.33827619811845, 204.7207573249423), 22: (-60.6945257676981, 219.50331069512544), 23: (-96.39219834818148, 133.26615122566105), 24: (-120.94824012851613, 177.8977219885887), 25: (-184.64687510128587, 195.73741247220264), 26: (-205.89738263316877, 240.37269314480284), 27: (-81.92534371711282, 183.66130332078345), 28: (-126.61923044571657, 182.43169001559224), 29: (-229.15683303382673, 159.62832851815227), 30: (-85.54158687355104, 46.671138867988546), 31: (-48.52964879603011, -3.093688231343952), 32: (-93.9390107257155, 150.46274339701236), 33: (-109.51941310837395, 190.08569007518832), 34: (-88.79786432336186, 255.23652474231739), 35: (-148.04978618948, 95.74322906395295), 36: (-136.35911613462352, 137.70769186424215), 37: (-135.4393104482334, 130.3570050586746), 38: (-72.93616546645676, 71.77853407090373), 39: (-83.5110428800289, 71.43618008569877), 40: (-83.56186423236493, 78.93804569100753), 41: (-82.10124260870776, 118.39464631579125), 42: (-57.75429255359836, 52.18223778172256), 43: (-1.8513351538402854, 3.3328982073346207), 44: (-71.93867544930092, 81.32881009670606), 45: (-108.29125987189391, 119.42061120166677), 46: (-99.59486069897413, 116.12392552082527), 47: (-118.62488381078266, 158.8960835942792), 48: (-80.31124287206846, 135.53651898834212), 49: (-115.16575683939799, 127.54997071836969), 50: (-115.24327861933418, 109.60986303916515), 51: (-82.63015431514941, 163.4831884617282), 52: (-95.73765704131051, 169.1874803647365), 53: (-90.43905376593251, 158.2791728218582), 54: (-81.26134610622874, 127.35296385956914), 55: (-101.79362025720985, 161.44555589281924), 56: (-81.39690810916967, 145.4090024168162), 57: (-86.71038815415716, 150.7939692552554), 58: (-120.10256371309667, 150.06566491550396), 59: (-110.36984614115245, 168.9727690232205), 60: (-128.60583526558722, 60.27311430934553), 61: (-112.12835935831698, 136.09854974566116), 62: (-34.61616591742576, 116.69379116443825), 63: (16.234237252497874, 119.4524499275572), 64: (-42.057680024129525, 127.81912594607662), 65: (-117.67911485828674, 56.146964948549), 66: (-117.37107802884063, 62.62976703417121), 67: (-113.84461070236411, 93.48992458483436), 68: (-72.10950705290125, 127.3670055529483), 69: (-112.96795269146483, 149.02456751878458), 70: (-107.43780779107702, 63.217152759944526), 71: (-120.85619696563329, 140.6478509217781), 72: (-107.73712369233527, 151.9785008696027), 73: (-113.60688708706029, 82.39943117819571), 74: (-101.12970915762236, 147.92084122873374), 75: (-108.12894017713369, 131.22755319873676), 76: (-45.88563429630964, 144.5194609302027), 77: (-71.12257260376246, 137.1443504620346), 78: (-103.74161973812036, 77.95509290714337), 79: (-108.4724990066507, 142.0148884047768), 80: (-123.66609633339233, 89.99288405348115), 81: (-110.12267634415333, 51.57570412048834), 82: (-104.51225379774016, 84.53978002114849), 83: (-116.01037125390248, 76.25302342968635), 84: (-113.93363296946818, 70.40179044684668), 85: (-105.29363471517223, 106.17003908445338), 86: (-102.12252082575192, 70.4280984407515), 87: (-101.13611736450244, 135.75809426839857), 88: (-90.87115744016309, 122.85874814292053), 89: (-90.23645126380042, 131.14030976355528), 90: (-135.99786105456994, 54.75169677488042), 91: (-90.09145799876795, 142.6819354314804), 92: (-100.66583730016899, 125.11844641019312), 93: (-91.24570564525557, 115.11782920755189), 94: (-12.102023898158995, -153.32920001053182), 95: (-5.092202710033097, -177.2265526665563), 96: (-3.0536366412100926, -172.10546225277523), 97: (-0.944245654635148, -183.79404838083522), 98: (0.5373476535026995, -177.50312319993873), 99: (5.24766903434795, -172.96625198130445), 100: (6.537047121680963, -181.29160213641848), 101: (-6.566444756311748, -183.0247065921026), 102: (-167.05088808784157, 51.19333041679386), 103: (-226.20336942576782, 41.26944685344664), 104: (-181.5869823700376, -24.0683989436015), 105: (-92.16860349658113, 69.03021420978496), 106: (-75.05796910071787, 150.47554354824064), 107: (-90.93391089451958, 137.34670444683036), 108: (-155.6907517261583, 83.40905300450073), 109: (-182.27256336480963, 96.52837089877116), 110: (-242.47399525074695, 69.32364297661198), 111: (-214.08910188601828, 70.46036770442481), 112: (-170.16405740541867, 88.83295059328447), 113: (-255.30002387710275, 93.19453845133417), 114: (-219.49170824577325, 125.67235076445006), 115: (-201.0505413942112, 69.28350089530319), 116: (-189.5524889200313, 48.03408908749365), 117: (-206.31466343658937, 55.508346592177574), 118: (-202.29251619964361, 78.96827389139118), 119: (-203.3827014808842, 102.2329761974917), 120: (-165.92952206749234, 64.84266151595345), 121: (-217.2869832887078, 83.70355111274101), 122: (-182.14903819667478, 34.488897022054886), 123: (-182.51891465847098, 78.59366397426597), 124: (-199.1279517004158, 110.13192799654233), 125: (-208.7988089228852, 80.28168560302987), 126: (-210.3635186269659, 66.97752388901121), 127: (-220.34395133723555, 98.09498284108014), 128: (-183.11120100060907, 85.85652401798414), 129: (-192.89043341873182, 104.30613332301685), 130: (-199.4042526254212, 90.90320262004938), 131: (-239.3421695807582, 108.3680898635189), 132: (-305.7175027059267, 116.33565152250256), 133: (-193.9821916662167, 54.916352982072496), 134: (-194.34513964601416, 71.1183973910825), 135: (-197.25248198201191, 62.587736316332524), 136: (-189.88841738200873, 88.36993242349558), 137: (-222.15196216730857, 107.9777010549335), 138: (-188.68729253169602, 110.18627158720189), 139: (-181.64526648113676, 70.63560923658542), 140: (-171.34678815677515, 71.01673790275872), 141: (-187.34313084888728, 62.549177599719926), 142: (-248.97494679532582, 126.47350661123915), 143: (-306.4777443120219, 131.3986912579607), 144: (-212.97503253929835, 93.07621211806575), 145: (-193.40436068036175, 95.79099050618875), 146: (-214.21480819324952, 118.27632377773708), 147: (-206.70320854791666, 124.93341217463909)}
 
     styleG2 = style.style(G2, pos2)
     styleG2['vertex_label'] = ['' for u in G2.nodes()]
     styleG2['edge_color'] = 'gray!40'
+    styleG2['node_size'] = [0.2 for u in G2.nodes()]
     styleG2['margin'] = 0.3
     styleAdd2 = {
         'canvas': (20, 20),
-        'vertex_size': 0.25,
         'edge_label_color': 'black!60',
         'node_style': '{draw=none}',
         'keep_aspect_ratio': False,
     }
+
     plot(G2,
-         '../publication/06_KG_energyAbsorption/images/plot/{}.pdf'.format(
-             filename2),
+         #  '../publication/06_KG_energyAbsorption/images/plot/{}.pdf'.format(
+         #      filename2),
          **styleG2, **styleAdd2, standalone=False)
 
 
@@ -1077,9 +1206,6 @@ def print_simrankpp_rev(cTxt, style):
     C = 0.8
     itr = 1000
     tol = 1e-5
-
-    oem.backend_server()
-    driver = oem.driver
 
     int_rel_simName = [
         [6030, 6031], [6003, 6030],
@@ -1753,9 +1879,6 @@ def plot_simrankpp_cevt_single(cypherTxt, style,
                                wTag='P_e'
                                ):
 
-    oem.backend_server()
-    driver = oem.driver
-
     MEDIUM_SIZE = 12
     plt.rc('axes', labelsize=MEDIUM_SIZE)  # fontsize of the x and y labels
     plt.rc('xtick', labelsize=MEDIUM_SIZE)  # fontsize of the tick labels
@@ -1766,7 +1889,7 @@ def plot_simrankpp_cevt_single(cypherTxt, style,
     name = 'simrank_cevt_{}_{}_{}_wPe4_single_rev.pdf'.format(lc, rls, pidMax)
     if not errList == []:
         name = 'err_' + name
-    dst = '../publication/06_KG_energyAbsorption/submition/{}'.format(name)
+    dst = '../publication/06_KG_energyAbsorption/submission/{}'.format(name)
 
     cypherTxt = cypherTxt.format(sims, '", "'.join(errList), pidMax)
     G = gm.get_graph(
@@ -1824,9 +1947,6 @@ def plot_simrankpp_cevt_single_displot(cypherTxt, style,
                                        wTag='P_e'
                                        ):
 
-    oem.backend_server()
-    driver = oem.driver
-
     MEDIUM_SIZE = 18
     plt.rc('axes', labelsize=MEDIUM_SIZE)  # fontsize of the x and y labels
     plt.rc('xtick', labelsize=MEDIUM_SIZE)  # fontsize of the tick labels
@@ -1837,7 +1957,7 @@ def plot_simrankpp_cevt_single_displot(cypherTxt, style,
     name = 'simrank_cevt_{}_{}_{}_wPe4_single_rev.pdf'.format(lc, rls, pidMax)
     if not errList == []:
         name = 'err_' + name
-    dst = '../publication/06_KG_energyAbsorption/submition/{}'.format(name)
+    dst = '../publication/06_KG_energyAbsorption/submission/{}'.format(name)
 
     cypherTxt = cypherTxt.format(sims, '", "'.join(errList), pidMax)
     G = gm.get_graph(
@@ -1928,9 +2048,6 @@ def plot_simrankpp_cevt_cnvrg(cypherTxt0, style,
                               lc='fp3',
                               errList=[]):
 
-    oem.backend_server()
-    driver = oem.driver
-
     sims = '.*{}_.*{}_.*'.format(rls, lc)
     # name = 'simrank_cevt_cnvrg_{}_{}_{}_wPe4_.pdf'.format(lc, rls)
     # dst = '../publication/06_KG_energyAbsorption/images/plot/{}'.format(name)
@@ -2001,47 +2118,101 @@ if __name__ == '__main__':
     #     uri="bolt://localhost:3687", auth=("neo4j", "ivory123"))
 
     style = gm.cyTxt()
+    # -----------------------------------------
+    # SCHEMA
 
-# SCHEMA
     # plot_schema(style.schema.txt, style)
 
-# BIPARTITE
- # YARIS
+    # -----------------------------------------
+    # BIPARTITE
+    # -----------------------------------------
+    # YARIS
+
     # plot_bipartite(style.sm.txt, style)  # yaris
     # plot_bipartite_rev(style.sm.txt_list, style)  # yaris_rev
- # CEVT
-    # plot_bipartite_cevt_1(style.sm_name.txt, style)  # stv03 82 sim fp3, stcr cevt 50 sim fp3, stcr fo5
+
+    # --------
+    # CEVT
+
+    # oem = oems.oems('CEVT')
+    # oem.backend_server()
+    # driver = oem.driver
+    # stv03 82 sim fp3, stcr cevt 50 sim fp3, stcr fo5
+    # plot_bipartite_cevt_1(style.sm_name.txt, style)
     # plot_bipartite_cevt_2(style.sm_name.txt, style)  # cevt 2 simulation
 
-# Spring Layout
-  # CEVT
-    # plot_spring_cevt_fd_w2(style.sm_name.txt, style, lc='fp3', pidMax=20, wscl=1)  # cevt force-directedweighted
-    # plot_spring_cevt_fd_w2(style.sm_name_err.txt, style, lc='fo5', pidMax=15, wscl=1, rls='stcr')  # cevt force-directedweighted
-    # plot_spring_cevt_forceatlas(style.sm_name_err.txt, style, lc='fo5', rls='stcr', pidMax=8)  # cevt
+    # -----------------------------------------
+    # Spring Layout
+    # -----------------------------------------
+    # CEVT
 
-  # off the method
+    oem = oems.oems('CEVT')
+    oem.backend_server()
+    driver = oem.driver
+    # plot_spring_cevt_fd_w2(style.sm_name_err.txt, style,
+    #    lc='fp3', pidMax=20, wscl=1)
+
+    # plot_spring_cevt_fd_w2(style.sm_name_err.txt, style,
+    #    lc='fo5', pidMax=15, wscl=1, rls='stcr')
+
+    # plot_spring_cevt_forceatlas(style.sm_name_err.txt, style,
+    #     lc='fo5', rls='stcr', pidMax=8, wscl=1)
+
+    # for lci in ['fo5', 'fp3', 'fod']:
+    #     for rlsi in ['stcr', 'stv0', 'stv03', 'm1']:
+    #         errList = oem.err['release'][rlsi][lci]['errList']
+    #         plot_simrankpp_cevt_single_displot(
+    # style.sm_name_err.txt, style, pidMax = 20, rls = rlsi, lc = lci, C = 0.95, wTag = 'P_e', errList = errList)
+
+    # --------
+    # REVISION
+
+    plot_spring_cevt_fd_w(style.sm_name_err.txt, style,
+                          lc='fo5', rls='stcr', pidMax=20, wscl=1
+                          # plot_frcAtls_cevt_err_rmv(                 # remove Error in step
+                          #     style.sm_name_err.txt, style, lc='fo5', rls='stcr', pidMax=8, wscl=1
+                          # )
+                          )
+
+    # ---------------
+    # OFF THE MTHD
+
     # for lc in ['fp3', 'fo5']:
-    # plot_spring_cevt_FR(style.sm_name.txt, style, lc=lc, pidMax=20) #cevt
-    # plot_spring_cevt_KK(style.sm_name.txt, style, lc=lc, pidMax=20) #cevt
-    # plot_spring_cevt_forceatlas(style.sm_name.txt, style, lc=lc, pidMax=20) #cevt
-    # plot_spring_cevt_FR(style.spem_name.txt, style, lc='fp3', pidMax=20)  # cevt, spem
-    # plot_spring_cevt_KK(style.sm_name.txt, style, lc='fp3', pidMax=20)  # cevt
-    # plot_spring_cevt_fd_w(style.sm_name_err.txt, style, lc='fo5', rls='stcr', pidMax=15, wscl=1)  # cevt force-directedweighted
-    # plot_spring_cevt_simrank_forceatlas(style.sm_name_err.txt, style, lc='fo5', rls='stcr', pidMax=15)  # cevt
+    # plot_spring_cevt_FR(style.sm_name.txt, style, lc=lc, pidMax=20)
+    # plot_spring_cevt_KK(style.sm_name.txt, style, lc=lc, pidMax=20)
+    # plot_spring_cevt_forceatlas(style.sm_name.txt, style, lc=lc, pidMax=20)
 
-  # Yaris
+    # plot_spring_cevt_FR(style.spem_name.txt, style, lc='fp3', pidMax=20)  # spem
+    # plot_spring_cevt_KK(style.sm_name.txt, style, lc='fp3', pidMax=20)
+    # plot_spring_cevt_simrank_forceatlas(
+    #     style.sm_name_err.txt, style, lc='fo5', rls='stcr', pidMax=15)
+    # ---------------
+    # Yaris
+
     # plot_spring_yaris_forceatlas(style.sm.txt, style, pidMax=28, opt='_wp_28p')
 
-  # off the method
+    # ---------------
+    # OFF THE MTHD
+
     # plot_spring_yaris_fd_w2(style.sm_name.txt, style, lc='fp3', pidMax=20, wscl=1)  # cevt force-directedweighted
     # plot_spring_yaris_FR(style.sm.txt, style, pidMax=28, opt='_28p')
     # plot_spring_yaris_KK(style.sm.txt, style, pidMax=28, opt='_28p')
 
-# Bundle graph:
+    # -----------------------------------------
+    # Bundle graph:
+    # -----------------------------------------
+    # CEVT
+
+    # oem = oems.oems('CEVT')
+    # oem.backend_server()
+    # driver = oem.driver
     # plot_bundle_cevt(style.sm_name.txt, style)
 
-# simrankpp
-  # YARIS_BUMPER
+    # -----------------------------------------
+    # simrankpp
+    # -----------------------------------------
+    # YARIS_BUMPER
+
     # oem = oems.oems('YARIS_BUMPER')
     # errList = oem.err['release']['']['']['errList']
     # plot_simrankpp_single(style.sm_name_err.txt, style,
@@ -2050,22 +2221,27 @@ if __name__ == '__main__':
     #                     sLimit=0.0, errList=errList, wscl=10e8)
     # plt.show()
 
-  # YARIS
-    oem = oems.oems('YARIS')
+    # ---------------
+    # YARIS
 
+    # oem = oems.oems('YARIS')
     # plot_simrankpp(style.sm_name.txt, style)
     # print_simrankpp_rev(style.sm_name.txt_list, style)
     # print_rank_IE_Pe_rev()
     # print_rank_disp_rev()
     # print_simRankpp_npart_rev(style.sm_name.txt_list, style)
-  # CEVT
+
+    # ---------------
+    # CEVT
+
     # plot_simrankpp_cevt(style.sm_name.txt, style)
     # simrank_cevt_inv_lc_rls_npid(style.sm_name_err.txt, style)
-    # -------------------------------------------------
-    oem = oems.oems('CEVT')
 
-    rls, lc = 'stcr', 'fo5'
-    errList = oem.err['release'][rls][lc]['errList']
+    # oem = oems.oems('CEVT')
+    # oem.backend_server()
+    # driver = oem.driver
+    # rls, lc = 'stcr', 'fo5'
+    # errList = oem.err['release'][rls][lc]['errList']
     # ---------------
     # TABLE OF CONVERGENCE
     # ---------------
@@ -2083,23 +2259,26 @@ if __name__ == '__main__':
     # plot_simrankpp_cevt_single(
     #     style.sm_name_err.txt, style, pidMax=15, rls=rls, lc=lc, C=0.95, wTag='P_e', errList=errList)
 
+    # ---------------
     # APPENDIX
-    for lci in ['fo5', 'fp3', 'fod']:
-        for rlsi in ['stcr', 'stv0', 'stv03', 'm1']:
-            errList = oem.err['release'][rlsi][lci]['errList']
-            plot_simrankpp_cevt_single_displot(
-                style.sm_name_err.txt, style, pidMax=20, rls=rlsi, lc=lci, C=0.95, wTag='P_e', errList=errList)
+    # ---------------
+    # for lci in ['fo5', 'fp3', 'fod']:
+    #     for rlsi in ['stcr', 'stv0', 'stv03', 'm1']:
+    #         errList = oem.err['release'][rlsi][lci]['errList']
+    #         plot_simrankpp_cevt_single_displot(
+    # style.sm_name_err.txt, style, pidMax = 20, rls = rlsi, lc = lci, C = 0.95, wTag = 'P_e', errList = errList)
 
     # plt.show()
 
-  # off the method
-    oem = oems.oems('CEVT')
+    # ---------------
+    # OFF THE MTHD
+
     # rls, lc = 'stcr', 'fp3'
     # errList = oem.err['release'][rls][lc]['errList']
     # plot_simrankpp_cevt_nprt(style.sm_name_err.txt, style, pidMax=20, rls=rls, lc=lc, sLimit=0.0, errList=errList, wc=0.325243)
 
-    rls, lc = 'stcr', 'fo5'
-    errList = oem.err['release'][rls][lc]['errList']
+    # rls, lc = 'stcr', 'fo5'
+    # errList = oem.err['release'][rls][lc]['errList']
 
     # plot_simrankpp_cevt_cnvrg(
     #     style.sm_name_err.txt, style, rls=rls,
@@ -2110,8 +2289,11 @@ if __name__ == '__main__':
     #     lc=lc, sLimit=0.0, errList=errList,
     #     pidMax=12, wc=0.306227)
 
-    rls, lc = 'stv0', 'fod'
-    errList = oem.err['release'][rls][lc]['errList']
+    # ---------------
+    # OFF THE MTHD
+
+    # rls, lc = 'stv0', 'fod'
+    # errList = oem.err['release'][rls][lc]['errList']
     # plot_simrankpp_cevt_nprt(
     #     style.sm_name_err.txt, style, rls=rls,
     #     lc=lc, sLimit=0.0, errList=errList,
@@ -2127,3 +2309,4 @@ if __name__ == '__main__':
     # pidMax=18, wc=0.3713)  # 005_001-011_001 >> 227_001
     # pidMax=17, wc=0.3)  # 227_001-330_001 >> 009_001
     # pidMax=20, wc=0.362)  # 226_001-330_001 >> 227_001
+    # ---------------

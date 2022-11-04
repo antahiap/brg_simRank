@@ -78,5 +78,13 @@
 
 - [x] fix the bolt for plot_report.py
 - [x] section 6.2, 4 pid -> components
-- [ ] split the paper
+- [x] split the paper
 - [ ] cite the conf paper modeling
+
+### Graph visualization
+
+- [x] make same vis as paper
+  - [x] check the error list > it was ok, the issue was that initital plot was without weight - one des is missing in curre
+- [x] show loop with removing high distance nodes
+  - [x] why network2tikzi doesn't plot > issue with latex, set the style with plotly
+- [ ] show visualization with more releases / several rls together

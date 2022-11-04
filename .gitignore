@@ -4,7 +4,7 @@ lspost*
 **/vw_2Data/
 **/envs*/
 **/CEVT/
-**/__pycache__
+**/__pycache__/
 **/*.pyc
 **/*.log
 **/*.ropeproject
@@ -25,6 +25,8 @@ note_scripts/LSDYNA_script/
 **/*.pt
 **/RELEASE*.txt
 **/*.diff
+**/.history
+*.pyc
 
 
 
