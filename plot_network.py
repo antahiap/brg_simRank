@@ -535,13 +535,13 @@ def plot_spring_cevt_fd_w2(cypherTxt, style,
             G, pos=None, iterations=10000)
 
 
-def plot_spring_cevt_fd_w(cypherTxt, style,
-                          pidMax=20,
-                          con=False,
-                          rls='stv03',
-                          lc='fo5',
-                          wscl=False
-                          ):
+def plot_frcAtls_cevt(cypherTxt, style,
+                      pidMax=20,
+                      con=False,
+                      rls='stv03',
+                      lc='fo5',
+                      wscl=False
+                      ):
     def style_G():
 
         styleG = style.style(G, pos)
@@ -652,7 +652,6 @@ def plot_spring_cevt_fd_w(cypherTxt, style,
     cnfgFA2 = FA_config(eInf=wi, sclR=sr)
     pos = cnfgFA2.forceatlas2_networkx_layout(
         G, pos=None, iterations=10000)
-    # pos = nx.spring_layout(G, weight='weight')  # FR
 
     for ri in range(0, 8):
         fi = flt
@@ -730,8 +729,6 @@ def plot_spring_cevt_fd_w(cypherTxt, style,
         print(outTex)
         pos = cnfgFA2.forceatlas2_networkx_layout(
             G, pos=None, iterations=10000)
-
-        # pos = nx.spring_layout(G, weight='weight')  # FR
 
 
 def plot_spring_yaris_fd_w(cypherTxt, style,
@@ -976,13 +973,15 @@ def plot_spring_cevt_KK(cypherTxt, style,
         **styleG, **styleAdd, standalone=False)
 
 
-def plot_frcAtls_cevt_err_rmv(
+def plot_frcAtls_cevt_DOEs(
     cypherTxt, style,
     pidMax=20,
     con=False,
     rls='stv03',
     lc='fo5',
-    wscl=False
+    errList='',
+    dir='',
+    wscl=False, eInf=1, sr=1
 ):
     def style_G():
         styleG = style.style(G, pos)
@@ -999,7 +998,7 @@ def plot_frcAtls_cevt_err_rmv(
 
         return {**styleG, **styleAdd}
 
-    def FA_config(eInf=1):
+    def FA_config(eInf=1, sclR=1):
         forceatlas2 = ForceAtlas2(
             # Behavior alternatives
             outboundAttractionDistribution=False,  # Dissuade hubs
@@ -1014,7 +1013,7 @@ def plot_frcAtls_cevt_err_rmv(
             multiThreaded=False,  # NOT IMPLEMENTED
 
             # Tuning
-            scalingRatio=1,
+            scalingRatio=sclR,
             strongGravityMode=False,
             # gravity=1.0,
 
@@ -1022,26 +1021,48 @@ def plot_frcAtls_cevt_err_rmv(
             verbose=True)
         return forceatlas2
 
-    errList = '", "'.join(oem.err['release'][rls][lc]['errList'])
+    def styleToMplt(styleG):
+        node_color = styleG['vertex_color']
+        alpha = styleG['vertex_opacity']
+        # node_label = {n: styleG['vertex_label'][n] for n in G.nodes()}
+        linewidth = styleG['edge_width']
+        pos = styleG['layout']
+        node_size = [x*200 for x in styleG['node_size']]
 
-    filename = 'rev_FA2_cevt_{}_{}_pid{}_errRmv'.format(
-        rls, lc, pidMax)
+        styleG = {
+            'node_color': node_color,
+            'alpha': alpha,
+            # 'labels': node_label,
+            'linewidths': linewidth,
+            'pos': pos,
+            'node_size': node_size,
+
+            'edge_color': 'lightgray',
+        }
+        return styleG
+
+    if not errList == '':
+        eTag = 'noErr'
+    else:
+        eTag = ''
+
+    filename = 'rev_FA2_cevt_{}_{}_pid{}_{}_eInf_{}_sclR_{}'.format(
+        rls, lc, pidMax, eTag, eInf, sr)
     sims = '.*{}.*{}.*'.format(rls, lc)
 
-    eL = []
-    for errCnt, e in enumerate(errList):
-        eL.append(e)
-        cypherTxt_I = cypherTxt.format(sims, eL, pidMax)
-        G = gm.get_graph(cypherTxt_I, 'P_e', driver=driver, w=wscl)
+    cypherTxt = cypherTxt.format(sims, errList, pidMax)
+    G = gm.get_graph(cypherTxt, 'P_e', driver=driver, w=wscl)
 
-        cnfgFA2 = FA_config(eInf=1)
-        pos = cnfgFA2.forceatlas2_networkx_layout(G, pos=None, iterations=5000)
-        styleG = style_G()
+    cnfgFA2 = FA_config(eInf=eInf, sclR=sr)
+    pos = cnfgFA2.forceatlas2_networkx_layout(G, pos=None, iterations=5000)
+    styleG = style_G()
 
-        plot(G,
-             #  '../publication/06_KG_energyAbsorption/submission/{}_errRmv{}.pdf'.format(
-             #      filename, errCnt),
-             **styleG, standalone=False)
+    styleGM = styleToMplt(styleG)
+    plt.figure(figsize=(5, 5))
+    nx.draw(G, **styleGM, with_labels=False)
+
+    plt.savefig(
+        '../publication/06_KG_energyAbsorption/{}/{}.pdf'.format(dir, filename))
 
 
 def plot_spring_cevt_forceatlas(cypherTxt, style,
@@ -2112,6 +2133,25 @@ def plot_simrankpp_HHLL(cypherTxt0, style,
     # print(df.to_latex(index=False, float_format="%.3f"))
 
 
+def plot_frcAtls_cevt_sumry():
+
+    rls, lc = 'stcr', 'fo5'
+    dir = 'submission'
+    # for w in [2, 1, .5, .02]:
+    # plot_frcAtls_cevt_DOEs(
+    #     style.sm_name_err.txt, style, lc=lc, rls=rls, pidMax=20, wscl=1, eInf=w, sr=1, errList='', dir=dir)
+
+    # plot_frcAtls_cevt_DOEs(
+    #     style.sm_name_err.txt, style, lc=lc, rls=rls, pidMax=20, wscl=1, eInf=1, sr=w, errList='', dir=dir)
+
+    errList = '", "'.join(oem.err['release'][rls][lc]['errList'])
+
+    plot_frcAtls_cevt_DOEs(
+        style.sm_name_err.txt, style, lc=lc, rls=rls, pidMax=20, wscl=1, eInf=.5, sr=1, errList=errList, dir=dir)
+
+    plt.show()
+
+
 if __name__ == '__main__':
 
     # driver = GraphDatabase.driver(
@@ -2167,12 +2207,10 @@ if __name__ == '__main__':
     # --------
     # REVISION
 
-    plot_spring_cevt_fd_w(style.sm_name_err.txt, style,
-                          lc='fo5', rls='stcr', pidMax=20, wscl=1
-                          # plot_frcAtls_cevt_err_rmv(                 # remove Error in step
-                          #     style.sm_name_err.txt, style, lc='fo5', rls='stcr', pidMax=8, wscl=1
-                          # )
-                          )
+    # plot_frcAtls_cevt(style.sm_name_err.txt, style,
+    #                   lc='fo5', rls='stcr', pidMax=20, wscl=1
+    #                   )
+    plot_frcAtls_cevt_sumry()
 
     # ---------------
     # OFF THE MTHD
@@ -2186,8 +2224,9 @@ if __name__ == '__main__':
     # plot_spring_cevt_KK(style.sm_name.txt, style, lc='fp3', pidMax=20)
     # plot_spring_cevt_simrank_forceatlas(
     #     style.sm_name_err.txt, style, lc='fo5', rls='stcr', pidMax=15)
+
     # ---------------
-    # Yaris
+    # YARIS
 
     # plot_spring_yaris_forceatlas(style.sm.txt, style, pidMax=28, opt='_wp_28p')
 
