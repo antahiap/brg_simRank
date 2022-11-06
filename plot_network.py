@@ -981,11 +981,14 @@ def plot_frcAtls_cevt_DOEs(
     lc='fo5',
     errList='',
     dir='',
-    wscl=False, eInf=1, sr=1
+    wscl=False, eInf=1, sr=1,
+    opt={}, simColor=False
 ):
-    def style_G():
-        styleG = style.style(G, pos)
-        styleG['vertex_label'] = ['' for u in G.nodes()]
+    def style_G(opt, simColor):
+        styleG = style.style(G, pos, simColor=simColor)
+        for key, value in opt.items():
+            styleG[key] = value
+        # styleG['vertex_label'] = ['' for u in G.nodes()]
         styleG['edge_color'] = 'gray!40'
         styleG['node_size'] = [0.2 for u in G.nodes()]
         styleG['margin'] = 0.3
@@ -1055,7 +1058,7 @@ def plot_frcAtls_cevt_DOEs(
 
     cnfgFA2 = FA_config(eInf=eInf, sclR=sr)
     pos = cnfgFA2.forceatlas2_networkx_layout(G, pos=None, iterations=5000)
-    styleG = style_G()
+    styleG = style_G(opt, simColor)
 
     styleGM = styleToMplt(styleG)
     plt.figure(figsize=(5, 5))
@@ -2146,8 +2149,40 @@ def plot_frcAtls_cevt_sumry():
 
     errList = '", "'.join(oem.err['release'][rls][lc]['errList'])
 
+    # plot_frcAtls_cevt_DOEs(
+    #     style.sm_name_err.txt, style, lc=lc, rls=rls, pidMax=20, wscl=1, eInf=.5, sr=1, errList=errList, dir=dir)
+
+    # errList = []
+    # rls = 'm1'  # 'str'
+    # for lc in ['fo5', 'fp3', 'fod']:
+    #     errList = errList + oem.err['release'][rls][lc]['errList']
+
+    # errList = '", "'.join(errList)
+
+    # lcAll = '(fo5|fp3|fod)_'
+    # opt = {
+    #     'vertex_opacity': 1
+    # }
+    # style.nodeColor['Des'] = 'gray'
+    # simColor = 'sim_lc'
+    # plot_frcAtls_cevt_DOEs(
+    #     style.sm_name_err.txt, style, lc=lcAll, rls=rls, pidMax=15, wscl=1, eInf=1, sr=1, errList=errList, dir=dir, opt=opt, simColor=simColor)
+
+    errList = []
+    lc = 'fo5'
+    for rls in ['stcr', 'stv0', 'stv03', 'm1']:
+        errList = errList + oem.err['release'][rls][lc]['errList']
+
+    errList = '", "'.join(errList)
+
+    rlsAll = '(stcr|stv0|stv03|m1)_'
+    opt = {
+        'vertex_opacity': 1
+    }
+    style.nodeColor['Des'] = 'gray'
+    simColor = 'sim_rel'
     plot_frcAtls_cevt_DOEs(
-        style.sm_name_err.txt, style, lc=lc, rls=rls, pidMax=20, wscl=1, eInf=.5, sr=1, errList=errList, dir=dir)
+        style.sm_name_err.txt, style, lc=lc, rls=rlsAll, pidMax=15, wscl=1, eInf=.5, sr=1, errList=errList, dir=dir, opt=opt, simColor=simColor)
 
     plt.show()
 

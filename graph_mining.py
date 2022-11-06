@@ -781,7 +781,16 @@ class cyTxt:
             'Barr': 'lightgrey',
             'Veh': '#20B2AA',  # 'lightseegreen',
             'Pltf': '#808000',  # 'olive',
-            'Ubdy': 'cornflowerblue'
+            'Ubdy': 'cornflowerblue',
+
+            'fo5': 'royalblue',
+            'fp3': 'mediumaquamarine',
+            'fod': 'orangered',
+
+            'stcr': 'red',
+            'stv0': 'blue',
+            'stv03': 'gold',
+            'm1': 'green'
         }
 
         self.node_label_pos = {
@@ -827,10 +836,22 @@ class cyTxt:
             'Ubdy': 0.8
         }
 
-    def style(self, G, pos, w=False):
+    def style(self, G, pos, w=False, simColor=False):
         nodesD = G.nodes(data=True)
 
+        # print(nodesD[230]['properties'])
+        # input(nodesD[232]['properties'])
+
         node_color = [self.nodeColor[u[1]['label']] for u in nodesD]
+
+        if simColor:
+            for i, nci in enumerate(node_color):
+                try:
+                    lc = nodesD[i]['properties'][simColor]
+                    node_color[i] = self.nodeColor[lc]
+
+                except KeyError:
+                    continue
         node_size = [self.nodeSize[u[1]['label']] for u in nodesD]
         node_name = [u[1]['name'] for u in nodesD]
         node_label_pos = [self.node_label_pos[u[1]['label']] for u in nodesD]
