@@ -1099,7 +1099,7 @@ def plot_spring_cevt_forceatlas(cypherTxt, style,
         outboundAttractionDistribution=False,  # Dissuade hubs
         linLogMode=False,  # NOT IMPLEMENTED
         adjustSizes=False,  # Prevent overlap (NOT IMPLEMENTED)
-        edgeWeightInfluence=.05,
+        edgeWeightInfluence=.5,
 
         # Performance
         jitterTolerance=1.0,  # Tolerance
@@ -2152,37 +2152,37 @@ def plot_frcAtls_cevt_sumry():
     # plot_frcAtls_cevt_DOEs(
     #     style.sm_name_err.txt, style, lc=lc, rls=rls, pidMax=20, wscl=1, eInf=.5, sr=1, errList=errList, dir=dir)
 
-    # errList = []
-    # rls = 'm1'  # 'str'
-    # for lc in ['fo5', 'fp3', 'fod']:
-    #     errList = errList + oem.err['release'][rls][lc]['errList']
-
-    # errList = '", "'.join(errList)
-
-    # lcAll = '(fo5|fp3|fod)_'
-    # opt = {
-    #     'vertex_opacity': 1
-    # }
-    # style.nodeColor['Des'] = 'gray'
-    # simColor = 'sim_lc'
-    # plot_frcAtls_cevt_DOEs(
-    #     style.sm_name_err.txt, style, lc=lcAll, rls=rls, pidMax=15, wscl=1, eInf=1, sr=1, errList=errList, dir=dir, opt=opt, simColor=simColor)
-
     errList = []
-    lc = 'fo5'
-    for rls in ['stcr', 'stv0', 'stv03', 'm1']:
+    rls = 'stcr'  # 'str'
+    for lc in ['fo5', 'fp3', 'fod']:
         errList = errList + oem.err['release'][rls][lc]['errList']
 
     errList = '", "'.join(errList)
 
-    rlsAll = '(stcr|stv0|stv03|m1)_'
+    lcAll = '(fo5|fp3|fod)_'
     opt = {
         'vertex_opacity': 1
     }
     style.nodeColor['Des'] = 'gray'
-    simColor = 'sim_rel'
+    simColor = 'sim_lc'
     plot_frcAtls_cevt_DOEs(
-        style.sm_name_err.txt, style, lc=lc, rls=rlsAll, pidMax=15, wscl=1, eInf=.5, sr=1, errList=errList, dir=dir, opt=opt, simColor=simColor)
+        style.sm_name_err.txt, style, lc=lcAll, rls=rls, pidMax=15, wscl=1, eInf=0.5, sr=1, errList=errList, dir=dir, opt=opt, simColor=simColor)
+
+    # errList = []
+    # lc = 'fp3'
+    # for rls in ['stcr', 'stv0', 'stv03', 'm1']:
+    #     errList = errList + oem.err['release'][rls][lc]['errList']
+
+    # errList = '", "'.join(errList)
+
+    # rlsAll = '(stcr|stv0|stv03|m1)_'
+    # opt = {
+    #     'vertex_opacity': 1
+    # }
+    # style.nodeColor['Des'] = 'gray'
+    # simColor = 'sim_rel'
+    # plot_frcAtls_cevt_DOEs(
+    #     style.sm_name_err.txt, style, lc=lc, rls=rlsAll, pidMax=15, wscl=1, eInf=.5, sr=1, errList=errList, dir=dir, opt=opt, simColor=simColor)
 
     plt.show()
 
@@ -2231,7 +2231,7 @@ if __name__ == '__main__':
     #    lc='fo5', pidMax=15, wscl=1, rls='stcr')
 
     # plot_spring_cevt_forceatlas(style.sm_name_err.txt, style,
-    #     lc='fo5', rls='stcr', pidMax=8, wscl=1)
+    # lc='fo5', rls='stcr', pidMax=8, wscl=1)
 
     # for lci in ['fo5', 'fp3', 'fod']:
     #     for rlsi in ['stcr', 'stv0', 'stv03', 'm1']:
@@ -2242,10 +2242,9 @@ if __name__ == '__main__':
     # --------
     # REVISION
 
-    # plot_frcAtls_cevt(style.sm_name_err.txt, style,
-    #                   lc='fo5', rls='stcr', pidMax=20, wscl=1
-    #                   )
-    plot_frcAtls_cevt_sumry()
+    plot_frcAtls_cevt(style.sm_name_err.txt, style,
+                      lc='fo5', rls='stcr', pidMax=20, wscl=1)
+    # plot_frcAtls_cevt_sumry()
 
     # ---------------
     # OFF THE MTHD
