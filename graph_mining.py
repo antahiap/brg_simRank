@@ -44,7 +44,7 @@ def get_graph(
         driver = GraphDatabase.driver(
             uri="bolt://localhost:3687", auth=("neo4j", "ivory123"))
 
-    # input(cypherTxt)
+    input(cypherTxt)
     # print(driver)
     nodes, rels = neo4jReturn(cypherTxt, driver)
     G = nx.Graph()
@@ -789,7 +789,7 @@ class cyTxt:
 
             'stcr': 'red',
             'stv0': 'blue',
-            'stv03': 'gold',
+            'stv03': 'goldenrod',
             'm1': 'green'
         }
 
@@ -833,14 +833,19 @@ class cyTxt:
             'Barr': 0.8,
             'Veh': 0.8,
             'Pltf': 0.8,
-            'Ubdy': 0.8
+            'Ubdy': 0.8,
+
+            # 'stcr': 1,
+            # 'stv0': 1,
+            # 'stv03': 1,
+            # 'm1': 1
         }
 
-    def style(self, G, pos, w=False, simColor=False):
+    def style(self, G, pos, w=False, simColor=False, nodeSize=False):
         nodesD = G.nodes(data=True)
 
         # print(nodesD[230]['properties'])
-        # input(nodesD[232]['properties'])
+        # input(nodesD[752]['properties'])
 
         node_color = [self.nodeColor[u[1]['label']] for u in nodesD]
 
@@ -849,10 +854,18 @@ class cyTxt:
                 try:
                     lc = nodesD[i]['properties'][simColor]
                     node_color[i] = self.nodeColor[lc]
-
                 except KeyError:
                     continue
+
         node_size = [self.nodeSize[u[1]['label']] for u in nodesD]
+        if nodeSize:
+            for i, nci in enumerate(node_size):
+                try:
+                    lc = nodesD[i]['properties'][nodeSize]
+                    node_size[i] = self.nodeColor[lc]
+                except KeyError:
+                    continue
+
         node_name = [u[1]['name'] for u in nodesD]
         node_label_pos = [self.node_label_pos[u[1]['label']] for u in nodesD]
         edge_color = [self.edge_color[G[u][v]['type']] for u, v in G.edges()]

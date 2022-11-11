@@ -1947,6 +1947,129 @@ def plot_doe_lc_all():
     fig1.write_image(dst)
 
 
+def plot_doe_lc_1rls_single():
+    import seaborn as sns
+    lcs = ['fp3', 'fo5', 'fod_']
+    sns.set(color_codes=False)
+    c_grp = 'c_lc'
+    ords = 5
+    ns = 1000
+    nPid = 20
+    pids = ''
+
+    dst = '../publication/06_KG_energyAbsorption/submission/doe_all_single.pdf'  # with tn
+    # sims = '.*fp3.*,.*fod_.*,.*fo5.*'
+    sims = '.*stcr.*fp3.*,.*stcr.*fod_.*,.*stcr.*fo5.*'
+    oem = oems.oems('CEVT')
+    df1 = oem.cypher().out_dataframe(
+        ns=int(ns), nPID=int(nPid), nOrd=ords, regs=sims, regp=pids)
+
+    df1 = df1.sort_values(by=[c_grp])
+    df1['IE'] = df1['IE'] / 1000  # kNmm
+
+    df1 = df1.replace('fo5', 'foI')
+    df1 = df1.replace('fod', 'foU')
+    df1 = df1.replace('fp3', 'ffo')
+
+    fig1 = px.scatter(
+        df1, x='dt', y='IE', color=c_grp,
+        hover_name="sim",
+        labels={
+            c_grp: "Load Cases",
+            "dt": u"\u0394 t [ms]",
+            "ti": "t<sub>i</sub>",
+            "IE": "IE<sub>max</sub> [kNmm]",
+            "tn": "t<sub>n</sub>",
+        },
+    )
+
+    fig1.update_layout(
+        width=400, height=400,
+        font=dict(size=18),
+        legend=dict(
+            yanchor='top', y=1.1, xanchor='left', x=0.62
+        )
+    )
+    fig1.update_traces(
+        marker_size=7,
+    )
+    fig1.show()
+    fig1.write_image(dst)
+
+
+def plot_doe_1lc_rls_single():
+    import seaborn as sns
+    lc = 'fp3'
+    rlsComb = [
+        ['stcr', 'stv0_', 'stv03',  '_m1_'],
+        # ['stcr', 'stv0_', 'stv03', '_m1_']
+    ]
+    color = ["red", "blue", "goldenrod", "green"]
+    sns.set(color_codes=False)
+    c_grp = 'c_rls'
+    ords = 20
+    ns = 10000
+    nPid = 20
+    pids = ''
+
+    for ri, rls in enumerate(rlsComb):
+        sims_txt = ','.join(['.*' + x + '.*{0}.*' for x in rls])
+        fName = '_'.join(rls)
+
+        dst = '../publication/06_KG_energyAbsorption/submission/doe_fp3_{0}_{1}.pdf'.format(
+            lc, fName)
+        sims = sims_txt.format(lc)
+        oem = oems.oems('CEVT')
+        df1 = oem.cypher().out_dataframe(
+            ns=int(ns), nPID=int(nPid), nOrd=ords, regs=sims, regp=pids)
+
+        # df1 = df1.replace('m1', 'zm1')
+        # df1 = df1.replace('zm1', 'm1')
+
+        df1['rlsNo'] = df1['c_rls'].map(
+            {'stcr': 10, 'stv0': 20, 'stv03': 30, 'm1': 40})
+        df1 = df1.sort_values(by=['rlsNo'])
+        df1['IE'] = df1['IE'] / 1000  # kNmm
+        df1 = df1.replace(to_replace='stcr', value='Primary')
+        df1 = df1.replace(to_replace='stv0', value='Early')
+        df1 = df1.replace(to_replace='stv03', value='Middle')
+        df1 = df1.replace(to_replace='m1', value='Late')
+
+        fig1 = px.scatter(
+            df1, x='dt', y='IE', color=c_grp,
+            hover_name="sim",
+            labels={
+                c_grp: "Development Phase",
+                "dt": u"\u0394 t [ms]",
+                "ti": "t<sub>i</sub>",
+                "IE": "IE<sub>max</sub> [kNmm]",
+                "tn": "t<sub>n</sub>",
+            },
+            color_discrete_sequence=color,
+        )
+
+        fig1.update_layout(
+            width=400, height=400,
+            font=dict(size=20),
+            margin=dict(l=0, r=0, b=0, t=0),
+            # showlegend=
+            legend=dict(
+                yanchor='top', y=1.1, xanchor='left', x=0.62
+            )
+        )
+        # fig1.update_layout({'yaxis1': {'range': [5, 20]}, 'yaxis2': {'range': [0, 58]}, 'yaxis3': {'range': [15, 70]}, 'yaxis4': {'range': [2, 38]}})
+
+        # fig1.update_layout({'yaxis1': {'range': [7, 20]}, 'yaxis2': {
+        #                    'range': [15, 70]}, 'yaxis3': {'range': [2, 38]}})
+
+        fig1.update_traces(
+            marker_size=7,
+        )
+        print(dst)
+        fig1.write_image(dst)
+        fig1.show()
+
+
 def plot_doe_lc_all_dt_tn(rls):
     import seaborn as sns
     lcs = ['fp3', 'fo5', 'fod_']
@@ -2271,6 +2394,10 @@ if __name__ == '__main__':
     # hard to judge, IE compensade with dt with np=20
     # plot_doe_runs(
     #     'cm1e_stcr_354_fo5__001,cm1e_stcr_387_fo5__001,cm1e_stcr_090_fo5__001', nPid=15)
+
+    # Revision
+    plot_doe_lc_1rls_single()
+    # plot_doe_1lc_rls_single()
 
 # ---------------------------------------------------------------------------
     # REVISION

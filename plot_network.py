@@ -982,10 +982,10 @@ def plot_frcAtls_cevt_DOEs(
     errList='',
     dir='',
     wscl=False, eInf=1, sr=1,
-    opt={}, simColor=False
+    opt={}, simColor=False, nodeSize=False
 ):
-    def style_G(opt, simColor):
-        styleG = style.style(G, pos, simColor=simColor)
+    def style_G(opt, simColor, nodeSize):
+        styleG = style.style(G, pos, simColor=simColor, nodeSize=nodeSize)
         for key, value in opt.items():
             styleG[key] = value
         # styleG['vertex_label'] = ['' for u in G.nodes()]
@@ -1039,6 +1039,7 @@ def plot_frcAtls_cevt_DOEs(
             'linewidths': linewidth,
             'pos': pos,
             'node_size': node_size,
+            # 'edgecolors': 'black',
 
             'edge_color': 'lightgray',
         }
@@ -1057,8 +1058,9 @@ def plot_frcAtls_cevt_DOEs(
     G = gm.get_graph(cypherTxt, 'P_e', driver=driver, w=wscl)
 
     cnfgFA2 = FA_config(eInf=eInf, sclR=sr)
-    pos = cnfgFA2.forceatlas2_networkx_layout(G, pos=None, iterations=5000)
-    styleG = style_G(opt, simColor)
+    pos = cnfgFA2.forceatlas2_networkx_layout(
+        G, pos=None, iterations=5000)
+    styleG = style_G(opt, simColor, nodeSize)
 
     styleGM = styleToMplt(styleG)
     plt.figure(figsize=(5, 5))
@@ -2147,42 +2149,44 @@ def plot_frcAtls_cevt_sumry():
     # plot_frcAtls_cevt_DOEs(
     #     style.sm_name_err.txt, style, lc=lc, rls=rls, pidMax=20, wscl=1, eInf=1, sr=w, errList='', dir=dir)
 
-    errList = '", "'.join(oem.err['release'][rls][lc]['errList'])
+    # errList = '", "'.join(oem.err['release'][rls][lc]['errList'])
 
     # plot_frcAtls_cevt_DOEs(
     #     style.sm_name_err.txt, style, lc=lc, rls=rls, pidMax=20, wscl=1, eInf=.5, sr=1, errList=errList, dir=dir)
 
-    errList = []
-    rls = 'stcr'  # 'str'
-    for lc in ['fo5', 'fp3', 'fod']:
-        errList = errList + oem.err['release'][rls][lc]['errList']
-
-    errList = '", "'.join(errList)
-
-    lcAll = '(fo5|fp3|fod)_'
-    opt = {
-        'vertex_opacity': 1
-    }
-    style.nodeColor['Des'] = 'gray'
-    simColor = 'sim_lc'
-    plot_frcAtls_cevt_DOEs(
-        style.sm_name_err.txt, style, lc=lcAll, rls=rls, pidMax=15, wscl=1, eInf=0.5, sr=1, errList=errList, dir=dir, opt=opt, simColor=simColor)
-
     # errList = []
-    # lc = 'fp3'
-    # for rls in ['stcr', 'stv0', 'stv03', 'm1']:
+    # rls = 'stcr'  # 'str'
+    # for lc in ['fo5', 'fp3', 'fod']:
+    #     # for rls in ['stcr', 'stv0', 'stv03', 'm1']:
     #     errList = errList + oem.err['release'][rls][lc]['errList']
 
     # errList = '", "'.join(errList)
 
-    # rlsAll = '(stcr|stv0|stv03|m1)_'
+    # lcAll = '(fo5|fp3|fod)_'
+    # # rlsAll = '_(stcr|stv0|stv03|m1)_'
     # opt = {
     #     'vertex_opacity': 1
     # }
     # style.nodeColor['Des'] = 'gray'
-    # simColor = 'sim_rel'
+    # simColor = 'sim_lc'
     # plot_frcAtls_cevt_DOEs(
-    #     style.sm_name_err.txt, style, lc=lc, rls=rlsAll, pidMax=15, wscl=1, eInf=.5, sr=1, errList=errList, dir=dir, opt=opt, simColor=simColor)
+    #     style.sm_name_err.txt, style, lc=lcAll, rls=rls, pidMax=20, wscl=1, eInf=.5, sr=1, errList=errList, dir=dir, opt=opt, simColor=simColor, nodeSize='sim_rel')
+
+    errList = []
+    lc = 'fp3'
+    for rls in ['stcr', 'stv0', 'stv03', 'm1']:
+        errList = errList + oem.err['release'][rls][lc]['errList']
+
+    errList = '", "'.join(errList)
+
+    rlsAll = '(stcr|stv0|stv03|m1)_'
+    opt = {
+        'vertex_opacity': 1
+    }
+    style.nodeColor['Des'] = 'gray'
+    simColor = 'sim_rel'
+    plot_frcAtls_cevt_DOEs(
+        style.sm_name_err.txt, style, lc=lc, rls=rlsAll, pidMax=20, wscl=1, eInf=.7, sr=1, errList=errList, dir=dir, opt=opt, simColor=simColor)
 
     plt.show()
 
@@ -2242,9 +2246,9 @@ if __name__ == '__main__':
     # --------
     # REVISION
 
-    plot_frcAtls_cevt(style.sm_name_err.txt, style,
-                      lc='fo5', rls='stcr', pidMax=20, wscl=1)
-    # plot_frcAtls_cevt_sumry()
+    # plot_frcAtls_cevt(style.sm_name_err.txt, style,
+    #   lc='fo5', rls='stcr', pidMax=20, wscl=1)
+    plot_frcAtls_cevt_sumry()
 
     # ---------------
     # OFF THE MTHD
