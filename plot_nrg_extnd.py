@@ -8,7 +8,7 @@ import oems
 import inv_simRnk_extnd as invS
 
 
-def add_ref(fig, val, legend=True):
+def add_ref(fig, val, legend=True, s=12):
     fig.add_trace(go.Scatter(
         mode='markers',
         x=[val[0]], y=[val[1]],
@@ -16,7 +16,7 @@ def add_ref(fig, val, legend=True):
         showlegend=legend,
         marker=dict(
             color=val[3],
-            size=12)
+            size=s)
     ), col=val[4], row=1)
 
     return(fig)
@@ -60,15 +60,22 @@ def plt_dataset():
     fig.show()
 
 
-def plt_simrankpp():
+def plt_simrankpp(rel, trgt, pidMax, dim=[460, 400], multi=False):
 
     OEM = 'YARIS'
     oem = oems.oems(OEM)
+    oem.backend_server()
 
-    nSim, pidMax, wTag = 7, 25, 'P_e'
+    nSim, wTag = 7, 'P_e'
     wscl, sprd, evd, C = 1e9, 'trgt', 2, .8
 
-    dst = '../publication/06_KG_energyAbsorption/submition/nrg_extnd_simrankpp_6000.pdf'
+    if not multi:
+        tag = '_single'
+    else:
+        tag = ''
+
+    dst = '../publication/06_KG_energyAbsorption/submission_02/nrg_extnd_simrankpp_6000_{}_{}{}.pdf'.format(
+        trgt, pidMax, tag)
 
     nFrmt = '"CCSA_submodel_[6].*"'
     nFrmtM = '""'
@@ -84,7 +91,8 @@ def plt_simrankpp():
                                 sims, ref, oem,
                                 nSim,
                                 pidMax, wTag, wscl,
-                                sprd, evd, C)
+                                sprd, evd, C,
+                                rel=rel, trgt=trgt)
 
     tags = []
     for r in sim_sR['lc pair']:
@@ -105,9 +113,8 @@ def plt_simrankpp():
                          "lc pair": "",
                          'tL_u': 'T<sub>2</sub> LHS [mm]',
                          'tR_u': 'T<sub>2</sub> RHS [mm]',
-                         '6003': '3'
                      },
-                     width=460, height=400)
+                     width=dim[0], height=dim[1])
     fig.update_traces(
         marker_size=7,
     )
@@ -115,8 +122,13 @@ def plt_simrankpp():
         font_size=14,
         margin=dict(t=0, r=0, l=0, b=0, pad=5),
     )
-    fig.update_yaxes(tick0=1.5, dtick=0.2)
-    fig.update_xaxes(tick0=1.5, dtick=0.2)
+    fig.update_yaxes(tick0=1.4, dtick=0.4)
+    fig.update_xaxes(tick0=1.4, dtick=0.4)
+
+    if multi == True:
+        fig.update_layout(showlegend=False)
+        fig.update_yaxes(visible=False, showticklabels=False)
+        fig.update_xaxes(visible=False, showticklabels=False)
 
     # add reference marker
     for p in ref:
@@ -124,11 +136,11 @@ def plt_simrankpp():
         r = sims.loc[sims.id == int(p)]
         x = r.tL_u.values[0]
         y = r.tR_u.values[0]
-        fig = add_ref(fig, [x, y, str(p), color, 1], legend=False)
+        fig = add_ref(fig, [x, y, str(p), color, 1], legend=False, s=10)
 
     print(dst)
     fig.write_image(dst)
-    fig.show()
+    # fig.show()
 
 
 def plt_rank_Pe():
@@ -140,7 +152,7 @@ def plt_rank_Pe():
     lmt = 28
     nSim = 7
 
-    dst = '../publication/06_KG_energyAbsorption/submition/nrg_extnd_Pe_6000.pdf'
+    dst = '../publication/06_KG_energyAbsorption/submission_02/nrg_extnd_Pe_6000.pdf'
 
     ref = {
         '6003': 'blue', '6030': 'red', '6031': 'lime', '6060': 'gold', '6061': '#9A0eea'}
@@ -174,7 +186,7 @@ def plt_rank_Pe():
                          'tL_u': 'T<sub>2</sub> LHS [mm]',
                          'tR_u': 'T<sub>2</sub> RHS [mm]',
                      },
-                     width=400, height=400)
+                     width=200, height=200)
     fig.update_traces(
         marker_size=7,
         showlegend=False
@@ -183,22 +195,28 @@ def plt_rank_Pe():
         font_size=14,
         margin=dict(t=0, r=0, l=0, b=0, pad=5),
     )
-    fig.update_yaxes(tick0=1.5, dtick=0.2)
-    fig.update_xaxes(tick0=1.5, dtick=0.2)
+    fig.update_yaxes(tick0=1.4, dtick=0.4)
+    fig.update_xaxes(tick0=1.4, dtick=0.4)
 
     for p in ref:
         color = ref[p]
         r = sims.loc[sims.id == int(p)]
         x = r.tL_u.values[0]
         y = r.tR_u.values[0]
-        fig = add_ref(fig, [x, y, str(p), color, 1], legend=False)
+        fig = add_ref(fig, [x, y, str(p), color, 1], legend=False, s=10)
     print(dst)
     fig.write_image(dst)
-    fig.show()
+    # fig.show()
 
 
 if __name__ == '__main__':
 
     # plt_dataset()
-    # plt_simrankpp()
-    plt_rank_Pe()
+    # plt_simrankpp('SIM_DES', 'Des', 28, [260, 200])
+    # plt_rank_Pe()
+
+    # Grp
+    # for i in [2, 5, 9, 28]:
+    #     plt_simrankpp('SIM_DES', 'Des', i, [120, 120], True)
+    for i in [2, 3, 5, 11]:
+        plt_simrankpp('GRP_FTS', 'Grp', i, [120, 120], True)

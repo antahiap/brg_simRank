@@ -87,4 +87,13 @@
   - [x] check the error list > it was ok, the issue was that initital plot was without weight - one des is missing in curre
 - [x] show loop with removing high distance nodes
   - [x] why network2tikzi doesn't plot > issue with latex, set the style with plotly
-- [ ] show visualization with more releases / several rls together
+- [x] show visualization with more releases / several rls together
+
+### SimRank with grouping
+- [x] add grouping to the database
+- [x] load the features 
+- [ ] simrank query to set graph for groping-des COG
+      - make new design based on box grouping
+      - add the weights to the edge of box design
+      - add intiger name of the box to the graph
+

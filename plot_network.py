@@ -1226,9 +1226,8 @@ def plot_bundle_cevt(cypherTxt, style,
         **styleG, **styleAdd, standalone=False)
 
 
-def print_simrankpp_rev(cTxt, style):
+def print_simrankpp_rev(cTxt, style, pidMax=5):
 
-    pidMax = 5
     C = 0.8
     itr = 1000
     tol = 1e-5
@@ -1323,9 +1322,8 @@ def print_simrankpp_rev(cTxt, style):
     print(dfR0.to_latex(index=False, float_format="%d"))
 
 
-def print_simRankpp_npart_rev(cTxt, style):
+def print_simRankpp_npart_rev(cTxt, style, pidMaxList):
 
-    pidMaxList = [2, 5, 15, 28]
     C = 0.8
     itr = 1000
     tol = 1e-5,
@@ -1347,7 +1345,7 @@ def print_simRankpp_npart_rev(cTxt, style):
             "['6003', '6031', '6060', '6030', '6061']",
             pidMax)
         # wscl scaling the weight
-        G = gm.get_graph(cypherTxt, wTag, w=wscl)
+        G = gm.get_graph(cypherTxt, wTag, w=wscl, driver=driver)
         data = gm.simrank_pp_similarity_numpy(
             G, max_iterations=itr, evd_opt=evd, sprd_opt=sprd, importance_factor=C, tolerance=tol)
         # -----------------------------
@@ -1363,8 +1361,7 @@ def print_simRankpp_npart_rev(cTxt, style):
                 if name in ss:
                     ids.append(n)
             int_rel_id.append(ids)
-        # print('==================================')
-        # print('---------------------')
+        # print('==================================')        # print('---------------------')
         for i, r in enumerate(int_rel_id):
             u, v = r[0], r[1]
             un, vn = int_rel_simName[i]
@@ -2248,7 +2245,7 @@ if __name__ == '__main__':
 
     # plot_frcAtls_cevt(style.sm_name_err.txt, style,
     #   lc='fo5', rls='stcr', pidMax=20, wscl=1)
-    plot_frcAtls_cevt_sumry()
+    # plot_frcAtls_cevt_sumry()
 
     # ---------------
     # OFF THE MTHD
@@ -2303,10 +2300,17 @@ if __name__ == '__main__':
 
     # oem = oems.oems('YARIS')
     # plot_simrankpp(style.sm_name.txt, style)
-    # print_simrankpp_rev(style.sm_name.txt_list, style)
+    # print_simrankpp_rev(style.sm_name.txt_list, style, pidMax=5)
     # print_rank_IE_Pe_rev()
     # print_rank_disp_rev()
-    # print_simRankpp_npart_rev(style.sm_name.txt_list, style)
+    # print_simRankpp_npart_rev(style.sm_name.txt_list, style, [2, 5, 15, 28])
+
+    # grouped parts
+    # print_simRankpp_npart_rev(style.sg_name.txt_list, style, [2, 3, 5, 11])
+
+    # ---------------
+    # OFF THE MTHD
+    # print_simrankpp_rev(style.sg_name.txt_list, style, pidMax=5)
 
     # ---------------
     # CEVT
@@ -2314,18 +2318,18 @@ if __name__ == '__main__':
     # plot_simrankpp_cevt(style.sm_name.txt, style)
     # simrank_cevt_inv_lc_rls_npid(style.sm_name_err.txt, style)
 
-    # oem = oems.oems('CEVT')
-    # oem.backend_server()
-    # driver = oem.driver
+    oem = oems.oems('CEVT')
+    oem.backend_server()
+    driver = oem.driver
     # rls, lc = 'stcr', 'fo5'
     # errList = oem.err['release'][rls][lc]['errList']
     # ---------------
     # TABLE OF CONVERGENCE
     # ---------------
-    # rls, lc = 'stcr', 'fod'
-    # errList = oem.err['release'][rls][lc]['errList']
-    # plot_simrankpp_cevt_cnvrg(
-    #     style.sm_name_err.txt, style, rls=rls, lc=lc, sLimit=0.0, C=0.95, wTag='P_e', errList=errList)
+    rls, lc = 'stcr', 'fo5'
+    errList = oem.err['release'][rls][lc]['errList']
+    plot_simrankpp_cevt_cnvrg(
+        style.sm_name_err.txt, style, rls=rls, lc=lc, sLimit=0.0, C=0.95, wTag='P_e', errList=errList)
     # plot_simrankpp_cevt_single_displot(
     #     style.sm_name_err.txt, style, pidMax=20, rls=rls, lc=lc, C=0.95, wTag='P_e', errList=errList)
     # plt.show()

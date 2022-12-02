@@ -267,11 +267,11 @@ class ExtndSimRank():
         n,
         pidMax, wTag, wscl,
         sprd, evd, C,
-        M2='""'
+        M2='""', rel='GRP_FTS', trgt='Grp'
     ):
         simExt = simExt.reset_index(drop=True)
         cypherTxt = self.query.simrank_G(
-            nFrmt, nFrmtM, pidMax, simM2=M2, simList=simExt.name.to_list())
+            nFrmt, nFrmtM, pidMax, simM2=M2, simList=simExt.name.to_list(), rel=rel, trgt=trgt)
         # wscl scaling the weight
         G = gm.get_graph(cypherTxt, wTag, w=wscl, driver=oem.driver)
 

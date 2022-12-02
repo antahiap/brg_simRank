@@ -41,15 +41,16 @@ def get_graph(
 ):
     # cypherTxt = cypherTxt.format(sTxt, pidMax)
     if not driver:
+        print(driver)
         driver = GraphDatabase.driver(
             uri="bolt://localhost:3687", auth=("neo4j", "ivory123"))
 
-    input(cypherTxt)
+    # input(cypherTxt)
     # print(driver)
     nodes, rels = neo4jReturn(cypherTxt, driver)
     G = nx.Graph()
 
-    cs, cm = 0, 0
+    cs, cm, cg = 0, 0, 0
     for node in nodes:
         propN = node._properties
         label, = node._labels
@@ -68,6 +69,16 @@ def get_graph(
             L = propN['des_pid']
             G.add_node(node.id, name=L, properties=propN,
                        bipartite=0, label='Des')
+        if label == 'Grp':
+            cg += 1
+
+            box = '_'.join(
+                [str(int(x)) for x in propN['grp_cog']]
+            )
+            L = propN['id']
+            G.add_node(node.id, name=L, box=box, properties=propN,
+                       bipartite=0, label='Grp')
+
     # for node in nodes:
     #     propN = node._properties
     #     label, = node._labels
@@ -1059,6 +1070,18 @@ class cyTxt:
             return s,m, rm order by s.sim_name
             """
         # return m,rm order by rm.w_e_value  desc limit {}
+
+    class sg_name:
+        txt_list = """
+            match (s:Sim)
+            where s.sim_abb in {}
+            CALL{{
+                with s
+                match p=(s:Sim)-[rg:GRP_FTS]-(g:Grp)
+                return g,rg order by rg.w_e_value desc limit {}
+            }}
+            return s,g, rg order by s.sim_name
+            """
 
 
 class gModels:

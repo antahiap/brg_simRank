@@ -1521,7 +1521,9 @@ def plot_doe_runs(runs='.*',
 
 
 def plot_doe_runs_HHLL(runs='.*',
-                       nPid=20
+                       nPid=20,
+                       w=400, h=500,
+                       l=[1.1, 1, 'right']
                        ):
 
     import seaborn as sns
@@ -1547,13 +1549,14 @@ def plot_doe_runs_HHLL(runs='.*',
     tags = [
         'H<sub>1</sub>: ',
         'H<sub>2</sub>: ',
-        'L  : '
+        'L<sub>1</sub>: ',
+        'L<sub>2</sub>: '
     ]
     for i, s in enumerate(sims_abb):
         df1.loc[df1.sim_abb == s, 'sim_abb'] = tags[i] + s
 
     # SET THE COLOR CODE
-    cList = ['#636EFA', '#00CC96', '#EF553B']
+    cList = ['#636EFA', '#00CC96', '#EF553B', '#ff7f0e']
     colors = {tags[i]+x: cList[i] for i, x in enumerate(sims_abb)}
 
     # PLOT
@@ -1576,15 +1579,15 @@ def plot_doe_runs_HHLL(runs='.*',
         marker_size=10,
     )
     fig1.update_layout(
-        width=400, height=500,
+        width=w, height=h,
         font_size=20,
         # yaxis_range=[2, 22],
     )
     fig1.update_layout(legend=dict(
         yanchor="top",
-        y=1,
-        xanchor="right",
-        x=1.1
+        x=l[0],
+        y=l[1],
+        xanchor=l[2],
     ))
 
     dst = dst.format(sims[0], sims_abb[1], sims_abb[2])
@@ -2358,8 +2361,8 @@ if __name__ == '__main__':
 
 # CEVT
     OEM = 'CEVT'
-    # oem = oems.oems(OEM)
-    # oemQ = oem.query(oem)
+    oem = oems.oems(OEM)
+    oemQ = oem.query(oem)
 
  # mining
     # plot_CEVT().dna()#
@@ -2396,7 +2399,7 @@ if __name__ == '__main__':
     #     'cm1e_stcr_354_fo5__001,cm1e_stcr_387_fo5__001,cm1e_stcr_090_fo5__001', nPid=15)
 
     # Revision
-    plot_doe_lc_1rls_single()
+    # plot_doe_lc_1rls_single()
     # plot_doe_1lc_rls_single()
 
 # ---------------------------------------------------------------------------
@@ -2415,6 +2418,10 @@ if __name__ == '__main__':
 
     # plot_doe_runs_HHLL(
     # 'cm1e_stcr_354_fo5__001,cm1e_stcr_387_fo5__001,cm1e_stcr_237_fo5__001', nPid = 20)
+    # plot_doe_runs_HHLL(
+    #     'cm1e_stcr_195_fo5__001,cm1e_stcr_197_fo5__001,cm1e_stcr_354_fo5__001,cm1e_stcr_387_fo5__001', nPid=2, h=300))
+    # plot_doe_runs_HHLL(
+    #     'cm1e_stcr_354_fo5__001,cm1e_stcr_387_fo5__001,cm1e_stcr_197_fo5__001,cm1e_stcr_195_fo5__001', nPid=4)
 # ---------------------------------------------------------------------------
 
 
@@ -2428,6 +2435,6 @@ if __name__ == '__main__':
 
  # Manuscript
     # plot_nrg_embd_2d_yaris_sub()
-    plot_nrg_embd_2d_yaris_sub_rev()
+    # plot_nrg_embd_2d_yaris_sub_rev()
 
 # plt.show()
