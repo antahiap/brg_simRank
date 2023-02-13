@@ -66,16 +66,18 @@ def plt_simrankpp(rel, trgt, pidMax, dim=[460, 400], multi=False):
     oem = oems.oems(OEM)
     oem.backend_server()
 
-    nSim, wTag = 7, 'P_e'
+    nSim, wTag = 7, 'P_e'  # 'IE'
     wscl, sprd, evd, C = 1e9, 'trgt', 2, .8
 
     if not multi:
-        tag = '_single'
+        tag = '_single'+wTag
     else:
-        tag = ''
+        tag = ''+wTag
 
-    dst = '../publication/06_KG_energyAbsorption/submission_02/nrg_extnd_simrankpp_6000_{}_{}{}.pdf'.format(
-        trgt, pidMax, tag)
+    rpath = '../publication/06_KG_energyAbsorption/submission_02/'
+    rpath = '../publication/06_KG_energyAbsorption/images/plot/'
+    dst = '{}nrg_extnd_simrankpp_6000_{}_{}{}.pdf'.format(
+        rpath, trgt, pidMax, tag)
 
     nFrmt = '"CCSA_submodel_[6].*"'
     nFrmtM = '""'

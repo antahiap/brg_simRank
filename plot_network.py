@@ -104,7 +104,7 @@ def plot_bipartite(cypherTxt, style):
 
 def plot_bipartite_rev(cypherTxt, style):
     pidMax = 5
-    wscl = 1e9  # 10e6
+    wscl = 1e7  # 10e6
     wTag = 'P_e'  # 'IE'  #
 
     ref = {
@@ -126,7 +126,7 @@ def plot_bipartite_rev(cypherTxt, style):
         "['6003', '6031', '6060', '6030', '6061']",
         pidMax)
     G = gm.get_graph(
-        cypherTxt, wTag, w=wscl)
+        cypherTxt, wTag, w=wscl, driver=driver)
 
     # ---------
     # Bipartite
@@ -173,7 +173,7 @@ def plot_bipartite_rev(cypherTxt, style):
     }
     plot(
         G,
-        '../publication/06_KG_energyAbsorption/images/tikz/bipartite_rev.tex',
+        # '../publication/06_KG_energyAbsorption/images/tikz/bipartite_rev.tex',
         **styleG, **styleAdd)  # , standalone = False)
 
 
@@ -1322,7 +1322,7 @@ def print_simrankpp_rev(cTxt, style, pidMax=5):
     print(dfR0.to_latex(index=False, float_format="%d"))
 
 
-def print_simRankpp_npart_rev(cTxt, style, pidMaxList):
+def print_simRankpp_npart_rev(cTxt, style, pidMaxList, wTag='P_e'):
 
     C = 0.8
     itr = 1000
@@ -1370,7 +1370,6 @@ def print_simRankpp_npart_rev(cTxt, style, pidMaxList):
         df.at[row, 'No. Parts'] = nPart
         return(df)
 
-    wTag = 'P_e'
     wscl = 1e9
     ri = 0
     for pidMax in pidMaxList:
@@ -2193,6 +2192,11 @@ if __name__ == '__main__':
     # driver = GraphDatabase.driver(
     #     uri="bolt://localhost:3687", auth=("neo4j", "ivory123"))
 
+    # oem = oems.oems('CEVT')
+    oem = oems.oems('YARIS')
+    oem.backend_server()
+    driver = oem.driver
+
     style = gm.cyTxt()
     # -----------------------------------------
     # SCHEMA
@@ -2205,7 +2209,7 @@ if __name__ == '__main__':
     # YARIS
 
     # plot_bipartite(style.sm.txt, style)  # yaris
-    # plot_bipartite_rev(style.sm.txt_list, style)  # yaris_rev
+    plot_bipartite_rev(style.sm.txt_list, style)  # yaris_rev
 
     # --------
     # CEVT
@@ -2222,9 +2226,9 @@ if __name__ == '__main__':
     # -----------------------------------------
     # CEVT
 
-    oem = oems.oems('CEVT')
-    oem.backend_server()
-    driver = oem.driver
+    # oem = oems.oems('CEVT')
+    # oem.backend_server()
+    # driver = oem.driver
     # plot_spring_cevt_fd_w2(style.sm_name_err.txt, style,
     #    lc='fp3', pidMax=20, wscl=1)
 
@@ -2298,7 +2302,6 @@ if __name__ == '__main__':
     # ---------------
     # YARIS
 
-    # oem = oems.oems('YARIS')
     # plot_simrankpp(style.sm_name.txt, style)
     # print_simrankpp_rev(style.sm_name.txt_list, style, pidMax=5)
     # print_rank_IE_Pe_rev()
@@ -2310,7 +2313,11 @@ if __name__ == '__main__':
 
     # ---------------
     # OFF THE MTHD
-    # print_simrankpp_rev(style.sg_name.txt_list, style, pidMax=5)
+    # print_simrankpp_rev(style.sg_name.txt_list, style, pidMax=5
+    # print_simRankpp_npart_rev(style.sm_name.txt_list, style, [
+    #                           2, 5, 15, 28], wTag='IE')
+    print_simRankpp_npart_rev(style.sg_name.txt_list, style, [
+                              2, 3, 5, 11], wTag='IE')
 
     # ---------------
     # CEVT
